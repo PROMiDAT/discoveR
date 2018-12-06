@@ -644,7 +644,7 @@ shinyUI(dashboardPagePlus(
             href="https://www.promidat.com/", style = "color:white;",
             target = "_blank", "https://www.promidat.com"), icono = icon("info")),
         infoBoxPROMiDAT(
-          labelInput("version"), "2.0.0", icono = icon("file-code-o"))
+          labelInput("version"), "1.0.0", icono = icon("file-code-o"))
       )
     ) #tabItems
   ) #dashboardBody
