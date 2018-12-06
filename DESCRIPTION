@@ -1,0 +1,14 @@
+Title: PROMiDAT SHINY EXPLORATORIO
+Package: DiscoveR
+Type: Package
+Version: 1.0.0
+Author: Oldemar Rodriguez R. with contributions from Diego Jimenez A. and Andres Navarro D.
+Maintainer: Oldemar Rodriguez <oldemar.rodriguez@ucr.ac.cr>
+Depends: R (>= 3.5)
+Imports: shiny, shinyAce, FactoMineR, shinydashboard, shinydashboardPlus, shinyWidgets, colourpicker, shinyjs, knitr, DT, promises, ggplot2, rstudioapi, factoextra, reshape,corrplot, dendextend, scatterplot3d, stringr, future, rmarkdown, zip, ggdendro, stringi, rgdal, raster
+Description: Perform an exploratory analysis on a database through a graphical interface.
+License: GPL (>=2)
+Encoding: UTF-8
+LazyData: true
+URL: http://www.promidat.com
+RoxygenNote: 6.1.1
