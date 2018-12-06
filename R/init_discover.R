@@ -8,7 +8,7 @@
 #' @examples
 #' \dontrun{
 #'  if(interactive()){
-#'    init_explorer()
+#'    init_discover()
 #'  }
 #'}
 init_discover <- function() {

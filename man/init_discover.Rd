@@ -20,7 +20,7 @@ This starts the DiscoveR application on the user's local computer.
 \examples{
 \dontrun{
  if(interactive()){
-   init_explorer()
+   init_discover()
  }
 }
 }
