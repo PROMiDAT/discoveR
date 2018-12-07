@@ -28,7 +28,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 
 shinyUI(dashboardPagePlus(
-  title="PROMiDAT - DiscoveR",
+  title="PROMiDAT - discoveR",
   dashboardHeaderPlus(
     title = tags$a(href="http://promidat.com", target = "_blank",
                    img(src="Logo2.png", height=55, width="100%",

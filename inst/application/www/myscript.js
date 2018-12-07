@@ -1,6 +1,6 @@
 $(document).ready(function() {
-  $("header").find("nav").append('<span class="header-title"> <i>Discove</i>R </span>');
-})
+  $("header").find("nav").append('<span class="header-title"> <i>discove</i>R </span>');
+});
 
 shinyjs.init = function() {
   $(".sidebar").on("click", ".disabled", function (e) {

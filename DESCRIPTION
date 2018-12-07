@@ -1,5 +1,5 @@
-Title: PROMiDAT SHINY EXPLORATORIO
-Package: DiscoveR
+Title: discoveR - Explorative Data Analisys System
+Package: discoveR
 Type: Package
 Version: 1.0.0
 Author: Oldemar Rodriguez R. with contributions from Diego Jimenez A. and Andres Navarro D.
