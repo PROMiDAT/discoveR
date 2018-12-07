@@ -4,7 +4,7 @@ selidioma;Seleccionar Idioma:;Select Language
 data;Datos;Data
 basico;Estadísticas Básicas;Basic Statistics
 acp;ACP;PCA
-jerarquico;Cluster Jerárquico;Hierarchical Cluster
+jerarquico;Cluster Jerárquico;Hierarchical Clustering
 kmedias;K-Medias;K-Means
 inercia;Inercia;Inertia
 inerciaintra;Inercia Intra-Clase;Inertia Intra-Class
@@ -38,7 +38,7 @@ tipo;Tipo;Type
 activa;Activa;Active
 aplicar;Aplicar;Apply
 resumen;Resumen Numérico;Numeric Summary
-normalidad;Test de Normalidad;Normal Test
+normalidad;Test de Normalidad;Normality Test
 dispersion;Dispersión;Scatter Plot
 distribuciones;Distribuciones;Distributions
 distribucion;Distribución;Distribution
@@ -152,4 +152,4 @@ ejes;Ejes:;Axes:
 repcosind;Coseno Individuos:;Individuals Cosine:
 repcosvar;Coseno Variables:;Variables Cosine:
 repdim;Dimensiones:;Dimentions:
-errorSep
+codreporte;Código del Reporte;Report Code

@@ -347,11 +347,18 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   mostrarData <- function() {
+    if(isolate(input$idioma) == "es") {
+      labelNum <- "Numérico"
+      labelCat <- "Categórico"
+    } else {
+      labelNum <- "Numerical"
+      labelCat <- "Categorical"
+    }
     nombre.columnas <- c("ID", colnames(datos))
     tipo.columnas <- sapply(colnames(datos), function(i)
       ifelse(class(datos[,i]) %in% c("numeric", "integer"),
-             "<span data-id='numerico'>Numérico</span>", 
-             "<span data-id='categorico'>Categórico</span>"))
+             paste0("<span data-id='numerico'>", labelNum, "</span>"), 
+             paste0("<span data-id='categorico'>", labelCat, "</span>")))
     sketch = htmltools::withTags(table(
       tableHeader(nombre.columnas),
       tags$tfoot(
@@ -624,8 +631,32 @@ shinyServer(function(input, output, session) {
       cod.dya.cat  <<- updatePlot$dya.cat
       res <- isolate(eval(parse(text = cod.dya.cat)))
       updateAceEditor(session, "fieldCodeCat", value = cod.dya.cat)
-      createLog(nombre.datos, "basico", "distribucion", cod.dya.cat,  
-                params = NULL, vars = input$sel.distribucion.cat)
+      var <- isolate(input$sel.distribucion.cat)
+      if(str_detect(var, pattern = "[[:digit:]]\\.(HC|CJ)") & 
+         is.null(datos.originales[[var]])) {
+        code <- paste0(
+          "datos[['", var, "']] <- as.factor(paste0('HC', hc.modelo$clusters))",
+          "\n", cod.dya.cat)
+        createLog(
+          nombre.datos, "rephc", "Cluster", code,  
+          params = paste(
+            "Clusters=", isolate(input$cant.cluster), "distancia=", 
+            isolate(input$sel.dist.method), "metodo=", 
+            isolate(input$sel.hc.method), collapse = "."))
+      } else if(str_detect(var, pattern = "[[:digit:]]\\.(Kmedias|Kmeans)") &
+                is.null(datos.originales[[var]])) {
+        code <- paste0(
+          "datos[['", var, "']] <- as.factor(paste0('K', k.modelo$cluster))\n",
+          cod.dya.cat)
+        createLog(
+          nombre.datos, "kmedias", "Cluster", code, params = paste(
+            "Clusters=", isolate(input$cant.kmeans.cluster), "iter=", 
+            isolate(input$num.iter), "nstart=", isolate(input$num.nstart), 
+            "algoritmo=", isolate(input$sel.algoritmo), collapse = "."))
+      } else {
+        createLog(nombre.datos, "basico", "distribucion", cod.dya.cat,  
+                  params = NULL, vars = input$sel.distribucion.cat)
+      }
       return(res)
     }, error = function(e) {
       if(ncol(var.categoricas(datos)) <= 0){
@@ -1683,10 +1714,9 @@ shinyServer(function(input, output, session) {
   })
 
   observeEvent(input$HCbutton, {
-    C.Jerarquica <- hc.modelo$clusters
-    datos <<- cbind(datos, C.Jerarquica)
-    datos$C.Jerarquica <<- paste0("CJ", datos$C.Jerarquica)
-    datos$C.Jerarquica <<- as.factor(datos$C.Jerarquica)
+    ifelse(input$idioma == "es", aux <- "CJ", aux <- "HC")
+    C.Jerarquica <- as.factor(paste0(aux, hc.modelo$clusters))
+    datos[[paste0(length(levels(C.Jerarquica)), ".", aux)]] <<- C.Jerarquica
     output$contents = DT::renderDataTable(mostrarData())
     showNotification(tr("msjclusters"), duration = 5, type = "message")
     updateSelectInput(session, "sel.distribucion.cat",
@@ -1694,9 +1724,9 @@ shinyServer(function(input, output, session) {
   })
 
   observeEvent(input$Kbutton, {
-    datos <<- cbind(datos, Kmedias = k.modelo$cluster)
-    datos$Kmedias <<- paste0("K", datos$Kmedias)
-    datos$Kmedias <<- as.factor(datos$Kmedias)
+    ifelse(input$idioma == "es", aux <- ".Kmedias", aux <- ".Kmeans")
+    Kmedias <- as.factor(paste0("K", k.modelo$cluster))
+    datos[[paste0(length(levels(Kmedias)), aux)]] <<- Kmedias
     output$contents = DT::renderDataTable(mostrarData())
     showNotification(tr("msjclusters"), duration = 5, type = "message")
     updateSelectInput(session, "sel.distribucion.cat",
