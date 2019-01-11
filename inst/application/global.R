@@ -1091,7 +1091,7 @@ def.reporte <- function(titulo = "Sin Titulo", nombre = "PROMiDAT") {
     "library(promises)\nlibrary(ggplot2)\nlibrary(FactoMineR)\n",
     "library(FactoMineR)\nlibrary(factoextra)\nlibrary(reshape)\n",
     "library(corrplot)\nlibrary(dendextend)\nlibrary(scatterplot3d)\n",
-    "library(stringr)\nlibrary(ggdendro)\nlibrary(modeest)\n",
+    "library(stringr)\nlibrary(ggdendro)\n",
     "```\n\n", "```{r}\n", extract.code("var.numericas"), "\n\n", 
     extract.code("var.categoricas"), "\n\n", extract.code("datos.disyuntivos"),
     "\n\n", extract.code("distribucion.numerico"), "\n\n", 
