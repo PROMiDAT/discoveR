@@ -22,10 +22,12 @@ def.colors <<- c("#F8766D", "#00BFC4", "#00BA38", "#C77CFF", "#00B0F6",
 #' @export
 #'
 
-tr <- function(text) { 
+tr <- function(text) {
   sapply(text, function(s) {
-    ifelse(is.null(translation[[s]][[input$idioma]]), s,
-           translation[[s]][[input$idioma]])
+    elem <- ifelse(is.null(translation[[s]][[input$idioma]]), s, 
+                   translation[[s]][[input$idioma]])
+    Encoding(elem) <- enc
+    elem
   }, USE.NAMES = F)
 }
 
@@ -1141,6 +1143,13 @@ user.reporte <- function() {
   return(res)
 }
 
+###################### Corrección tildes ################################################
+info.sys <- .Platform$OS.type
+if(toupper(info.sys) != "WINDOWS"){
+  enc <<- "utf8"
+}else{
+  enc <<- "UTF-8"
+}
 
 
 
