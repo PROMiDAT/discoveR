@@ -19,7 +19,7 @@ shinyServer(function(input, output, session) {
   )
 
   session$onSessionEnded(function() {
-    #rm(envir = .GlobalEnv, list = ls(envir = .GlobalEnv))
+    rm(envir = .GlobalEnv, list = ls(envir = .GlobalEnv))
     recover.cat()
     stopApp()
   })
