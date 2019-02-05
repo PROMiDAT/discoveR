@@ -12,12 +12,8 @@
 #'}
 init_discover <- function() {
   rm(envir = .GlobalEnv, list = ls(envir = .GlobalEnv))
-  info.sys <- Sys.info()
-  if(is.null(info.sys)) {
-    info.sys <- .Platform$OS.type
-  }
   Sys.setenv("LANGUAGE" = "ES")
-  if(toupper(info.sys) != "WINDOWS") {
+  if(toupper(.Platform$OS.type) != "WINDOWS") {
     options(encoding = "utf8")
   } else {
     options(encoding = "UTF-8")

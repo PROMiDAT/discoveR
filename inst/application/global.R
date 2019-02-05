@@ -1187,9 +1187,9 @@ user.reporte <- function() {
 
 ###################### Corrección tildes ######################################
 info.sys <- .Platform$OS.type
-if(toupper(info.sys) != "WINDOWS"){
+if(toupper(info.sys) != "WINDOWS") {
   enc <<- "utf8"
-}else{
+} else {
   enc <<- "UTF-8"
 }
 
