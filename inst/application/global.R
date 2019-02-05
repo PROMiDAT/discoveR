@@ -100,6 +100,31 @@ recover.cat <- function(){
   lockBinding("cat",.BaseNamespaceEnv)
 }
 
+checkError <- function(expr, idioma = "es", n.num = NULL, n.cat = NULL) {
+  tryCatch({
+    if(!is.null(n.num)) {
+      if(n.num <= 1) {
+        error.variables(shiny::isolate(input$idioma), T)
+        return(NULL)
+      }
+    } 
+    if (!is.null(n.cat)) {
+      if(n.cat <= 1) {
+        error.variables(shiny::isolate(input$idioma), F)
+        return(NULL)
+      }
+    }
+    res <- eval(parse(text = expr))
+    return(res)
+  }, warning = function(w) {
+    shiny::showNotification(paste0("WARNING: ", w), duration = 10, type = "warning")
+    return(NULL)
+  }, error = function(e) {
+    shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
+    return(NULL)
+  })
+}
+
 error.variables <- function(idioma = "es", num = T){
   if(num){
     img <- raster::stack(paste0("www/", idioma, "_errorNum.png"))
@@ -485,7 +510,7 @@ default.normal <- function(data = "datos", vars = NULL, color = "#00FF22AA",
 
 fisher.calc <- function (x, na.rm = FALSE, ...) {
   if (!is.numeric(x)) {
-    stop("argument 'x' is must be numeric")
+    stop("x debe ser numérico")
   }
   if (na.rm)
     x <- x[!is.na(x)]
@@ -884,7 +909,7 @@ panel.inercia <- function(modelo, cant.clusters, datos = NULL, esHC = T) {
     tags$div(
       class='shiny-html-output col-sm-12 shiny-bound-output', id=i$id,
       tags$div(
-        class=paste0('small-box bg-', i$color), 
+        class = paste0('small-box bg-', i$color), 
         tags$div(class='inner', tags$h3(i$Value), tags$p(i$Label)),
         tags$div(class='icon-large', tags$i(class=i$icon))
       )
@@ -924,15 +949,14 @@ centros.horizontal.todos <- function(centros){
     theme(text = element_text(size = 20)) + aes(fill = variable)
 }
 
-cluster.horiz <- function(sel = "1", colores = "'steelblue'",
-                          color = "red", esHC = T) {
+cluster.horiz <- function(sel = "1", color = "steelblue", esHC = T) {
   code.centros <-
     ifelse(esHC, "centros <- as.data.frame(t(hc.modelo$centros$real))",
            "centros <- as.data.frame(t(k.modelo$centers))")
   if(sel == "todos") {
     return(paste0(
       code.centros, "\ncentros.horizontal.todos(centros) +\n",
-      "  scale_fill_manual(values = c(", paste(colores, collapse = ","), "))"))
+      "  scale_fill_manual(values = c(", paste(color, collapse = ","), "))"))
   } else {
     return(paste0(
       code.centros, "\nggplot(data = centros, aes(x = row.names(centros), ",
@@ -1055,30 +1079,47 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T) {
 #' @return functions
 #' @export
 #'
-init.replist <- function(nombre) {
-  env.report$codigo.reporte[[nombre]][["basico"]] <- list()
-  env.report$codigo.reporte[[nombre]][["acp"]] <- list()
-  env.report$codigo.reporte[[nombre]][["rephc"]] <- list()
-  env.report$codigo.reporte[[nombre]][["kmedias"]] <- list()
+init.replist <- function(datos) {
+  env.report$codigo.reporte[[datos]][["basico"]] <- list()
+  env.report$codigo.reporte[[datos]][["acp"]] <- list()
+  env.report$codigo.reporte[[datos]][["rephc"]] <- list()
+  env.report$codigo.reporte[[datos]][["repk"]] <- list()
 }
 
-createLog <- function(datos, modelo, titulo = NULL, codigo, params = NULL, vars = "vacio") {
-  if(!is.null(params) & !is.null(vars)) {
-    if(is.null(env.report$codigo.reporte[[datos]][[modelo]][[params]][[titulo]])) {
-      env.report$codigo.reporte[[datos]][[modelo]][[params]][[titulo]] <- list()
-    }
-    env.report$codigo.reporte[[datos]][[modelo]][[params]][[titulo]][[vars]] <- codigo
-  } else if(!is.null(params)) {
-    if(is.null(env.report$codigo.reporte[[datos]][[modelo]][[params]])) {
-      env.report$codigo.reporte[[datos]][[modelo]][[params]] <- list()
-    }
-    env.report$codigo.reporte[[datos]][[modelo]][[params]][[titulo]] <- codigo
+createLogBasico <- function(datos, titulo, codigo, vars = NULL) {
+  if(is.null(vars)){
+    env.report$codigo.reporte[[datos]][["basico"]][[titulo]] <- codigo
   } else {
-    if(is.null(env.report$codigo.reporte[[datos]][[modelo]][[titulo]])) {
-      env.report$codigo.reporte[[datos]][[modelo]][[titulo]] <- list()
-    }
-    env.report$codigo.reporte[[datos]][[modelo]][[titulo]][[vars]] <- codigo
+    env.report$codigo.reporte[[datos]][["basico"]][[titulo]][[vars]] <- codigo
   }
+}
+
+createLogACP <- function(datos, codigo, rep.modelo = NULL, vars = NULL) {
+  aux <- paste0("Centrado: ", rep.modelo[1], ", Dimensiones: ", rep.modelo[2])
+  if(is.null(env.report$codigo.reporte[[datos]][["acp"]][["ACP"]][[aux]])){
+    env.report$codigo.reporte[[datos]][["acp"]][["ACP"]][[aux]] <- list()
+  }
+  env.report$codigo.reporte[[datos]][["acp"]][["ACP"]][[aux]][[vars]] <- codigo
+}
+
+createLogCJ <- function(datos, codigo, rep.modelo = NULL, vars = NULL) {
+  aux <- paste0("Clusters: ", rep.modelo[1], ", Distancia: ", rep.modelo[2], 
+                ", Metodo: ", rep.modelo[3])
+  titulo <- "Clusterizacion_Jerarquica"
+  if(is.null(env.report$codigo.reporte[[datos]][["rephc"]][[titulo]][[aux]])){
+    env.report$codigo.reporte[[datos]][["rephc"]][[titulo]][[aux]] <- list()
+  }
+  env.report$codigo.reporte[[datos]][["rephc"]][[titulo]][[aux]][[vars]] <- codigo
+}
+
+createLogK <- function(datos, codigo, rep.modelo = NULL, vars = NULL) {
+  aux <- paste0("Clusters: ", rep.modelo[1], ", Iteraciones: ", rep.modelo[2],
+                ", Formas Fuertes: ", rep.modelo[3], ", Algoritmo: ", rep.modelo[4])
+  titulo <- "Kmedias"
+  if(is.null(env.report$codigo.reporte[[datos]][["repk"]][[titulo]][[aux]])){
+    env.report$codigo.reporte[[datos]][["repk"]][[titulo]][[aux]] <- list()
+  }
+  env.report$codigo.reporte[[datos]][["repk"]][[titulo]][[aux]][[vars]] <- codigo
 }
 
 def.reporte <- function(titulo = "Sin Titulo", nombre = "PROMiDAT") {
@@ -1090,10 +1131,11 @@ def.reporte <- function(titulo = "Sin Titulo", nombre = "PROMiDAT") {
     "knitr::opts_chunk$set(echo = FALSE,  fig.height = 10, fig.width = 15)\n",
     "```\n\n",
     "```{r message=FALSE, warning=FALSE}\n",
-    "library(promises)\nlibrary(ggplot2)\nlibrary(FactoMineR)\n",
-    "library(FactoMineR)\nlibrary(factoextra)\nlibrary(reshape)\n",
-    "library(corrplot)\nlibrary(dendextend)\nlibrary(scatterplot3d)\n",
-    "library(stringr)\nlibrary(ggdendro)\n",
+    "library(knitr)\nlibrary(future)\nlibrary(reshape)\nlibrary(ggplot2)\n",
+    "library(stringr)\nlibrary(stringi)\nlibrary(corrplot)\n",
+    "library(promises)\nlibrary(ggdendro)\nlibrary(rmarkdown)\n",
+    "library(dendextend)\nlibrary(factoextra)\nlibrary(FactoMineR)\n",
+    "library(scatterplot3d)\n",
     "```\n\n", "```{r}\n", extract.code("var.numericas"), "\n\n", 
     extract.code("var.categoricas"), "\n\n", extract.code("datos.disyuntivos"),
     "\n\n", extract.code("distribucion.numerico"), "\n\n", 
@@ -1143,7 +1185,7 @@ user.reporte <- function() {
   return(res)
 }
 
-###################### Corrección tildes ################################################
+###################### Corrección tildes ######################################
 info.sys <- .Platform$OS.type
 if(toupper(info.sys) != "WINDOWS"){
   enc <<- "utf8"

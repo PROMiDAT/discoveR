@@ -33,7 +33,7 @@
 
 .multiple-select-var{
   float: right;
-  width: 100%;
+  width: 180px;
   margin-bottom: -3px;
   margin-top: 6px;
   font-size: 14px;
@@ -345,6 +345,37 @@ input[type="checkbox"]:hover:before {
     margin-left: 0;
 }
 
+.btn-run {
+  background-color: black;
+  color: green;
+  border-color: #888888;
+}
+
+.btn-run:active:focus {
+  background-color: black;
+  color: green;
+  border-color: #888888;
+  outline-color: green;
+}
+
+.btn-run:active {
+  background-color: black;
+  color: green;
+  border-color: #888888;
+}
+
+.btn-run:hover {
+  background-color: black;
+  color: green;
+  border-color: #888888;
+}
+
+.btn-run:focus {
+  background-color: black;
+  color: green;
+  border-color: #888888;
+}
+
 .dataTables_empty {
   color: white;
   background-color: #CBB051;
@@ -381,6 +412,15 @@ input[type="checkbox"]:hover:before {
 .selectize-dropdown .active {
   background-color: #777777;
   color: #CBB051;
+}
+
+.shiny-input-container:not(.shiny-input-container-inline) {
+    width: 100%;
+}
+
+.btn-options button:focus {
+    background-color: #666666;
+    outline: -webkit-focus-ring-color auto 0;
 }
 
 
