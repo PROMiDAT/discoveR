@@ -150,8 +150,6 @@ shinyServer(function(input, output, session) {
     nombre.datos <<- paste0(nombre.datos, paste(rep.vars, collapse = "."))
     datos.reporte[[nombre.datos]] <<- datos
     init.replist(nombre.datos)
-    createLogBasico(nombre.datos, "Transformacion de los Datos",
-                    paste0(code.res, "\nstr(datos)"))
     shiny::isolate(eval(parse(text = code.res)))
     shinyAce::updateAceEditor(session, "fieldCodeTrans", value = code.res)
     updateData$datos <- datos
