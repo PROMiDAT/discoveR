@@ -217,7 +217,11 @@ shinyServer(function(input, output, session) {
       output$txtcor <- shiny::renderPrint(print(correlacion))
       updateSelects(datos)
       nmax <- calc.maxK(datos)
+      cant.num <- ncol(var.numericas(datos))
+      ndef <- 5
+      if(cant.num < 5) ndef <- cant.num
       updateSliderInput(session, "iteracionesK", max = nmax, value = nmax)
+      updateSliderInput(session, "slider.npc", max = cant.num, value = ndef)
     }, error = function(e) {
       print(paste0("ERROR: ", e))
       return(datos <- NULL)
@@ -550,7 +554,7 @@ shinyServer(function(input, output, session) {
       createLogBasico(nombre.datos, "correlacion", cod.cor)
       return(res)
     }, error = function(e) {
-      if(ncol(var.numericas(datos)) <= 1){
+      if(ncol(var.numericas(datos)) <= 1) {
         error.variables(shiny::isolate(input$idioma), T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
@@ -583,17 +587,20 @@ shinyServer(function(input, output, session) {
     tryCatch({
       if(!is.null(datos)) {
         eval(parse(text = codigo))
-        shinyAce::updateAceEditor(session, "fieldCodePCAModelo", value = codigo)
         updateData$pca.modelo <- pca.modelo
-        output$txtpca <- shiny::renderPrint(print(unclass(pca.modelo)))
-        updateSliderTextInput(session, "slider.ejes", choices =
-                                c(1:input$slider.npc), selected = c(1, 2))
+        shinyAce::updateAceEditor(session, "fieldCodePCAModelo", value = codigo)
+        output$txtpca <- shiny::renderPrint(print(unclass(updateData$pca.modelo)))
         createLogACP(nombre.datos, codigo, rep.acp, "modelo")
       }
     }, error = function(e) {
       shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
     })
+  })
+  
+  observeEvent(input$slider.npc, {
+    updateSliderTextInput(session, "slider.ejes", choices =
+                            c(1:input$slider.npc), selected = c(1, 2))
   })
 
   #' Gráfico de PCA (Individuos)
@@ -602,9 +609,10 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   output$plot.ind = shiny::renderPlot({
+    input$ACPRun
     tryCatch({
-      pca.modelo <<- updateData$pca.modelo
-      cod.pca.ind <<- updatePlot$pca.ind
+      pca.modelo <<- shiny::isolate(updateData$pca.modelo)
+      cod.pca.ind <<- shiny::isolate(updatePlot$pca.ind)
       cos <- shiny::isolate(input$ind.cos)
       ind.ejes <- paste(shiny::isolate(input$slider.ejes), collapse = ",")
       
@@ -682,9 +690,10 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   output$plot.var = shiny::renderPlot({
+    input$ACPRun
     tryCatch({
-      pca.modelo <<- updateData$pca.modelo
-      cod.pca.var <<- updatePlot$pca.var
+      pca.modelo <<- shiny::isolate(updateData$pca.modelo)
+      cod.pca.var <<- shiny::isolate(updatePlot$pca.var)
       cos <- shiny::isolate(input$ind.cos)
       ind.ejes <-paste(shiny::isolate(input$slider.ejes), collapse = ",")
       
@@ -719,9 +728,10 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   output$plot.biplot = shiny::renderPlot({
+    input$ACPRun
     tryCatch({
-      pca.modelo <<- updateData$pca.modelo
-      cod.pca.bi <<- updatePlot$pca.bi
+      pca.modelo <<- shiny::isolate(updateData$pca.modelo)
+      cod.pca.bi <<- shiny::isolate(updatePlot$pca.bi)
       cos <- shiny::isolate(input$ind.cos)
       ind.ejes <- paste(shiny::isolate(input$slider.ejes), collapse = ",")
       

@@ -385,13 +385,10 @@ shinyUI(dashboardPagePlus(
                   onLabel = labelInput("si"), offLabel = labelInput("no"),
                   labelWidth = "100%"),
                 shiny::sliderInput("slider.npc", labelInput("numerodim"), 
-                            min = 2, max = 10, value = 5),
-                shiny::actionButton("ACPRun", labelInput("ejecutar"), 
-                                    class = "btn-run", width = "100%"), 
+                            min = 2, max = 10, value = 5), 
                 shinyWidgets::sliderTextInput(
                   "slider.ejes", labelInput("selejes"), grid = T,
-                  choices = c(1:10), selected = c(1,2)), shiny::hr(),
-                shiny::hr(),
+                  choices = c(1:10), selected = c(1,2)), 
                 shiny::conditionalPanel(
                   condition = paste0("input.tabPCA == 'tabInd' ||",
                                      " input.tabPCA == 'tabBi'"),
@@ -417,7 +414,10 @@ shinyUI(dashboardPagePlus(
                     inputId = "cvc.metodo", label = labelInput("seltipo"),
                     choices =  c("circle", "square", "ellipse",  "number",
                                  "shade", "color", "pie"))
-                ), shiny::hr()
+                ), shiny::hr(),
+                shiny::actionButton("ACPRun", labelInput("ejecutar"), 
+                                    class = "btn-run", width = "100%"), 
+                shiny::hr()
               ),
               list(
                 shinyAce::aceEditor(
