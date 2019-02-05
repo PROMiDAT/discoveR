@@ -6,7 +6,6 @@
 #' @details This starts the discoveR application on the user's local computer.
 #' @keywords discoveR
 #' @examples
-#' \dontrun{
 #'  if(interactive()){
 #'    init_discover()
 #'  }
@@ -26,4 +25,3 @@ init_discover <- function() {
   shiny::runApp(appDir = system.file("application", package = "discoveR"), 
                 launch.browser = TRUE)
 }
-
