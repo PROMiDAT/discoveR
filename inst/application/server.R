@@ -517,30 +517,6 @@ shinyServer(function(input, output, session) {
       res <- shiny::isolate(eval(parse(text = cod.dya.cat)))
       shinyAce::updateAceEditor(session, "fieldCodeCat", value = cod.dya.cat)
       cat.var <- shiny::isolate(input$sel.distribucion.cat)
-      if(str_detect(var, pattern = "[[:digit:]]\\.(HC|CJ)") & 
-         is.null(datos.originales[[var]])) {
-        code <- paste0(
-          "datos[['", var, "']] <- as.factor(paste0('HC', hc.modelo$clusters))",
-          "\n", cod.dya.cat)
-        #createLog(
-        #  nombre.datos, "rephc", "Cluster", code,  
-        #  params = paste(
-        #    "Clusters=", shiny::isolate(input$cant.cluster), "distancia=", 
-        #    shiny::isolate(input$sel.dist.method), "metodo=", 
-        #    shiny::isolate(input$sel.hc.method), collapse = "."))
-      } else if(str_detect(var, pattern = "[[:digit:]]\\.(Kmedias|Kmeans)") &
-                is.null(datos.originales[[var]])) {
-        code <- paste0(
-          "datos[['", var, "']] <- as.factor(paste0('K', k.modelo$cluster))\n",
-          cod.dya.cat)
-        #createLog(
-        #  nombre.datos, "kmedias", "Cluster", code, params = paste(
-        #    "Clusters=", shiny::isolate(input$cant.kmeans.cluster), "iter=", 
-        #    shiny::isolate(input$num.iter), "nstart=", shiny::isolate(input$num.nstart), 
-        #    "algoritmo=", shiny::isolate(input$sel.algoritmo), collapse = "."))
-      } else {
-        createLogBasico(nombre.datos, "distribucion", cod.dya.cat, cat.var)
-      }
       return(res)
     }, error = function(e) {
       if(ncol(var.categoricas(datos)) <= 0){
