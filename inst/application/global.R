@@ -104,7 +104,7 @@ checkError <- function(expr, idioma = "es", n.num = NULL, n.cat = NULL) {
   tryCatch({
     if(!is.null(n.num)) {
       if(n.num <= 1) {
-        return(error.variables(idiama, T))
+        return(error.variables(idioma, T))
       }
     } 
     if (!is.null(n.cat)) {
