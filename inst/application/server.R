@@ -703,7 +703,7 @@ shinyServer(function(input, output, session) {
       createLogACP(nombre.datos, codigo, rep.acp,
                    paste0("Variables ejes: ", ejes, ", cos: ", cos))
     }
-    plot(res.plot[[2]])
+    return(res.plot[[2]])
   })
   
   shiny::observeEvent(input$run.pcaVar, {
@@ -729,7 +729,7 @@ shinyServer(function(input, output, session) {
                    paste0("Sobreposicion ejes: ", ejes, ", var.cos: ", 
                           var.cos, ", ind.cos: ", ind.cos))
     }
-    plot(res.plot[[2]])
+    return(res.plot[[2]])
   })
   
   shiny::observeEvent(input$run.pcaBi, {
