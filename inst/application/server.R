@@ -745,7 +745,7 @@ shinyServer(function(input, output, session) {
       if(is.null(ejex) & is.null(ejey)){
         return(NULL)
       } else {
-        res <- updatePlot$pca.bi + 
+        res <- updatePlot$pca.bi[[2]] + 
           coord_cartesian(xlim = ejex, ylim = ejey, expand = FALSE)
         return(res)
       }
