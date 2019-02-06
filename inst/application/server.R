@@ -579,23 +579,41 @@ shinyServer(function(input, output, session) {
   #'
   shiny::observeEvent(c(updateData$datos, input$ACPRun), {
     datos <- updateData$datos
+    hay.num <- ncol(var.numericas(datos))
+    
     centrado <- shiny::isolate(input$switch.scale)
     dimensiones <- shiny::isolate(input$slider.npc)
+    ejes <- shiny::isolate(input$slider.ejes)
+    ind.cos <- shiny::isolate(input$ind.cos) * 0.01
+    ind.col <- shiny::isolate(input$col.pca.ind)
+    var.cos <- shiny::isolate(input$var.cos) * 0.01
+    var.col <- shiny::isolate(input$col.pca.var) 
+    
     codigo <- def.pca.model(scale.unit = centrado, npc = dimensiones)
+    idioma <- shiny::isolate(input$idioma)
     rep.acp <<- c(centrado, dimensiones)
     
-    tryCatch({
-      if(!is.null(datos)) {
-        eval(parse(text = codigo))
+    shinyAce::updateAceEditor(session, "fieldCodePCAModelo", value = codigo)
+    
+    if(!is.null(datos)) {
+      pca.modelo <<- checkError(codigo, idioma)
+      if(!is.null(pca.modelo)) {
         updateData$pca.modelo <- pca.modelo
-        shinyAce::updateAceEditor(session, "fieldCodePCAModelo", value = codigo)
-        output$txtpca <- shiny::renderPrint(print(unclass(updateData$pca.modelo)))
+        output$txtpca <- shiny::renderPrint(unclass(updateData$pca.modelo))
         createLogACP(nombre.datos, codigo, rep.acp, "modelo")
+        
+        ind.cod <- pca.individuos(ind.cos, ind.col, ejes)
+        var.cod <- pca.variables(var.cos, color = var.col, ejes)
+        bi.cod <- pca.sobreposicion(ind.cos, var.cos, ind.col, var.col, ejes)
+        
+        updatePlot$pca.ind <- list(
+          ind.cod, checkError(ind.cod, idioma, n.num = hay.num))
+        updatePlot$pca.var <- list(
+          var.cod, checkError(var.cod, idioma, n.num = hay.num))
+        updatePlot$pca.bi <- list(
+          bi.cod, checkError(bi.cod, idioma, n.num = hay.num))
       }
-    }, error = function(e) {
-      shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
-      return(NULL)
-    })
+    }
   })
   
   observeEvent(input$slider.npc, {
@@ -609,39 +627,34 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   output$plot.ind = shiny::renderPlot({
-    input$ACPRun
+    res.plot <- updatePlot$pca.ind
+    codigo <- res.plot[[1]]
+    shinyAce::updateAceEditor(session, "fieldCodeInd", value = codigo)
+    if((!is.null(res.plot[[2]])) || (class(res.plot[[2]]) != "RasterStack")) {
+      ejes   <- paste(shiny::isolate(input$slider.ejes), collapse = ", ")
+      cos    <- shiny::isolate(input$ind.cos) * 0.01
+      createLogACP(nombre.datos, codigo, rep.acp,
+                   paste0("Individuos ejes: ", ejes, ", cos: ", cos))
+    }
+    return(res.plot[[2]])
+  })
+  
+  shiny::observeEvent(input$run.pcaInd, {
+    idioma <- shiny::isolate(input$idioma)
+    cod.ind <- shiny::isolate(input$fieldCodeInd)
+    updatePlot$pca.ind <- list(cod.ind, checkError(cod.ind, idioma))
+  })
+  
+  output$plot.ind.zoom <- shiny::renderPlot({
     tryCatch({
-      pca.modelo <<- shiny::isolate(updateData$pca.modelo)
-      cod.pca.ind <<- shiny::isolate(updatePlot$pca.ind)
-      cos <- shiny::isolate(input$ind.cos)
-      ind.ejes <- paste(shiny::isolate(input$slider.ejes), collapse = ",")
-      
-      res <- shiny::isolate(eval(parse(text = cod.pca.ind)))
-      shinyAce::updateAceEditor(session, "fieldCodeInd", value = cod.pca.ind)
-      createLogACP(nombre.datos, cod.pca.ind, rep.acp,
-                   paste0("Individuos ejes: ", ind.ejes, ", cos: ", cos))
-      return(res)
-    }, error = function(e) {
-      if(ncol(var.numericas(datos)) <= 1){
-        error.variables(shiny::isolate(input$idioma), T)
-      } else {
-        shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
+      ejex <- ind.ranges$x
+      ejey <- ind.ranges$y
+      if(is.null(ejex) & is.null(ejey)){
         return(NULL)
-      }
-    })
-   })
-
-   output$plot.ind.zoom <- shiny::renderPlot({
-     tryCatch({
-       ejex <- ind.ranges$x
-       ejey <- ind.ranges$y
-       if(is.null(ejex) & is.null(ejey)){
-         return(NULL)
-       } else {
-         cod.ind <<- updatePlot$pca.ind
-         res <- shiny::isolate(eval(parse(text = cod.ind)))
-         res <- res + coord_cartesian(xlim = ejex, ylim = ejey, expand = FALSE)
-         return(res)
+      } else {
+        res <- updatePlot$pca.ind[[2]] + 
+          coord_cartesian(xlim = ejex, ylim = ejey, expand = FALSE)
+        return(res)
        }
      }, error = function(e) {
        return(NULL)
@@ -651,11 +664,12 @@ shinyServer(function(input, output, session) {
    output$mostrar.ind.zoom = DT::renderDataTable({
      tryCatch({
        dimensiones <- as.data.frame(pca.modelo$ind$coord)
+       ejes <- input$slider.ejes
        return(
          brushedPoints(
-           df = dimensiones[, c(input$slider.ejes)], brush = input$zoom.ind,
-           xvar = names(dimensiones)[input$slider.ejes[1]],
-           yvar = names(dimensiones)[input$slider.ejes[2]])
+           df = dimensiones[, c(ejes)], brush = input$zoom.ind,
+           xvar = names(dimensiones)[ejes[1]],
+           yvar = names(dimensiones)[ejes[2]])
        )
      }, error = function(e) {
        return(NULL)
@@ -674,52 +688,28 @@ shinyServer(function(input, output, session) {
     }
   })
 
-  shiny::observeEvent(input$run.pcaInd, {
-    updatePlot$pca.ind <- input$fieldCodeInd
-  })
-
-  shiny::observeEvent(c(input$col.pca.ind, input$ind.cos, input$slider.ejes), {
-    updatePlot$pca.ind <- pca.individuos(
-      ind.cos = input$ind.cos * 0.01, color = input$col.pca.ind, 
-      ejes = input$slider.ejes)
-  })
-
   #' Gráfico de PCA (Variables)
   #' @author Diego
   #' @return plot
   #' @export
   #'
   output$plot.var = shiny::renderPlot({
-    input$ACPRun
-    tryCatch({
-      pca.modelo <<- shiny::isolate(updateData$pca.modelo)
-      cod.pca.var <<- shiny::isolate(updatePlot$pca.var)
-      cos <- shiny::isolate(input$ind.cos)
-      ind.ejes <-paste(shiny::isolate(input$slider.ejes), collapse = ",")
+    res.plot <- updatePlot$pca.var
+    if((!is.null(res.plot[[2]])) || (class(res.plot[[2]]) != "RasterStack")) {
+      codigo <- res.plot[[1]]
+      ejes   <- paste(shiny::isolate(input$slider.ejes), collapse = ", ")
+      cos    <- shiny::isolate(input$var.cos) * 0.01
       
-      res <- shiny::isolate(eval(parse(text = cod.pca.var)))
-      shinyAce::updateAceEditor(session, "fieldCodeVar", value = cod.pca.var)
-      createLogACP(nombre.datos, cod.pca.var, rep.acp, 
-                   paste0("Variables-ejes: ", ind.ejes, ", cos: ", cos))
-      return(res)
-    }, error = function(e) {
-      if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
-      } else {
-        shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
-        return(NULL)
-      }
-    })
+      createLogACP(nombre.datos, codigo, rep.acp,
+                   paste0("Variables ejes: ", ejes, ", cos: ", cos))
+    }
+    plot(res.plot[[2]])
   })
-
+  
   shiny::observeEvent(input$run.pcaVar, {
-    updatePlot$pca.var <- input$fieldCodeVar
-  })
-
-  shiny::observeEvent(c(input$var.cos, input$col.pca.var, input$slider.ejes), {
-    updatePlot$pca.var <- pca.variables(
-      var.cos = input$var.cos * 0.01, color = input$col.pca.var,
-      ejes = input$slider.ejes)
+    idioma <- shiny::isolate(input$idioma)
+    var.cod <- shiny::isolate(input$fieldCodeVar)
+    updatePlot$pca.var <- list(var.cod, checkError(var.cod, idioma))
   })
 
   #' Gráfico de PCA (Sobreposición)
@@ -728,26 +718,24 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   output$plot.biplot = shiny::renderPlot({
-    input$ACPRun
-    tryCatch({
-      pca.modelo <<- shiny::isolate(updateData$pca.modelo)
-      cod.pca.bi <<- shiny::isolate(updatePlot$pca.bi)
-      cos <- shiny::isolate(input$ind.cos)
-      ind.ejes <- paste(shiny::isolate(input$slider.ejes), collapse = ",")
+    res.plot <- updatePlot$pca.bi
+    if((!is.null(res.plot[[2]])) || (class(res.plot[[2]]) != "RasterStack")) {
+      codigo  <- res.plot[[1]]
+      ejes    <- paste(shiny::isolate(input$slider.ejes), collapse = ", ")
+      var.cos <- shiny::isolate(input$var.cos) * 0.01
+      ind.cos <- shiny::isolate(input$ind.cos) * 0.01
       
-      res <- shiny::isolate(eval(parse(text = cod.pca.bi)))
-      shinyAce::updateAceEditor(session, "fieldCodeBi", value = cod.pca.bi)
-      createLogACP(nombre.datos, cod.pca.bi, rep.acp, 
-                   paste0("Sobreposicion-ejes: ", ind.ejes, ", cos: ", cos))
-      return(res)
-    }, error = function(e) {
-      if(ncol(var.numericas(datos)) <= 1){
-        error.variables(shiny::isolate(input$idioma), T)
-      } else {
-        shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
-        return(NULL)
-      }
-    })
+      createLogACP(nombre.datos, codigo, rep.acp,
+                   paste0("Sobreposicion ejes: ", ejes, ", var.cos: ", 
+                          var.cos, ", ind.cos: ", ind.cos))
+    }
+    plot(res.plot[[2]])
+  })
+  
+  shiny::observeEvent(input$run.pcaBi, {
+    idioma <- shiny::isolate(input$idioma)
+    bi.cod <- shiny::isolate(input$fieldCodeBi)
+    updatePlot$pca.bi <- list(bi.cod, checkError(bi.cod, idioma))
   })
   
   output$plot.bi.zoom <- shiny::renderPlot({
@@ -757,9 +745,8 @@ shinyServer(function(input, output, session) {
       if(is.null(ejex) & is.null(ejey)){
         return(NULL)
       } else {
-        cod.bi <<- updatePlot$pca.bi
-        res <- shiny::isolate(eval(parse(text = cod.bi)))
-        res <- res + coord_cartesian(xlim = ejex, ylim = ejey, expand = FALSE)
+        res <- updatePlot$pca.bi + 
+          coord_cartesian(xlim = ejex, ylim = ejey, expand = FALSE)
         return(res)
       }
     }, error = function(e) {
@@ -791,18 +778,6 @@ shinyServer(function(input, output, session) {
       bi.ranges$x <- NULL
       bi.ranges$y <- NULL
     }
-  })
-
-  shiny::observeEvent(input$run.pcaBi, {
-    updatePlot$pca.bi <- input$fieldCodeBi
-  })
-
-  shiny::observeEvent(c(input$col.pca.ind, input$ind.cos, input$var.cos,
-                 input$col.pca.var, input$slider.ejes), {
-    updatePlot$pca.bi <- pca.sobreposicion(
-      ind.cos = input$ind.cos * 0.01, var.cos = input$var.cos * 0.01,
-      col.ind = input$col.pca.ind, col.var = input$col.pca.var,
-      ejes = input$slider.ejes)
   })
 
   #' Gráfico de PCA (Varianza Explicada para cada Eje)
@@ -1113,9 +1088,8 @@ shinyServer(function(input, output, session) {
     tryCatch({
       dimensiones <- as.data.frame(pca.modelo$ind$coord)
       return(brushedPoints(
-        df = dimensiones[, c(input$slider.ejes)], brush = input$zoom.mapa,
-        xvar = names(dimensiones)[input$slider.ejes[1]],
-        yvar = names(dimensiones)[input$slider.ejes[2]]))
+        df = dimensiones[, c(1, 2)], brush = input$zoom.mapa,
+        xvar = names(dimensiones)[1], yvar = names(dimensiones)[2]))
     }, error = function(e) {
       print(e)
       return(NULL)
@@ -1426,9 +1400,8 @@ shinyServer(function(input, output, session) {
     tryCatch({
       dimensiones <- as.data.frame(pca.modelo$ind$coord)
       return(brushedPoints(
-        df = dimensiones[, c(input$slider.ejes)], brush = input$zoom.kmapa,
-        xvar = names(dimensiones)[input$slider.ejes[1]],
-        yvar = names(dimensiones)[input$slider.ejes[2]]))
+        df = dimensiones[, c(1, 2)], brush = input$zoom.kmapa,
+        xvar = names(dimensiones)[1], yvar = names(dimensiones)[2]))
     }, error = function(e) {
       print(e)
       return(NULL)

@@ -104,18 +104,15 @@ checkError <- function(expr, idioma = "es", n.num = NULL, n.cat = NULL) {
   tryCatch({
     if(!is.null(n.num)) {
       if(n.num <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
-        return(NULL)
+        return(error.variables(idiama, T))
       }
     } 
     if (!is.null(n.cat)) {
       if(n.cat <= 1) {
-        error.variables(shiny::isolate(input$idioma), F)
-        return(NULL)
+        return(error.variables(idioma, F))
       }
     }
-    res <- eval(parse(text = expr))
-    return(res)
+    return(eval(parse(text = expr)))
   }, warning = function(w) {
     shiny::showNotification(paste0("WARNING: ", w), duration = 10, type = "warning")
     return(NULL)
@@ -1192,6 +1189,3 @@ if(toupper(info.sys) != "WINDOWS") {
 } else {
   enc <<- "UTF-8"
 }
-
-
-
