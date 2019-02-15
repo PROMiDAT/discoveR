@@ -1,29 +1,16 @@
 # UI Script
 
 library(DT)
-library(zip)
 library(shiny)
-library(knitr)
-library(rgdal)
-library(raster)
 library(future)
-library(reshape)
 library(ggplot2)
 library(shinyjs)
-library(stringr)
-library(stringi)
-library(corrplot)
 library(shinyAce)
-library(promises)
-library(ggdendro)
 library(rmarkdown)
-library(dendextend)
 library(factoextra)
 library(rstudioapi)
-library(FactoMineR)
 library(colourpicker)
 library(shinyWidgets)
-library(scatterplot3d)
 library(shinydashboard)
 library(shinydashboardPlus)
 
@@ -40,7 +27,7 @@ shinyUI(dashboardPagePlus(
       tags$div(style="padding-top:10px;"),
       shinydashboard::menuItem(labelInput("data"), tabName = "cargar",
                                icon = shiny::icon("dashboard")),
-      shinydashboard:: menuItem(
+      shinydashboard::menuItem(
         labelInput("basico"), tabName = "parte1", 
         icon = shiny::icon("th-list"),
         shinydashboard::menuSubItem(
@@ -85,7 +72,7 @@ shinyUI(dashboardPagePlus(
     )
   ),
 
-  dashboardBody(
+  shinydashboard::dashboardBody(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "style_promidat.css"),
       tags$link(rel = "shiny::icon", type = "image", href = paste0(
@@ -113,7 +100,7 @@ shinyUI(dashboardPagePlus(
             radioButtonsTr('sep', "separador", c(';', ',', '\t'), 
                            c("puntocoma", "coma", "tab")),
             radioButtonsTr('dec', "separadordec", c(',', '.'), c("coma", "punto")),
-            shinyWidgets::switchInput(
+            switchInput(
               inputId = "deleteNA", onStatus = "success", offStatus = "danger", 
               value = T, labelWidth = "100px", label = labelInput("eliminana"), 
               onLabel = labelInput("si"), offLabel = labelInput("no")),
@@ -379,16 +366,16 @@ shinyUI(dashboardPagePlus(
             tabs.content = list(
               list(
                 shiny::h4(labelInput("opciones")), shiny::hr(),
-                shinyWidgets::switchInput(
+                switchInput(
                   inputId = "switch.scale", value = T, onStatus = "success",
                   offStatus = "danger", label = labelInput("centrar"), 
                   onLabel = labelInput("si"), offLabel = labelInput("no"),
                   labelWidth = "100%"),
                 shiny::sliderInput("slider.npc", labelInput("numerodim"), 
                             min = 2, max = 10, value = 5), 
-                shinyWidgets::sliderTextInput(
-                  "slider.ejes", labelInput("selejes"), grid = T,
-                  choices = c(1:10), selected = c(1,2)), 
+                shiny::sliderInput(
+                  "slider.ejes", labelInput("selejes"), min = 1,
+                  max = 10, value = c(1,2)), 
                 shiny::conditionalPanel(
                   condition = paste0("input.tabPCA == 'tabInd' ||",
                                      " input.tabPCA == 'tabBi'"),
@@ -718,7 +705,7 @@ shinyUI(dashboardPagePlus(
           icono = shiny::icon("info")
         ),
         infoBoxPROMiDAT(
-          labelInput("version"), "1.0.3", icono = shiny::icon("file-code-o"))
+          labelInput("version"), "1.0.4", icono = shiny::icon("file-code-o"))
       )
     ) #shinydashboard::tabItems
   ) #dashboardBody

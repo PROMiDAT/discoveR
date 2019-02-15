@@ -153,3 +153,5 @@ repcosind;Coseno Individuos:;Individuals Cosine:
 repcosvar;Coseno Variables:;Variables Cosine:
 repdim;Dimensiones:;Dimentions:
 codreporte;Código del Reporte;Report Code
+errornum;Se necesitan variables numéricas  para esta parte.;You need numerical variables for this part.
+errorcat;Se necesitan variables categóricas  para esta parte.;You need categorical variables for this part.

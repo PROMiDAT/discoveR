@@ -44,15 +44,13 @@ shinyServer(function(input, output, session) {
   shinyAce::updateAceEditor(session, "fieldFuncVert", 
                             extract.code("centros.vertical.todos"))
   shinyAce::updateAceEditor(
-    session, "fieldFuncRadar", paste0(extract.code("coord_radar"), "\n",
-                                      extract.code("centros.radar")))
+    session, "fieldFuncRadar", paste0(extract.code("centros.radar")))
   shinyAce::updateAceEditor(session, "fieldFuncKhoriz", 
                             extract.code("centros.horizontal.todos"))
   shinyAce::updateAceEditor(session, "fieldFuncKvert", 
                             extract.code("centros.vertical.todos"))
   shinyAce::updateAceEditor(
-    session, "fieldFuncKradar", paste0(extract.code("coord_radar"), "\n", 
-                                       extract.code("centros.radar")))
+    session, "fieldFuncKradar", paste0(extract.code("centros.radar")))
   
   updateData <- shiny::reactiveValues(
     datos = NULL, cor.modelo = NULL, pca.modelo = NULL,
@@ -81,41 +79,38 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   shiny::observeEvent(input$loadButton, {
-    codigo.carga <- ""
+    rowname <- shiny::isolate(input$rowname)
+    ruta <- shiny::isolate(input$file1)
+    sep <- shiny::isolate(input$sep)
+    dec <- shiny::isolate(input$dec)
+    encabezado <- shiny::isolate(input$header)
+    deleteNA <- shiny::isolate(input$deleteNA)
     codigo.na <- ""
     tryCatch({
-      codigo.carga <- code.carga(
-        nombre.filas = input$rowname, ruta = input$file1$datapath,
-        separador = input$sep, sep.decimal = input$dec,
-        encabezado = input$header)
-      datos.originales <<- shiny::isolate(eval(parse(text = codigo.carga)))
-      if(ncol(datos.originales) <= 1){
-        shiny::showNotification(
-          paste0("ERROR: Check Separators"), duration = 10, type = "error")
+      codigo.carga <- code.carga(rowname, ruta$datapath, sep, dec, encabezado)
+      datos.originales <<- eval(parse(text = codigo.carga))
+      if(ncol(datos.originales) <= 1) {
+        shiny::showNotification("ERROR: Check Separators", duration = 10, type = "error")
         return(NULL)
       }
+      nombre.datos <<- stringi::stri_extract_first(ruta$name, regex = ".*(?=\\.)")
       if(any(is.na(datos.originales))) {
-        codigo.na <- paste0(code.NA(deleteNA = input$deleteNA))
-        shiny::isolate(eval(parse(text = codigo.na)))
-        nombre.datos <<- paste0(stringi::stri_extract_first(
-          str = input$file1$name, regex = ".*(?=\\.)"), 
-          ifelse(input$deleteNA, ".sinNA.", ".conNA.")
-        )
-      } else {
-        nombre.datos <<- stringi::stri_extract_first(
-          str = input$file1$name, regex = ".*(?=\\.)")
+        codigo.na <- code.NA(deleteNA)
+        eval(parse(text = codigo.na))
+        nombre.datos <<- paste0(
+          nombre.datos, ifelse(deleteNA, ".sinNA.", ".conNA."))
       }
       datos.reporte[[nombre.datos]] <<- datos.originales
       init.replist(nombre.datos)
+      shinyAce::updateAceEditor(
+        session, "fieldCodeData", value = paste0(codigo.carga, "\n", codigo.na))
       updateData$datos <- datos.originales
     }, error = function(e) {
-      shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
+      shiny::showNotification(paste0("ERROR: ", e), NULL, 10, type = "error")
       updateData$datos <- NULL
       datos.originales <<- NULL
       return(NULL)
     })
-    shinyAce::updateAceEditor(
-      session, "fieldCodeData", value = paste0(codigo.carga, "\n", codigo.na))
   })
 
   #' Transform Button Function
@@ -151,7 +146,7 @@ shinyServer(function(input, output, session) {
     datos.reporte[[nombre.datos]] <<- datos
     init.replist(nombre.datos)
     createLogBasico(nombre.datos, "Transformacion de los Datos", "str(datos)")
-    shiny::isolate(eval(parse(text = code.res)))
+    eval(parse(text = code.res))
     shinyAce::updateAceEditor(session, "fieldCodeTrans", value = code.res)
     updateData$datos <- datos
   })
@@ -262,7 +257,7 @@ shinyServer(function(input, output, session) {
   }
   output$contents = DT::renderDataTable(NULL, server = T)
 
-  #' Update on Transform Table
+  #' Update Transform Table
   #' @author Diego
   #' @return functions
   #' @export
@@ -317,15 +312,12 @@ shinyServer(function(input, output, session) {
   #' @export
   #'
   output$resumen.completo = DT::renderDataTable({
-    return(obj.resum())
-  }, options = list(dom = 'ft', scrollX = TRUE), rownames = F)
-
-  obj.resum <- eventReactive(updateData$datos, {
     datos <- updateData$datos
     createLogBasico(nombre.datos, "resumen", "summary(datos)")
-    data.frame(unclass(summary(datos)), check.names = FALSE,
-               stringsAsFactors = FALSE)
-  })
+    res <- data.frame(unclass(summary(datos)), check.names = FALSE,
+                      stringsAsFactors = FALSE)
+    return(res)
+  }, options = list(dom = 'ft', scrollX = TRUE), rownames = F)
 
   output$resumen = shiny::renderUI({
     if(input$sel.resumen %in% colnames(var.numericas(datos))) {
@@ -349,7 +341,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e){
       if(ncol(var.numericas(datos)) <= 0){
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -412,7 +404,7 @@ shinyServer(function(input, output, session) {
       return(shiny::isolate(eval(parse(text = cod.disp))))
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1){
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
            return(NULL)
@@ -481,7 +473,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 0){
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -523,7 +515,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.categoricas(datos)) <= 0){
-        error.variables(shiny::isolate(input$idioma), F)
+        error.variables(F)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -555,7 +547,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -617,8 +609,8 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$slider.npc, {
-    updateSliderTextInput(session, "slider.ejes", choices =
-                            c(1:input$slider.npc), selected = c(1, 2))
+    updateSliderInput(session, "slider.ejes", max = input$slider.npc, 
+                      value = c(1, 2))
   })
 
   #' Gráfico de PCA (Individuos)
@@ -796,7 +788,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -820,7 +812,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -844,7 +836,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e),
                          duration = 10, type = "error")
@@ -869,7 +861,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e),
                          duration = 10, type = "error")
@@ -898,7 +890,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1) {
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -922,7 +914,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1){
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
         return(NULL)
@@ -1206,7 +1198,7 @@ shinyServer(function(input, output, session) {
       code <- shiny::isolate(input$fieldCodeBar)
       bar.cat <- checkError(code)
       if(!is.null(bar.cat)) 
-        createLogCJ(nombre.datos, "", codigo, rep.hc, "Categoricas: Propio")
+        createLogCJ(nombre.datos, code, rep.hc, "Categoricas: Propio")
       return(bar.cat)
     })
   })
@@ -1346,7 +1338,7 @@ shinyServer(function(input, output, session) {
       return(res)
     }, error = function(e) {
       if(ncol(var.numericas(datos)) <= 1){
-        error.variables(shiny::isolate(input$idioma), T)
+        error.variables(T)
       } else {
         shiny::showNotification(paste0("ERROR: ", e),
                          duration = 10, type = "error")
@@ -1519,7 +1511,7 @@ shinyServer(function(input, output, session) {
       code <- shiny::isolate(input$fieldCodeKbar)
       bar.cat <- checkError(code)
       if(!is.null(bar.cat))
-        createLogK(nombre.datos, codigo, rep.k, "Categoricas: propio")
+        createLogK(nombre.datos, code, rep.k, "Categoricas: propio")
       return(bar.cat)
     })
   })
@@ -1647,7 +1639,7 @@ shinyServer(function(input, output, session) {
       file.rename(out, paste(input$textTitulo,'-', input$textNombre, '.docx', sep=''))
       files <- c(paste(input$textTitulo,'-', input$textNombre, '.docx', sep=''), files)
 
-      zip::zip(file, files)
+      utils::zip(file, files)
     }
   )
 })

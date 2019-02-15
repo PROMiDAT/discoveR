@@ -1,3 +1,4 @@
+source('biblioteca.R', local = T)
 
 ###################### Variables ##############################################
 #' Carga de Variables
@@ -104,12 +105,12 @@ checkError <- function(expr, idioma = "es", n.num = NULL, n.cat = NULL) {
   tryCatch({
     if(!is.null(n.num)) {
       if(n.num <= 1) {
-        return(error.variables(idioma, T))
+        return(error.variables(T))
       }
     } 
     if (!is.null(n.cat)) {
-      if(n.cat <= 1) {
-        return(error.variables(idioma, F))
+      if(n.cat < 1) {
+        return(error.variables(F))
       }
     }
     return(eval(parse(text = expr)))
@@ -122,13 +123,27 @@ checkError <- function(expr, idioma = "es", n.num = NULL, n.cat = NULL) {
   })
 }
 
-error.variables <- function(idioma = "es", num = T){
+error.variables <- function(num = T) {
   if(num){
-    img <- raster::stack(paste0("www/", idioma, "_errorNum.png"))
-  }else{
-    img <- raster::stack(paste0("www/", idioma, "_errorCat.png"))
+    error.plot(tr("errornum"))
+  } else {
+    error.plot(tr("errorcat"))
   }
-  raster::plotRGB(img)
+}
+
+error.plot <- function(msg) {
+  res <- ggplot(data.frame(x = c(2, 2.5, 3), y = c(2 ,3 ,2))) + 
+    geom_polygon(mapping=aes(x=x, y=y), col="gold", fill="gold", alpha=0.3) +
+    annotate("rect", xmin = 2.47, xmax = 2.53, ymin = 2.4, ymax = 2.8) +
+    annotate("rect", xmin = 2.47, xmax = 2.53, ymin = 2.25, ymax = 2.35) +
+    annotate("text", x = 2.5, y = 2.1, label = paste0("bold('", msg, "')"), 
+             size = 8, parse = T) + 
+    theme(
+      panel.background = element_rect(fill = "transparent"),
+      axis.title = element_blank(), axis.ticks = element_blank(),
+      axis.text = element_blank()
+    )
+  return(res)
 }
 
 ###################### Funciones Shiny ########################################
@@ -808,8 +823,8 @@ diagrama <- function(cant = "as.numeric(input$cant.cluster)",
     "dendograma <- dendro_data(hc.modelo$modelo, type='rectangle')\n",
     "order.labels <- data.frame(label=names(hc.modelo$clusters), clusters = hc.modelo$clusters)\n",
     "dendograma[['labels']] <- merge(dendograma[['labels']], order.labels, by='label')\n",
-    "ggplot() + geom_segment(data=segment(dendograma), aes(x=x, y=y, xend=xend, yend=yend)) +\n",
-    "  geom_text(data=label(dendograma), aes(x, y, label = label, hjust=1.1, color = clusters), \n",
+    "ggplot() + geom_segment(data=dendograma$segments, aes(x=x, y=y, xend=xend, yend=yend)) +\n",
+    "  geom_text(data=dendograma$label, aes(x, y, label = label, hjust=1.1, color = clusters), \n",
     "            size = 4, angle = 90) +\n",
     "  scale_color_manual(values = c(", paste(colores, collapse = ","),
     ")) + expand_limits(y=-2)", " +\nlabs(x = '', y = '') + theme_minimal()"))
@@ -939,7 +954,7 @@ centros.horizontal.todos <- function(centros){
     paste0('Cluster ', i))
   var <- row.names(centros)
   centros <- cbind(centros, var)
-  centros <- melt(centros, id.vars = 'var')
+  centros <- melt.data.frame(centros, id.vars = 'var')
   ggplot(centros, aes(x=var, y=value)) +
     geom_bar(stat='identity', position='dodge', show.legend = F) +
     labs(x = '', y = '') + facet_wrap(~variable) + coord_flip() +
@@ -972,7 +987,7 @@ cluster.horiz <- function(sel = "1", color = "steelblue", esHC = T) {
 centros.vertical.todos <- function(centros){
   cluster <- c(1:nrow(centros))
   centros <- cbind(centros, cluster)
-  centros <- melt(centros, id.vars = 'cluster')
+  centros <- melt.data.frame(centros, id.vars = 'cluster')
   ggplot(centros, aes(x=variable, y=value, fill=factor(cluster))) +
     geom_bar(stat='identity', position='dodge') + labs(x = '', y = '')
 }
@@ -1001,15 +1016,8 @@ cluster.vert <- function(sel = "1", colores = "'steelblue'", esHC = T) {
 #' @return functions
 #' @export
 #'
-coord_radar <- function (theta = 'x', start = 0, direction = 1) {
-  theta <- match.arg(theta, c('x', 'y'))
-  r <- if (theta == 'x') 'y' else 'x'
-  ggproto('CordRadar', CoordPolar, theta = theta, r = r, start = start,
-          direction = sign(direction), is_linear = function(coord) TRUE)
-}
-
 centros.radar <- function(centros){
-  res <- melt(t(centros), varnames = c('variables', 'clusteres'))
+  res <- melt.array(t(centros), varnames = c('variables', 'clusteres'))
   res <- res[order(res$variables, decreasing = F), ]
   res$clusteres <- as.character(res$clusteres)
   ggplot(res, aes(x = variables, y = value)) +
@@ -1034,7 +1042,8 @@ centros.radar <- function(centros){
               colour = '#dddddd', family = 'Arial') +
     geom_text(aes(x = 0.5, y = 100, label = '100%'), size = 3.5,
               colour = '#dddddd', family = 'Arial') +
-    coord_radar()
+    ggproto("CordRadar", CoordPolar, theta = "x", r = "y", 
+            start = 0, direction = sign(1))
 }
 
 cluster.radar <- function(colores = "'steelblue'", esHC = T){
@@ -1189,3 +1198,4 @@ if(toupper(info.sys) != "WINDOWS") {
 } else {
   enc <<- "UTF-8"
 }
+
