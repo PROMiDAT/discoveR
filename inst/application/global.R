@@ -101,26 +101,19 @@ recover.cat <- function(){
   lockBinding("cat",.BaseNamespaceEnv)
 }
 
-checkError <- function(expr, idioma = "es", n.num = NULL, n.cat = NULL) {
-  tryCatch({
-    if(!is.null(n.num)) {
-      if(n.num <= 1) {
-        return(error.variables(T))
-      }
-    } 
-    if (!is.null(n.cat)) {
-      if(n.cat < 1) {
-        return(error.variables(F))
-      }
+mostrarError <-  function(msg, n.num = NULL, n.cat = NULL) {
+  if(!is.null(n.num)) {
+    if(n.num < 1) {
+      return(error.variables(T))
     }
-    return(eval(parse(text = expr)))
-  }, warning = function(w) {
-    shiny::showNotification(paste0("WARNING: ", w), duration = 10, type = "warning")
-    return(NULL)
-  }, error = function(e) {
-    shiny::showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
-    return(NULL)
-  })
+  } 
+  if (!is.null(n.cat)) {
+    if(n.cat < 1) {
+      return(error.variables(F))
+    }
+  }
+  shiny::showNotification(paste0("ERROR: ", msg), duration = 10, type = "error")
+  return(NULL)
 }
 
 error.variables <- function(num = T) {
@@ -300,6 +293,11 @@ updateSelects <- function(datos) {
   })
   updateinitSelects("selVert", colnames(var.numericas(datos)))
   updateinitSelects("sel.Kvert", colnames(var.numericas(datos)))
+  nmax <- calc.maxK(datos)
+  updateSliderInput(session, "iteracionesK", max = nmax, value = nmax)
+  cant.num <- ncol(var.numericas(datos))
+  ndef <- ifelse(cant.num < 5, cant.num, 5)
+  updateSliderInput(session, "slider.npc", max = cant.num, value = ndef)
 }
 
 updateinitSelects <- function(id, choices) {
@@ -309,7 +307,7 @@ updateinitSelects <- function(id, choices) {
   updateSelectInput(session, id, choices = vars)
 }
 
-updateMenu <- function(datos = NULL, init = F){
+updateMenu <- function(datos = NULL, init = F) {
   element <- "#sidebarItemExpanded li"
   menu.values <- c(
     "[class^=treeview]",  " a[data-value=acp]", " a[data-value=agrupacion]",
@@ -373,18 +371,6 @@ datos.disyuntivos <- function(data, vars){
   return(data)
 }
 
-code.carga <- function(nombre.filas = T, ruta = NULL, separador = ";",
-                       sep.decimal = ",", encabezado = T) {
-  if(!is.null(ruta)){
-    ruta <- gsub("\\", "/", ruta, fixed = T)
-  }
-  res <- paste0(
-    "read.table('", ruta, "', header=", encabezado, ", sep='", 
-    separador, "', dec = '", sep.decimal, "'", 
-    ifelse(nombre.filas, ", row.names = 1", ""), ")")
-  return(res)
-}
-
 code.NA <- function(deleteNA = T) {
   res <- ifelse(
     deleteNA, "datos.originales <<- na.omit(datos.originales)\n",
@@ -398,6 +384,19 @@ code.NA <- function(deleteNA = T) {
       "      datos.originales[, variable][is.na(datos.originales[, variable])] <<- \n",
       "        Mode(datos.originales[, variable]))",
       "\n  }\n}"))
+  return(res)
+}
+
+code.carga <- function(nombre.filas = T, ruta = NULL, separador = ";",
+                       sep.decimal = ",", encabezado = T, incluir.NA = F) {
+  if(!is.null(ruta)) {
+    ruta <- gsub("\\", "/", ruta, fixed = T)
+  }
+  res <- paste0(
+    "datos.originales <<- read.table('", ruta, "', header=", encabezado, 
+    ", sep='", separador, "', dec = '", sep.decimal, "'", 
+    ifelse(nombre.filas, ", row.names = 1", ""), ")")
+  res <- paste0(res, "\n", code.NA(incluir.NA))
   return(res)
 }
 
@@ -874,7 +873,7 @@ codo.jambu <- function(data. = NULL, k. = NA_integer_, tituloy = "",
   return(plot(res.plot))
 }
 
-calc.maxK <- function(data) {
+calc.maxK <- function(datos) {
   ifelse(nrow(datos) < 40, return(as.integer(nrow(datos)/2)), return(20))
 }
 

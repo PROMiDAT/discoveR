@@ -5,6 +5,7 @@ library(shiny)
 library(future)
 library(ggplot2)
 library(shinyjs)
+library(stringi)
 library(shinyAce)
 library(rmarkdown)
 library(factoextra)
@@ -127,7 +128,7 @@ shinyUI(dashboardPagePlus(
           shinydashboard::box(title = labelInput("data"), status = "primary", width = 12,
               solidHeader = TRUE, collapsible = TRUE, 
               DT::dataTableOutput('contents'), shiny::hr(),
-              shiny::actionButton("downloaDatos", labelInput("descargar"),
+              shiny::downloadButton("downloaDatos", labelInput("descargar"),
                                   width = "100%")))
       ),
 
