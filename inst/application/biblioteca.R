@@ -1520,6 +1520,17 @@ as.dendro <- function (segments, labels, leaf_labels = NULL, class)
   if (is.null(mp <- attr(x, "midpoint"))) 0 else mp
 }
 
+.memberDend <- function (x) 
+{
+  r <- attr(x, "x.member")
+  if (is.null(r)) {
+    r <- attr(x, "members")
+    if (is.null(r)) 
+      r <- 1L
+  }
+  r
+}
+
 plotNodeLimit <- function (x1, x2, subtree, center) 
 {
   inner <- !is.leaf(subtree) && x1 != x2
