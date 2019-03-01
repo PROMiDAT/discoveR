@@ -1,4 +1,19 @@
 
+########################## modeest ###########################################
+
+fisher.calc <- function (x, na.rm = FALSE, ...) {
+  if (!is.numeric(x)) {
+    stop("x must be numeric")
+  }
+  if (na.rm)
+    x <- x[!is.na(x)]
+  nx <- length(x)
+  
+  sk <- sum((x - mean(x))^3/stats::sd(x)^3)/nx
+  
+  return(sk)
+}
+
 ########################## reshape ###########################################
 
 melt.data.frame <- function (data, id.vars, measure.vars, variable_name = "variable", 
@@ -1520,8 +1535,7 @@ as.dendro <- function (segments, labels, leaf_labels = NULL, class)
   if (is.null(mp <- attr(x, "midpoint"))) 0 else mp
 }
 
-.memberDend <- function (x) 
-{
+.memberDend <- function (x) {
   r <- attr(x, "x.member")
   if (is.null(r)) {
     r <- attr(x, "members")

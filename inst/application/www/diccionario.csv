@@ -9,6 +9,7 @@ kmedias;K-Medias;K-Means
 inercia;Inercia;Inertia
 inerciaintra;Inercia Intra-Clase;Inertia Intra-Class
 inerciainter;Inercia Inter-Clase;Inertia Inter-Class
+silhouette;Anchura media de Silhouette;Average Silhouette Width
 reporte;Generar Reporte;Generate Report
 acercade;Acerca De;About
 cargar;Cargar;Load
@@ -20,8 +21,12 @@ coma;Coma;Comma
 puntocoma;Punto y coma;Semicolon
 tab;Espacio;Tab
 separadordec;Separador Decimal;Decimal Separator
+eliminana;Acción para Datos Ausentes(NAs);Action for Missing Data(NAs)
+eliminar;Eliminar;Delete
+imputar;Imputar;Impute
+jambu;Jambu;Jambu
+sil;Silhouette;Silhouette
 punto;Punto;Point
-eliminana;Eliminar NA;Remove NA
 si;SI;YES
 no;NO;NO
 cargarchivo;Cargar Archivo;Load Archive 
@@ -56,6 +61,7 @@ selcolores;Seleccionar Colores:;Select Colors:
 ejecutar;Ejecutar;Run
 titulodistribucion;Distribución y Atipicidad de;Distribution and Atipicity of
 codigo;Código;Code
+funciones;Funciones;Functions
 codigodistnum;Grafico de la Distribución (Numéricas);Distribution Plot (Numerical)
 codigodistcat;Grafico de la Distribución (Categóricas);Distribution Plot (Categorical)
 cantidadcasos;Cantidad de Casos;Number of Cases
@@ -69,10 +75,10 @@ vee;Varianza Explicada por cada Eje;Variance Explained for each Axis
 cci;Cosenos Cuadrados de los Individuos;Square Cosines of Individuals
 ccv;Cosenos Cuadrados de las Variables;Square Cosines of Variables
 cvc;Correlación Variables con los Componenetes;Correlation Variables with the Componenetes
-cp1;Contribución de las variables Dim-1;Contribution of the variables Dim-1
-cp2;Contribución de las variables Dim-2;Contribution of the variables Dim-2
+cp;Contribución de las variables Dim;Contribution of the variables Dim
 resultados;Resultados Numéricos;Numerical Results
 centrar;Centrar y Reducir;Center and Reduce
+nocentrar;Sin Centrar ni Reducir;Unfocused and Unreduced
 numerodim;Número de Dimensiones;Number of Dimentions
 selejes;Seleccionar Ejes:;Select Axes:
 cosind;Coseno de los Individuos:;Cosines of Individuals:
@@ -86,6 +92,8 @@ vertical;Vertical;Vertical
 radar;Radar;Radar
 interpretacioncat;Interpretación Categórico;Categorical Interpretation
 cantcluster;Cantidad de Clústers:;Number of Clusters:
+numcluster;Número de Clusters;Number of Clusters
+metcluster;Método Número de Clusters:;Method Number of Clusters:
 indiceagrega;Índice de Agregación:;Aggregation Index:
 metododist;Método para la Distancia:;Distance Method:
 agregarcluster;Agregar Clústers a Tabla de Datos;Add Clusters to Dataset 

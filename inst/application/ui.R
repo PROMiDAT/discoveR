@@ -1,25 +1,26 @@
 # UI Script
 
-library(DT)
-library(shiny)
-library(future)
-library(ggplot2)
-library(shinyjs)
-library(stringi)
-library(shinyAce)
-library(rmarkdown)
-library(factoextra)
-library(rstudioapi)
-library(colourpicker)
-library(shinyWidgets)
-library(shinydashboard)
-library(shinydashboardPlus)
+suppressMessages({
+  library(DT)
+  library(zip)
+  library(shiny)
+  library(ggplot2)
+  library(shinyjs)
+  library(stringi)
+  library(shinyAce)
+  library(rmarkdown)
+  library(factoextra)
+  library(rstudioapi)
+  library(colourpicker)
+  library(shinydashboard)
+  library(shinydashboardPlus)
+})
 
-shinyUI(dashboardPagePlus(
+shinyUI(shinydashboardPlus::dashboardPagePlus(
   title="PROMiDAT - discoveR",
-  shinydashboardPlus::dashboardHeaderPlus(
+  shinydashboard::dashboardHeader(
     title = tags$a(href="http://promidat.com", target = "_blank",
-                   shiny::img(src="Logo2.png", height=55, width="100%",
+                   shiny::img(src = "Logo2.png", height = 55, width = "100%",
                        style="padding-top:2px; padding-bottom:6px;"))
   ),
   shinydashboard::dashboardSidebar(
@@ -84,7 +85,7 @@ shinyUI(dashboardPagePlus(
     ),
     shiny::conditionalPanel(
       condition="($('html').hasClass('shiny-busy'))",
-      div(id = "loaderWrapper", div(id="loader"))
+      div(id = "loaderWrapper", div(id = "loader"))
     ),
 
     shinydashboard::tabItems(
@@ -101,27 +102,20 @@ shinyUI(dashboardPagePlus(
             radioButtonsTr('sep', "separador", c(';', ',', '\t'), 
                            c("puntocoma", "coma", "tab")),
             radioButtonsTr('dec', "separadordec", c(',', '.'), c("coma", "punto")),
-            switchInput(
-              inputId = "deleteNA", onStatus = "success", offStatus = "danger", 
-              value = T, labelWidth = "100px", label = labelInput("eliminana"), 
-              onLabel = labelInput("si"), offLabel = labelInput("no")),
+            radioSwitch("deleteNA", "eliminana", c("eliminar", "imputar")),
             shiny::fileInput(
               'file1', labelInput("cargarchivo"), width = "100%", 
               placeholder = "", buttonLabel = labelInput("subir"), 
-              accept = c('text/csv', '.csv')),
+              accept = c('text/csv', '.csv')), shiny::hr(),
             shiny::actionButton("loadButton", labelInput("cargar"), width = "100%"),
-            shiny::hr(), shinyAce::aceEditor(
-              "fieldCodeData", mode = "r", theme = "monokai", value = "", 
-              height = "15vh", readOnly = T)),
+            shiny::hr(), codigo.monokai("fieldCodeData", height = "10vh")),
           shiny::tabPanel(
             title = labelInput("trans"), width = 12, solidHeader = FALSE, 
             collapsible = FALSE, collapsed = FALSE, 
             DT::DTOutput('transData'), shiny::hr(), 
-            shiny::actionButton("transButton", labelInput("aplicar"), 
-                                width = "100%"),
-            shiny::hr(), shinyAce::aceEditor(
-              "fieldCodeTrans", mode = "r", theme = "monokai", value = "", 
-              height = "10vh", readOnly = T))
+            shiny::actionButton(
+              "transButton", labelInput("aplicar"), width = "100%"),
+            shiny::hr(), codigo.monokai("fieldCodeTrans", height = "10vh"))
         )),
         shiny::column(
           width = 7,
@@ -134,13 +128,11 @@ shinyUI(dashboardPagePlus(
 
       #Resumen Numérico
       shinydashboard::tabItem(tabName = "resumen", shiny::column(
-        shinydashboard::box(
+        width = 7, shinydashboard::box(
           title = labelInput("resumen"), status = "primary", width = 12,
           solidHeader = TRUE, collapsible = TRUE, 
           DT::dataTableOutput("resumen.completo"), shiny::hr(),
-          shinyAce::aceEditor(
-            "fieldCodeResum", mode = "r", theme = "monokai", value = "", 
-            height = "8vh", readOnly = T)), width = 7),
+          codigo.monokai("fieldCodeResum", height = "8vh"))),
         shiny::column(
           shinydashboard::box(
             title = labelInput("resumenvar"), status = "primary",
@@ -172,12 +164,10 @@ shinyUI(dashboardPagePlus(
           list(
             shiny::conditionalPanel(
               "input.BoxNormal == 'tabNormalPlot'",
-              campo.codigo("run.normal", "ref.normal", "fieldCodeNormal",
-                           height = "25vh")),
+              codigo.monokai("fieldCodeNormal", height = "25vh")),
             shiny::conditionalPanel(
               "input.BoxNormal == 'tabNormalCalc'",
-              campo.codigo("run.calc.normal", "ref.calc.normal", 
-                           "fieldCalcNormal", height = "20vh")))
+              codigo.monokai("fieldCalcNormal", height = "20vh")))
           ))
         )
       ),
@@ -216,9 +206,8 @@ shinyUI(dashboardPagePlus(
                    colourpicker::colourInput(
                      "col.disp", labelInput("selcolor"), value = "#FF0000AA", 
                      allowTransparent = T)),
-              list(shiny::column(width = 12,
-                          campo.codigo("run.disp", "ref.disp", 
-                                       "fieldCodeDisp", height = "15vh"))
+              list(shiny::column(
+                width = 12, codigo.monokai("fieldCodeDisp", height = "15vh"))
               )
             )
           )
@@ -257,26 +246,22 @@ shinyUI(dashboardPagePlus(
               ),
               list(shiny::conditionalPanel(
                 condition = "input.tabDyA == 'numericas'",
-                campo.codigo("run.dya.num", "ref.dya.num",
-                             "fieldCodeNum", height = "15vh")),
+                codigo.monokai("fieldCodeNum", height = "15vh")),
                 shiny::conditionalPanel(
                   condition = "input.tabDyA == 'categoricas'",
-                  campo.codigo("run.dya.cat", "ref.dya.cat",
-                               "fieldCodeCat", height = "15vh"))),
+                  codigo.monokai("fieldCodeCat", height = "15vh"))),
               list(DT::dataTableOutput("mostrar.atipicos")),
               list(
-                shiny::h4(labelInput("codigo")), shiny::hr(),
+                shiny::h4(labelInput("funciones")), shiny::hr(),
                 shinydashboard::tabBox(
                   id = "tabCodeDyA", width = NULL, 
                   title = labelInput("codedist"),
-                  shiny::tabPanel(title = labelInput("numericas"), 
-                           shinyAce::aceEditor("fieldFuncNum", mode = "r", 
-                                     theme = "monokai", value = "", 
-                                     height = "300px", readOnly = T)),
-                  shiny::tabPanel(title = labelInput("categoricas"), 
-                           shinyAce::aceEditor("fieldFuncCat", mode = "r", 
-                                     theme = "monokai", value = "", 
-                                     height = "180px", readOnly = T))
+                  shiny::tabPanel(
+                    title = labelInput("numericas"), 
+                    codigo.monokai("fieldFuncNum", height = "300px")),
+                  shiny::tabPanel(
+                    title = labelInput("categoricas"), 
+                    codigo.monokai("fieldFuncCat", height = "180px"))
                 )
               )
             )
@@ -305,11 +290,7 @@ shinyUI(dashboardPagePlus(
               shiny::selectInput(
                 inputId = "cor.tipo", label = labelInput("seltipo"), 
                 choices =  c("lower", "upper", "full"))),
-            list(
-              shinyAce::aceEditor("fieldModelCor", height = "6vh", mode = "r",
-                        theme = "monokai", value = "", readOnly = T),
-              campo.codigo("run.code.cor", "ref.code.cor",
-                           "fieldCodeCor", height = "15vh"))
+            list(codigo.monokai("fieldCodeCor",  height = "15vh"))
             )
           )
         )
@@ -319,18 +300,26 @@ shinyUI(dashboardPagePlus(
       shinydashboard::tabItem(
         tabName = "acp",
         shinydashboard::tabBox(
-          id = "tabPCA", width = NULL,
+          id = "tabPCA", width = NULL, title = tags$div(
+            class = "multiple-select-var", style = "width: 60px;",
+            shiny::conditionalPanel(
+              condition = "input.tabPCA == 'tabPC1'",
+              shiny::selectInput("pc1.dim", NULL, choices = 1)
+            )
+          ),
           shiny::tabPanel(
             title = labelInput("individuos"), value = "tabInd", shiny::fluidRow(
               shiny::column(
                 width = 8,
                 shiny::plotOutput(
-                  'plot.ind', height = "70vh",
-                  brush = brushOpts(id = "zoom.ind", resetOnNew = TRUE))
+                  'plot.ind', height = "70vh", brush =
+                    brushOpts(id = "zoom.ind", resetOnNew = TRUE))
               ),
-              shiny::column(width = 4, DT::dataTableOutput('mostrar.ind.zoom'),
-                            shiny::hr(), shiny::plotOutput(
-                              'plot.ind.zoom', height = "40vh")))
+              shiny::column(
+                width = 4, DT::dataTableOutput('mostrar.ind.zoom'), shiny::hr(), 
+                shiny::plotOutput('plot.ind.zoom', height = "40vh")
+              )
+            )
           ),
           shiny::tabPanel(
             title = labelInput("variables"), value = "tabVar",
@@ -339,90 +328,87 @@ shinyUI(dashboardPagePlus(
           shiny::tabPanel(
             title = labelInput("sobreposicion"), value = "tabBi", shiny::fluidRow(
               shiny::column(
-                width = 8,
-                shiny::plotOutput('plot.biplot', height = "70vh",
-                           brush = brushOpts(id = "zoom.bi", resetOnNew = TRUE))
+                width = 8, shiny::plotOutput(
+                  'plot.biplot', height = "70vh", brush = 
+                    brushOpts(id = "zoom.bi", resetOnNew = TRUE))
               ),
-              shiny::column(width = 4, DT::dataTableOutput('mostrar.bi.zoom'),
-                     shiny::hr(), shiny::plotOutput(
-                       'plot.bi.zoom', height = "40vh")))
+              shiny::column(
+                width = 4, DT::dataTableOutput('mostrar.bi.zoom'), shiny::hr(),
+                shiny::plotOutput('plot.bi.zoom', height = "40vh")))
           ),
           navbarMenu(
             labelInput("ayudacp"),
             shiny::tabPanel(labelInput("vee"), value = "tabVEE",
-                     shiny::plotOutput("plotVEE", height = "70vh")),
+                            shiny::plotOutput("plotVEE", height = "70vh")),
             shiny::tabPanel(labelInput("cci"), value = "tabCCI",
-                     shiny::plotOutput("plotCCI", height = "70vh")),
+                            shiny::plotOutput("plotCCI", height = "70vh")),
             shiny::tabPanel(labelInput("ccv"), value = "tabCCV",
-                     shiny::plotOutput("plotCCV", height = "70vh")),
+                            shiny::plotOutput("plotCCV", height = "70vh")),
             shiny::tabPanel(labelInput("cvc"), value = "tabCVC",
-                     shiny::plotOutput("plotCVC", height = "70vh")),
-            shiny::tabPanel(labelInput("cp1"), value = "tabPC1",
-                     shiny::plotOutput("plotPC1", height = "70vh")),
-            shiny::tabPanel(labelInput("cp2"), value = "tabPC2",
-                     shiny::plotOutput("plotPC2", height = "70vh"))),
+                            shiny::plotOutput("plotCVC", height = "70vh")),
+            shiny::tabPanel(labelInput("cp"), value = "tabPC1",
+                            shiny::plotOutput("plotPC1", height = "70vh"))),
           shiny::tabPanel(title = labelInput("resultados"), value = "pca.salida",
-                   shiny::verbatimTextOutput("txtpca")),
+                          shiny::verbatimTextOutput("txtpca")),
           tabsOptions(
+            widths = c(100, 100), heights = c(70, 50),
             tabs.content = list(
               list(
-                shiny::h4(labelInput("opciones")), shiny::hr(),
-                switchInput(
-                  inputId = "switch.scale", value = T, onStatus = "success",
-                  offStatus = "danger", label = labelInput("centrar"), 
-                  onLabel = labelInput("si"), offLabel = labelInput("no"),
-                  labelWidth = "100%"),
-                shiny::sliderInput("slider.npc", labelInput("numerodim"), 
-                            min = 2, max = 10, value = 5), 
-                shiny::sliderInput(
-                  "slider.ejes", labelInput("selejes"), min = 1,
-                  max = 10, value = c(1,2)), 
+                options.run("run.pca"), tags$hr(style = "margin-top: 0px;"),
+                radioSwitch("switch.scale", NULL, c("centrar", "nocentrar")),
+                shiny::column(
+                  width = 7, shiny::sliderInput(
+                    "slider.npc", labelInput("numerodim"), 2, 10, 5)
+                ),
+                shiny::column(
+                  width = 5, shiny::sliderInput(
+                    "slider.ejes", labelInput("selejes"), 1, 10, c(1,2))
+                ),
                 shiny::conditionalPanel(
                   condition = paste0("input.tabPCA == 'tabInd' ||",
                                      " input.tabPCA == 'tabBi'"),
-                  shiny::sliderInput("ind.cos", label = labelInput("cosind"), 
-                              min = 0, max = 100, value = 0),
-                  colourpicker::colourInput(
-                    "col.pca.ind", label = labelInput("selcolor"),
-                    value = "#696969", allowTransparent = T)
+                  shiny::column(
+                    width = 9, shiny::sliderInput(
+                      "ind.cos", labelInput("cosind"), 0, 100, 0)
                   ),
+                  shiny::column(
+                    width = 3, colourpicker::colourInput(
+                      "col.pca.ind", labelInput("selcolor"), "#696969", 
+                      allowTransparent = T)
+                  )
+                ),
                 shiny::conditionalPanel(
                   condition = paste0("input.tabPCA == 'tabVar' || ",
                                      "input.tabPCA == 'tabBi'"),
-                  shiny::sliderInput(
-                    "var.cos", label = labelInput("cosvar"), 
-                    min = 0, max = 100, value = 0),
-                  colourpicker::colourInput(
-                    "col.pca.var", labelInput("selcolor"),
-                    value = "steelblue", allowTransparent = T)
+                  shiny::column(
+                    width = 9, shiny::sliderInput(
+                      "var.cos", labelInput("cosvar"), 0, 100, 0)
                   ),
+                  shiny::column(
+                    width = 3, colourpicker::colourInput(
+                      "col.pca.var", labelInput("selcolor"), "steelblue", 
+                      allowTransparent = T)
+                  )
+                ),
                 shiny::conditionalPanel(
                   condition = "input.tabPCA == 'tabCVC'",
                   shiny::selectInput(
                     inputId = "cvc.metodo", label = labelInput("seltipo"),
                     choices =  c("circle", "square", "ellipse",  "number",
                                  "shade", "color", "pie"))
-                ), shiny::hr(),
-                shiny::actionButton("ACPRun", labelInput("ejecutar"), 
-                                    class = "btn-run", width = "100%"), 
-                shiny::hr()
+                )
               ),
               list(
-                shinyAce::aceEditor(
-                  "fieldCodePCAModelo", height = "5vh", mode = "r",
-                  theme = "monokai", value = "", readOnly = T),
+                codigo.monokai("fieldCodePCAModelo", height = "5vh"),
                 lapply(c("Ind", "Var", "Bi"), function(i) {
                   shiny::conditionalPanel(
                     condition = paste0("input.tabPCA == 'tab", i, "'"),
-                    campo.codigo(paste0("run.pca", i), paste0("ref.pca", i),
-                                 paste0("fieldCode", i), height = "15vh"))
+                    codigo.monokai(paste0("fieldCode", i), height = "15vh"))
                 }),
                 lapply(c('VEE', 'CCI', 'CCV', 'CVC', 'PC1', 'PC2'), function(i) {
                   shiny::conditionalPanel(
                     condition = paste0("input.tabPCA == 'tab", i, "'"),
-                    shinyAce::aceEditor(
-                      paste0("fieldCode", i), mode = "r", theme = "monokai",
-                      value = "", height = "15vh", readOnly = T))
+                    codigo.monokai(paste0("fieldCode", i), height = "15vh"))
                 })
               )
             )
@@ -432,13 +418,12 @@ shinyUI(dashboardPagePlus(
 
       #Agrupaciones
       shinydashboard::tabItem(tabName = "agrupacion", shinydashboard::tabBox(
-        id = "tabjerar", width = 12, title = tags$div(
+        id = "tabjerar", width = NULL, title = tags$div(
           class = "multiple-select-var",
           lapply(c("Horiz", "Vert", "Bar"), function(i) {
             shiny::conditionalPanel(
               condition = paste0("input.tabjerar == 'tab", i, "'"),
-              shiny::selectInput(inputId = paste0("sel", i), 
-                          label = NULL, choices =  ""))
+              shiny::selectInput(paste0("sel", i), NULL, ""))
           })
         ),
         shiny::tabPanel(
@@ -453,8 +438,9 @@ shinyUI(dashboardPagePlus(
           title = labelInput("mapa"), value = "tabMapa", shiny::fluidRow(
             shiny::column(
               width = 8,
-              shiny::plotOutput('plot.mapa', height = "70vh",
-                         brush = brushOpts(id = "zoom.mapa", resetOnNew = TRUE))
+              shiny::plotOutput(
+                'plot.mapa', height = "70vh", brush = 
+                  brushOpts(id = "zoom.mapa", resetOnNew = TRUE))
             ),
             shiny::column(
               width = 4, DT::dataTableOutput('mostrar.mapa.zoom'), shiny::hr(),
@@ -479,60 +465,47 @@ shinyUI(dashboardPagePlus(
         tabsOptions(
           botones = list(shiny::icon("gear"), shiny::icon("terminal"), 
                          shiny::icon("code")),
-          widths = c(33.3, 100, 100), heights = c(100, 50, 70),
+          widths = c(100, 100, 100), heights = c(70, 50, 70),
           tabs.content = list(
-            list(shiny::h4(labelInput("opciones")), shiny::hr(),
-                 shiny::sliderInput(inputId = "cant.cluster", min = 2, max = 10,
-                             label = labelInput("cantcluster"), value = 2),
-                 shiny::selectInput(
-                   inputId = "sel.hc.method", label = labelInput("selmetodo"),
-                   selectize = T, choices =  c("ward.D2", "single", 
-                                               "complete", "average")),
-                 shiny::selectInput(inputId = "sel.dist.method", 
-                             label = labelInput("metododist"), selectize = T,
-                             choices =  c("euclidean", "maximum", "manhattan",
-                                          "canberra", "binary", "minkowski")),
-                 tags$label(class='control-label', labelInput("selcolores")),
-                 shiny::fluidRow(
-                   lapply(1:10, function(i)
-                     tags$div(class = "select-color", colourpicker::colourInput(
-                       paste0("hcColor", i), NULL, value = def.colors[i],
-                       allowTransparent = T)))), shiny::hr(),
-                 shiny::actionButton("CJRun", labelInput("ejecutar"), 
-                                     class = "btn-run", width = "100%"), 
-                 shiny::hr(),
-                 shiny::actionButton("HCbutton", labelInput("agregarcluster"), 
-                              width = "100%"), shiny::hr()),
+            list(options.run("run.hc"), tags$hr(style = "margin-top: 0px;"),
+                 shiny::column(width = 9, shiny::sliderInput(
+                   "cant.cluster", labelInput("cantcluster"), 2, 10, 2),
+                   shiny::selectInput(
+                   "sel.dist.method",  labelInput("metododist"),
+                   c("euclidean", "maximum", "manhattan", "canberra", 
+                     "binary", "minkowski")),
+                   shiny::selectInput(
+                     "sel.hc.method", labelInput("selmetodo"),
+                     c("ward.D2", "single", "complete", "average"))
+                 ),
+                 color.input("hcColor"), shiny::hr(), shiny::actionButton(
+                   "HCbutton", labelInput("agregarcluster"), width = "100%"),
+                 shiny::hr()
+            ),
             list(
-              shinyAce::aceEditor("fieldCodeModelo", height = "8vh",mode = "r",
-                        theme = "monokai", value = "", readOnly = T),
+              codigo.monokai("fieldCodeModelo", height = "8vh"),
               lapply(c("Dendo", "Mapa", "Horiz", 
                        "Vert", "Radar", "Bar"), function(i) {
                 shiny::conditionalPanel(
                   condition = paste0("input.tabjerar == 'tab", i, "'"),
-                  campo.codigo(paste0("run.hc", i), paste0("ref.hc", i),
-                               paste0("fieldCode", i), height = "13vh"))
+                  codigo.monokai(paste0("fieldCode", i), height = "13vh"))
               })
             ),
-            list(shiny::h4(labelInput("codigo")), shiny::hr(),
+            list(shiny::h4(labelInput("funciones")), shiny::hr(),
                  shinydashboard::tabBox(
                    id = "tabCodejerar", width = NULL,
-                   shiny::tabPanel(title = labelInput("codecentros"), 
-                            shinyAce::aceEditor(
-                              "fieldCodeCentr", mode = "r", theme = "monokai",
-                              value = "", height = "25vh", readOnly = T)),
-                   shiny::tabPanel(title = labelInput("codehoriz"), 
-                            shinyAce::aceEditor(
-                              "fieldFuncHoriz", mode = "r", theme = "monokai",
-                              value = "", height = "25vh", readOnly = T)),
-                   shiny::tabPanel(title = labelInput("codevert"), 
-                            shinyAce::aceEditor(
-                              "fieldFuncVert", mode = "r", theme = "monokai",
-                              value = "", height = "25vh", readOnly = T)),
-                   shiny::tabPanel(title = labelInput("coderadar"), 
-                            shinyAce::aceEditor(
-                              "fieldFuncRadar", mode = "r", theme = "monokai",
-                              value = "", height = "25vh", readOnly = T))
+                   shiny::tabPanel(
+                     title = labelInput("codecentros"),
+                     codigo.monokai("fieldCodeCentr", height = "25vh")),
+                   shiny::tabPanel(
+                     title = labelInput("codehoriz"), 
+                     codigo.monokai("fieldFuncHoriz", height = "25vh")),
+                   shiny::tabPanel(
+                     title = labelInput("codevert"), 
+                     codigo.monokai("fieldFuncVert", height = "25vh")),
+                   shiny::tabPanel(
+                     title = labelInput("coderadar"), 
+                     codigo.monokai("fieldFuncRadar", height = "25vh"))
                  )
               )
             )
@@ -543,23 +516,22 @@ shinyUI(dashboardPagePlus(
       #K-means
       shinydashboard::tabItem(
         tabName = "kmedias", shinydashboard::tabBox(
-          id = "tabkmedias", width = 12, title =
+          id = "tabkmedias", width = NULL, title =
             tags$div(
               class = "multiple-select-var",
               lapply(c("Khoriz", "Kvert", "Kbar"), function(i) {
                 shiny::conditionalPanel(
                   condition = paste0("input.tabkmedias == 'tab", i, "'"),
-                  shiny::selectInput(inputId = paste0("sel.", i),
-                              label = NULL, choices = ""))
+                  shiny::selectInput(paste0("sel.", i), NULL, ""))
               })
             ),
           shiny::tabPanel(
             title = labelInput("inercia"), value = "tabKinercia",
             shiny::wellPanel(
-              shiny::fluidRow(uiOutput('inercia.k')), style="height: 65vh;")
+              shiny::fluidRow(uiOutput('inercia.k')), style = "height: 65vh;")
           ),
-          shiny::tabPanel(title = labelInput("jambu"), value = "tabJambu",
-                   shiny::plotOutput('plot.jambu', height = "70vh")
+          shiny::tabPanel(title = labelInput("numcluster"), value = "tabJambu",
+                          shiny::plotOutput('plot.jambu', height = "70vh")
           ),
           shiny::tabPanel(
             title = labelInput("mapa"), value = "tabKmapa", shiny::fluidRow( 
@@ -595,65 +567,53 @@ shinyUI(dashboardPagePlus(
           tabsOptions(
             botones = list(shiny::icon("gear"), shiny::icon("terminal"), 
                            shiny::icon("code")),
-            widths = c(33.3, 100, 100), heights = c(100, 50, 80),
+            widths = c(100, 100, 100), heights = c(70, 50, 80),
             tabs.content = list(
-              list(shiny::h4(labelInput("opciones")), shiny::hr(),
-                   shiny::conditionalPanel(
-                     condition = "input.tabkmedias == 'tabJambu'",
-                     shiny::sliderInput(
-                       inputId = "iteracionesK", min = 2, value = 20,
-                       label = labelInput("kiter"), max = 20)),
-                   shiny::sliderInput(
-                     inputId = "cant.kmeans.cluster", min = 2, value = 2,
-                     label = labelInput("cantcluster"), max = 10),
-                   shiny::numericInput(
-                     "num.nstart", step = 10, value = 1,
-                     label = labelInput("nstart")),
-                   shiny::numericInput(
-                     "num.iter", step = 100, value = 10, 
-                     label = labelInput("niter")),
-                   shiny::selectInput(
-                     inputId = "sel.algoritmo", label = labelInput("algoritmo"), 
-                     selectize = T, choices =  c("Hartigan-Wong", "Lloyd", 
-                                                 "Forgy", "MacQueen")),
-                   tags$label(class='control-label', labelInput("selcolores")),
-                   shiny::fluidRow(
-                     lapply(1:10, function(i)
-                       tags$div(class = "select-color", colourpicker::colourInput(
-                         paste0("kColor", i), NULL, value = def.colors[i],
-                         allowTransparent = T)))
-                   ), shiny::hr(),
-                   shiny::actionButton("KRun", labelInput("ejecutar"), 
-                                       class = "btn-run", width = "100%"),
-                   shiny::hr(),
-                   shiny::actionButton("Kbutton", labelInput("agregarcluster"), 
-                                width = "100%"), shiny::hr()
+              list(
+                options.run("run.k"), tags$hr(style = "margin-top: 0px;"),
+                shiny::column(width = 9, shiny::sliderInput(
+                  "cant.kmeans.cluster", labelInput("cantcluster"), 2, 10, 2),
+                  shiny::column(width = 7, shiny::numericInput(
+                    "num.nstart", labelInput("nstart"), 1, step = 10), 
+                    shiny::numericInput(
+                      "num.iter", labelInput("niter"), 10, step = 100)
+                  ),
+                  shiny::column(width = 5, shiny::selectInput(
+                    "sel.algoritmo", labelInput("algoritmo"), 
+                    c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen")),
+                    shiny::conditionalPanel(
+                      condition = paste0("input.tabkmedias == 'tabJambu'"),
+                      radioSwitch(
+                        "radiojambu", "metcluster", 
+                        c("jambu", "sil"), c("wss", "silhouette")))
+                  )
+                ),
+                color.input("kColor"), shiny::hr(), shiny::actionButton(
+                  "Kbutton", labelInput("agregarcluster"), width = "100%"),
+                shiny::hr()
               ),
               list(
-                shinyAce::aceEditor("fieldCodeKModelo", height = "5vh", mode = "r",
-                          theme = "monokai", value = "", readOnly = T),
+                codigo.monokai("fieldCodeKModelo", height = "5vh"),
                 lapply(c("Jambu", "Kmapa", "Khoriz", "Kvert",
                          "Kradar", "Kbar"), function(i) {
                   shiny::conditionalPanel(
                     condition = paste0("input.tabkmedias == 'tab", i, "'"),
-                    campo.codigo(paste0("run.", i), paste0("ref.", i),
-                                 paste0("fieldCode", i), height = "15vh"))
+                    codigo.monokai(paste0("fieldCode", i), height = "15vh"))
                 })
               ),
-              list(shiny::h4(labelInput("codigo")), shiny::hr(),
-                   lapply(list(
-                     list(titulo = labelInput("codejambu"), id = "Jambu"),
-                     list(titulo = labelInput("codehoriz"), id = "Khoriz"),
-                     list(titulo = labelInput("codevert"), id = "Kvert"),
-                     list(titulo = labelInput("coderadar"), id = "Kradar")),
-                     function(i) {
-                       shiny::conditionalPanel(
-                         condition = paste0("input.tabkmedias == 'tab", i$id, "'"),
-                         shiny::h5(i$titulo),
-                         shinyAce::aceEditor(
-                           paste0("fieldFunc", i$id), mode = "r", theme = "monokai",
-                           value = "", height = "50vh", readOnly = T))
-                   })
+              list(shiny::h4(labelInput("funciones")), shiny::hr(),
+                   shinydashboard::tabBox(
+                     id = "tabCodeK", width = NULL,
+                     shiny::tabPanel(
+                       title = labelInput("codehoriz"), 
+                       codigo.monokai("fieldFuncKhoriz", height = "30vh")),
+                     shiny::tabPanel(
+                       title = labelInput("codevert"), 
+                       codigo.monokai("fieldFuncKvert", height = "30vh")),
+                     shiny::tabPanel(
+                       title = labelInput("coderadar"), 
+                       codigo.monokai("fieldFuncKradar", height = "30vh"))
+                   )
               )
             )
           )
@@ -682,7 +642,7 @@ shinyUI(dashboardPagePlus(
             title = labelInput("codreporte"), width = 12, height = "50vh",
             status = "primary", solidHeader = TRUE, collapsible = TRUE,
             shinyAce::aceEditor("fieldCodeReport", mode="markdown", 
-                                value='', height = "43vh"))),
+                                value = '', height = "43vh"))),
         shiny::fluidRow(shiny::column(
           width = 12, shinydashboard::box(
             title = labelInput("salida"), width = 12, height = "35vh",
@@ -706,8 +666,11 @@ shinyUI(dashboardPagePlus(
           icono = shiny::icon("info")
         ),
         infoBoxPROMiDAT(
-          labelInput("version"), "1.0.5", icono = shiny::icon("file-code-o"))
+          labelInput("version"), "1.1.0", icono = shiny::icon("file-code-o"))
       )
     ) #shinydashboard::tabItems
   ) #dashboardBody
 )) #UI
+
+
+

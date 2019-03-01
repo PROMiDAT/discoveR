@@ -1,11 +1,11 @@
 Title: Exploratory Data Analysis System
 Package: discoveR
 Type: Package
-Version: 1.0.5
+Version: 1.1.0
 Author: Oldemar Rodriguez R. with contributions from Diego Jimenez A. and Andres Navarro D.
 Maintainer: Oldemar Rodriguez <oldemar.rodriguez@ucr.ac.cr>
 Depends: R (>= 3.5)
-Imports: shiny, shinydashboard, shinydashboardPlus, shinyAce, shinyWidgets, shinyjs, colourpicker, ggplot2, DT, factoextra, rstudioapi, future, rmarkdown, stringi
+Imports: shiny, shinydashboard, shinydashboardPlus, shinyAce, shinyjs, colourpicker, ggplot2, DT, factoextra, rstudioapi, rmarkdown, stringi, zip
 Description: Performs an exploratory data analysis through a 'shiny' interface. It includes basic methods such as the mean, median, mode, normality test, among others. It also includes clustering techniques such as Principal Components Analysis, Hierarchical Clustering and the K-Means Method.
 License: GPL (>=2)
 Encoding: UTF-8

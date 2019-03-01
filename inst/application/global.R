@@ -7,7 +7,6 @@ source('biblioteca.R', local = T)
 #' @export
 #'
 contador <<- 0
-datos <<- NULL
 datos.originales <<- NULL
 nombre.datos <<- ""
 datos.reporte <<- list()
@@ -22,6 +21,17 @@ def.colors <<- c("#F8766D", "#00BFC4", "#00BA38", "#C77CFF", "#00B0F6",
 #' @return functions
 #' @export
 #'
+
+codigo.prueba <- function() {
+  return(paste0(
+    "datos[, 'Survived'] <- as.factor(datos[, 'Survived'])\n", 
+    "datos <- datos.disyuntivos(datos, 'Survived')\n", 
+    "datos[, 'Pclass'] <- as.factor(datos[, 'Pclass'])\n",
+    "datos <- subset(datos, select = -Name)\n",
+    "datos <- datos.disyuntivos(datos, 'Sex')\n",
+    "datos <- subset(datos, select = -Ticket)\n",
+    "datos <- subset(datos, select = -Cabin)"))
+}
 
 tr <- function(text) {
   sapply(text, function(s) {
@@ -78,7 +88,7 @@ overwrite.cat <- function(){
   lockBinding("cat",.BaseNamespaceEnv)
 }
 
-recover.cat <- function(){
+recover.cat <- function() {
   unlockBinding("cat", .BaseNamespaceEnv)
 
   .BaseNamespaceEnv$cat <- function (..., file = "", sep = " ", fill = FALSE, labels = NULL,
@@ -104,24 +114,16 @@ recover.cat <- function(){
 mostrarError <-  function(msg, n.num = NULL, n.cat = NULL) {
   if(!is.null(n.num)) {
     if(n.num < 1) {
-      return(error.variables(T))
+      return(error.plot(tr("errornum")))
     }
   } 
   if (!is.null(n.cat)) {
     if(n.cat < 1) {
-      return(error.variables(F))
+      return(error.plot(tr("errorcat")))
     }
   }
   shiny::showNotification(paste0("ERROR: ", msg), duration = 10, type = "error")
   return(NULL)
-}
-
-error.variables <- function(num = T) {
-  if(num){
-    error.plot(tr("errornum"))
-  } else {
-    error.plot(tr("errorcat"))
-  }
 }
 
 error.plot <- function(msg) {
@@ -167,6 +169,7 @@ updateLabelInput <- function (session, labelid, value = NULL) {
     type = 'updateLabel', 
     message = list(ids = labelid, values = sentvalue))
 }
+
 extract.code <- function(funcion) {
   code <- paste(head(eval(parse(text = funcion)), 100), collapse = "\n")
   code <- paste(funcion, "<-", code)
@@ -174,17 +177,53 @@ extract.code <- function(funcion) {
 }
 
 inputRadio <- function(inputId, value, isSelected) {
-  res <- tags$input(type="radio", name=inputId, value=value)
+  res <- tags$input(type = "radio", name = inputId, value = value)
   if(isSelected) {
     res$attribs$checked <- "checked"
   }
   return(res)
 }
 
+radioSwitch <- function(id, label = NULL, names, values = NULL) {
+  if(is.null(values)) values <- c(TRUE, FALSE) 
+  tags$div(
+    class = "form-group", `data-shinyjs-resettable-type`="RadioButtons", 
+    `data-shinyjs-resettable-value` = names[1],
+    if(!is.null(label)) {
+      tags$label(class = "control-label", `for` = id, `data-id` = label)
+    },
+    tags$div(
+      class = "radioGroupButtons btn-group-container-sw", id = id, `data-toggle`="buttons",
+      tags$div(
+        class = "btn-radiogroup",
+        tags$button(
+          class = "btn radiobtn btn-radioswitch active",
+          tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
+          tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
+          tags$input(type="radio", autocomplete="off", name=id, value=values[1], checked="checked",
+                     style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
+          labelInput(names[1])
+        )
+      ),
+      tags$div(
+        class = "btn-radiogroup", role = "group", 
+        tags$button(
+          class = "btn radiobtn btn-radioswitch",
+          tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
+          tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
+          tags$input(type="radio", autocomplete="off", name=id, value=values[2],
+                     style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
+          labelInput(names[2])
+        )
+      )
+    )
+  )
+}
+
 radioButtonsTr <- function(inputId, label, values, names){
   tags$div(
     id=inputId, class="form-group shiny-input-radiogroup shiny-input-container",
-    tags$label(class="control-label", `for`=inputId, labelInput(label)),
+    tags$label(class = "control-label", `for` = inputId, labelInput(label)),
     tags$div(
       class="shiny-options-group",
       lapply(1:length(values), function(i) {
@@ -198,6 +237,16 @@ radioButtonsTr <- function(inputId, label, values, names){
       })
     )
   )
+}
+
+options.run <- function(runid) {
+  tags$div(
+    style = "display: inline-block; width: 100%", 
+    shiny::h4(labelInput("opciones"), 
+              style = "float: left;margin-bottom: 0px;margin-top: 0px;"),
+    tags$button(
+      id = runid, type = "button", class = "run-button action-button", 
+      icon("play"), tags$a(labelInput("ejecutar"), style = "color:white")))
 }
 
 tabsOptions <- function(
@@ -230,18 +279,9 @@ tabsOptions <- function(
   return(tags$div(HTML(res)))
 }
 
-campo.codigo <- function(runid, refid, fieldid, ...) {
-  tags$div(
-    class = "box box-solid bg-black",
-    tags$div(
-      style = "text-align:right;padding-right: 10px;",
-      tags$button(
-        id = runid, type = "button", class = "run-button action-button", 
-        icon("play"), tags$a(labelInput("ejecutar"), style = "color:white"))),
-    tags$div(
-      class = "box-body", 
-      aceEditor(fieldid, mode = "r", theme = "monokai", value = "", ...))
-  )
+codigo.monokai <- function(id, height) {
+  shinyAce::aceEditor(id, mode = "r", theme = "monokai", 
+                      value = "", readOnly = T, height = height)
 }
 
 infoBoxPROMiDAT <- function(titulo, valor, icono) {
@@ -293,8 +333,6 @@ updateSelects <- function(datos) {
   })
   updateinitSelects("selVert", colnames(var.numericas(datos)))
   updateinitSelects("sel.Kvert", colnames(var.numericas(datos)))
-  nmax <- calc.maxK(datos)
-  updateSliderInput(session, "iteracionesK", max = nmax, value = nmax)
   cant.num <- ncol(var.numericas(datos))
   ndef <- ifelse(cant.num < 5, cant.num, 5)
   updateSliderInput(session, "slider.npc", max = cant.num, value = ndef)
@@ -320,6 +358,26 @@ updateMenu <- function(datos = NULL, init = F) {
       removeClass(class = "disabled", selector = paste0(element, i))
     }
   })
+}
+
+color.input <- function(id) {
+  tags$div(
+    tags$label(class='control-label', labelInput("selcolores")),
+    shiny::fluidRow(
+      lapply(1:10, function(i)
+        tags$div(class = "select-color", colourpicker::colourInput(
+          paste0(id, i), NULL, value = def.colors[i], allowTransparent = T))))
+  )
+}
+
+mostrar.colores <- function(id, n) {
+  for (i in 1:10) {
+    if(i <= n) {
+      shinyjs::show(paste0(id, i))
+    } else {
+      shinyjs::hide(paste0(id, i))
+    }
+  }
 }
 
 ###################### Carga de Datos #########################################
@@ -354,7 +412,7 @@ var.categoricas <- function(data){
   return(res)
 }
 
-datos.disyuntivos <- function(data, vars){
+datos.disyuntivos <- function(data, vars) {
   if(is.null(data)) {
     return(NULL)
   }
@@ -418,13 +476,8 @@ code.trans <- function(variable, nuevo.tipo) {
   }
 }
 
-code.desactivar.aux <- function(variable){
+code.desactivar <- function(variable){
   return(paste0("datos <- subset(datos, select = -", variable, ")"))
-}
-
-code.desactivar <- function(variables){
-  return(paste0("datos <- subset(datos, select = -c(",
-                paste(variables, collapse = ","), "))"))
 }
 
 ###################### Estadisticas Basicas ###################################
@@ -499,17 +552,17 @@ resumen.categorico <- function(data, variable){
 #' @return functions
 #' @export
 #'
-default.normal <- function(data = "datos", vars = NULL, color = "#00FF22AA", 
+default.normal <- function(vars = NULL, color = "#00FF22AA", 
                            labelcurva = "Curva Normal") {
   if(is.null(vars)){
     return(NULL)
   } else {
     return(paste0(
-      "promedio <- mean(", data, "[, '", vars, "']) \n",
-      "desviacion <- sd(", data, "[, '", vars, "']) \n",
-      "values <- dnorm(", data, "[, '", vars, "'], mean = promedio, sd = desviacion) \n",
-      "values <- c(values, hist(", data, "[, '", vars, "'],  plot = F)$density) \n",
-      "hist(", data, "[, '", vars, "'], col = '", color, "', border=F, axes=F,\n",
+      "promedio <- mean(datos[, '", vars, "']) \n",
+      "desviacion <- sd(datos[, '", vars, "']) \n",
+      "values <- dnorm(datos[, '", vars, "'], mean = promedio, sd = desviacion) \n",
+      "values <- c(values, hist(datos", "[, '", vars, "'],  plot = F)$density) \n",
+      "hist(datos[, '", vars, "'], col = '", color, "', border=F, axes=F,\n",
       "  freq = F, ylim = range(0, max(values)), ylab = '', \n",
       "  main = '", vars, "') \n",
       "axis(1, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025) \n",
@@ -519,24 +572,11 @@ default.normal <- function(data = "datos", vars = NULL, color = "#00FF22AA",
   }
 }
 
-fisher.calc <- function (x, na.rm = FALSE, ...) {
-  if (!is.numeric(x)) {
-    stop("x debe ser numérico")
-  }
-  if (na.rm)
-    x <- x[!is.na(x)]
-  nx <- length(x)
-  
-  sk <- sum((x - mean(x))^3/stats::sd(x)^3)/nx
-  
-  return(sk)
-}
-
 default.calc.normal <- function(
-  data = "datos", labelsi = "Positiva", labelno = "Negativa", 
+  labelsi = "Positiva", labelno = "Negativa", 
   labelsin = "Sin Asimetría") {
   return(paste0(
-    "calc <- lapply(var.numericas(", data,"), function(i) fisher.calc(i)[1]) \n",
+    "calc <- lapply(var.numericas(datos), function(i) fisher.calc(i)[1]) \n",
     "calc <- as.data.frame(calc) \n",
     "calc <- rbind(calc, lapply(calc, function(i) ifelse(i > 0, '", labelsi,
     "',\n  ifelse(i < 0, '", labelno, "', '", labelsin, "')))) \n",
@@ -548,18 +588,18 @@ default.calc.normal <- function(
 #' @return functions
 #' @export
 #'
-default.disp <- function(data = "datos", vars = NULL, color = "#FF0000AA") {
+default.disp <- function(vars = NULL, color = "#FF0000AA") {
   if(length(vars) < 2) {
-    return("NULL")
+    return("")
   } else if(length(vars) == 2) {
     return(paste0(
-      "ggplot(data = ", data, ", aes(x = ", vars[1], ", y = ", vars[2],
-      ", label = rownames(", data, "))) +\n", "geom_point(color = '",
+      "ggplot(data = datos, aes(x = ", vars[1], ", y = ", vars[2],
+      ", label = rownames(datos))) +\n", "geom_point(color = '",
       color, "', size = 3) + geom_text(vjust = -0.7) + theme_minimal()"))
   } else{
     return(paste0(
-      "scatterplot3d(", data, "[, '", vars[1], "'], ", data, "[, '", vars[2], 
-      "'], ", data, "[, '", vars[3], "'], pch = 16, color = '", color, "')"))
+      "scatterplot3d(datos[, '", vars[1], "'], datos[, '", vars[2], 
+      "'], datos[, '", vars[3], "'], pch = 16, color = '", color, "')"))
   }
 }
 
@@ -591,16 +631,16 @@ distribucion.categorico <- function(var) {
     theme_minimal()
 }
 
-def.code.num <- function(data = "datos", variable, color) {
-  paste0("distribucion.numerico(", data, "[, ", variable, "], ",
-         variable, ", color = ", color,")")
+def.code.num <- function(variable, color) {
+  paste0("distribucion.numerico(datos[, '", variable, "'], '",
+         variable, "', color = '", color,"')")
 }
 
 def.code.cat <- function(
-  data = "datos", variable, titulox = tr("cantidadcasos"), 
+  variable, titulox = tr("cantidadcasos"), 
   tituloy = tr("categorias")) {
   paste0(
-    "distribucion.categorico(", data, "[, '", variable,"']) + ", 
+    "distribucion.categorico(datos[, '", variable,"']) + ", 
     "labs(title = '", variable, "', x = '", 
     titulox, "', y = '", tituloy, "')")
 }
@@ -610,14 +650,11 @@ def.code.cat <- function(
 #' @return functions
 #' @export
 #'
-modelo.cor <- function(data = "datos") {
-  return(paste0("correlacion <<- cor(var.numericas(", data, "))"))
-}
-
 correlaciones <- function(metodo = 'circle', tipo = "lower") {
   return(paste0(
-    "corrplot(correlacion, method='", metodo,"', shade.col=NA, tl.col='black',\n",
-    "         tl.srt=20, addCoef.col='black', order='AOE', type = '", tipo, "')"))
+    "corrplot(cor(var.numericas(datos)), method='", metodo, "', shade.col=NA,",
+    " tl.col='black',\n", "         tl.srt=20, addCoef.col='black', order='AOE',", 
+    " type = '", tipo, "')"))
 }
 
 ###################### PCA ####################################################
@@ -639,8 +676,8 @@ def.pca.model <- function(data = "datos", scale.unit = T, npc = 5) {
 pca.individuos <- function(ind.cos = 0, color = '#696969', ejes = c(1, 2)) {
   return(paste0(
     "fviz_pca_ind(pca.modelo, pointsize = 2, pointshape = 16, axes = c(",
-    paste(ejes, collapse = ","), "),\n", "    col.ind = '", color, 
-    "', select.ind = list(cos2 = ", ind.cos, ")) + labs(title = '')"))
+    ejes, "),\n", "    col.ind = '", color, "', select.ind = list(cos2 = ", 
+    ind.cos, ")) + labs(title = '')"))
 }
 
 #' PCA Variables
@@ -652,7 +689,7 @@ pca.variables <- function(var.cos = 0, color = 'steelblue', ejes = c(1, 2)) {
   return(paste0(
     "fviz_pca_var(pca.modelo, col.var= '", color, 
     "', select.var = list(cos2 = ", var.cos, "),\n",
-    "    axes = c(", paste(ejes, collapse = ","), ")) + labs(title = '')"))
+    "    axes = c(", ejes, ")) + labs(title = '')"))
 }
 
 #' PCA Sobreposición
@@ -667,7 +704,7 @@ pca.sobreposicion <- function(ind.cos = 0, var.cos = 0, col.ind = '#696969',
     col.var, "', \n", "    col.ind = '", col.ind, 
     "', select.ind = list(cos2 = ", ind.cos, "), ", 
     "select.var = list(cos2 = ", var.cos, "),\n axes = c(", 
-    paste(ejes, collapse = ","), ")) + labs(title = '')"))
+    ejes, ")) + labs(title = '')"))
 }
 
 #' PCA Varianza Explicada por cada eje
@@ -718,26 +755,15 @@ code.pca.cvp <- function(metodo = "circle", titulo) {
     "         title = '", titulo, "')"))
 }
 
-#' PCA Contributions of variables to PC1
+#' PCA Contributions of variables
 #' @author Diego
 #' @return functions
 #' @export
 #'
-code.pca.pc1 <- function(titulo, tituloy) {
+code.pca.pc1 <- function(titulo, tituloy, dim = "1") {
   return(paste0(
-    "fviz_contrib(pca.modelo, choice = 'var', axes = 1, top = 20) +\n",
-    "  labs(y = '", tituloy, "', title = '", titulo, "')"))
-}
-
-#' PCA Contributions of variables to PC2
-#' @author Diego
-#' @return functions
-#' @export
-#'
-code.pca.pc2 <- function(titulo, tituloy) {
-  return(paste0(
-    "fviz_contrib(pca.modelo, choice = 'var', axes = 2, top = 20) +\n",
-    "  labs(y = '", tituloy, "', title = '", titulo, "')"))
+    "fviz_contrib(pca.modelo, choice = 'var', axes = ", dim, ", top = 20) +\n",
+    "  labs(y = '", tituloy, "', title = '", paste0(titulo, "-", dim), "')"))
 }
 
 ###################### Clustering Jerarquico ##################################
@@ -746,13 +772,13 @@ code.pca.pc2 <- function(titulo, tituloy) {
 #' @return functions
 #' @export
 #'
-def.model <- function(data = "datos", cant = "as.numeric(input$cant.cluster)",
+def.model <- function(cant = "as.numeric(input$cant.cluster)",
                       dist.method = "euclidean", hc.method = "complete") {
   return(paste0(
-    "modelo <- hclust(dist(var.numericas(", data, "), method = '",
+    "modelo <- hclust(dist(var.numericas(datos), method = '",
     dist.method, "'), method = '", hc.method, "')\n",
     "clusters <- as.factor(cutree(modelo, k = ", cant, "))\n",
-    "centros <- calc.centros(var.numericas(", data, "), clusters)\n",
+    "centros <- calc.centros(var.numericas(datos), clusters)\n",
     "hc.modelo <- list(modelo = modelo, clusters = clusters, centros = centros)"))
 }
 
@@ -771,7 +797,7 @@ calc.centros <- function(data, clusteres) {
 #' @return functions
 #' @export
 #'
-centros.total <- function(DF){
+centros.total <- function(DF) {
   apply(DF, 2, mean)
 }
 
@@ -816,8 +842,7 @@ WP <- function(DF, modelo, cant){
 #' @return functions
 #' @export
 #'
-diagrama <- function(cant = "as.numeric(input$cant.cluster)", 
-                     colores = "'steelblue'") {
+diagrama <- function(colores = "'steelblue'") {
   return(paste0(
     "dendograma <- dendro_data(hc.modelo$modelo, type='rectangle')\n",
     "order.labels <- data.frame(label=names(hc.modelo$clusters), clusters = hc.modelo$clusters)\n",
@@ -848,39 +873,18 @@ def.k.model <- function(data = "datos", cant = "as.numeric(input$cant.kmeans.clu
 #' @return functions
 #' @export
 #'
-lead <- function(x){
-  out <- c(x[-seq_len(1)], rep(NA, 1))
-  return(out)
-}
-
-codo.jambu <- function(data. = NULL, k. = NA_integer_, tituloy = "",
-                       nstart. = 200, iter.max. = 5000, h. = 1.5){
-  params <- list(k = k., data = list(data.))
-  params <- purrr::cross(params)
-  models <- purrr::map(params, ~future::future(
-    kmeans(x = .$data, centers = .$k, iter.max = iter.max., nstart = nstart.)))
-  models <- future::values(models)
-  tot_withinss <- purrr::map_dbl(models, 'tot.withinss')
-  model_index <- head(which(!tot_withinss/lead(tot_withinss) > h.), 1)
-  if(length(model_index) == 0)
-    model_index <- which.min(tot_withinss)
-  best_model <- models[[model_index]]
-  res.plot <- ggplot() + geom_point(aes(x = k., y = tot_withinss), size = 2) +
-    geom_line(aes(x = k., y = tot_withinss), size = 1) +
-    theme_minimal() + labs(x = 'k', y = tituloy) +
-    scale_x_continuous(breaks = seq(1, length(k.), 1)) +
-    scale_y_continuous(labels = scales::comma)
-  return(plot(res.plot))
-}
-
 calc.maxK <- function(datos) {
   ifelse(nrow(datos) < 40, return(as.integer(nrow(datos)/2)), return(20))
 }
 
-def.code.jambu <- function(data = "datos", k = 20, tituloy) {
+def.code.jambu <- function(k, metodo = "wss") {
+  xtitle <- tr("cantcluster")
+  ifelse(
+    metodo == "wss", ytitle <- tr("inerciaintra"), ytitle <- tr("silhouette"))
   return(paste0(
-    "codo.jambu(data. = var.numericas(", data, "), k. = 2:", k,
-    ", tituloy = '", tituloy, "')"))
+    "Datos.Escalados <- scale(var.numericas(datos))\n",
+    "fviz_nbclust(Datos.Escalados, kmeans, method = '", metodo, "', k.max = ",
+    k, ") +\nlabs(title = '', x = '", xtitle, "', y = '", ytitle, "')"))
 }
 
 
@@ -972,7 +976,7 @@ cluster.horiz <- function(sel = "1", color = "steelblue", esHC = T) {
     return(paste0(
       code.centros, "\nggplot(data = centros, aes(x = row.names(centros), ",
       "y = centros[, ", sel, "])) +\n",
-      "  geom_bar(stat = 'identity', fill = ", color, ") +\n",
+      "  geom_bar(stat = 'identity', fill = ", color[as.numeric(sel)], ") +\n",
       "  scale_y_continuous(expand = c(.01,0,0,0)) +\n",
       "  labs(x = '', y = '') + coord_flip() + theme_minimal()"))
   }
@@ -1077,6 +1081,24 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T) {
     "labs(x = '', y = '') + guides(fill = F))"))
 }
 
+clusters.variable <- function(datos, clusters, idioma, esHC = T) {
+  tryCatch({
+    if(esHC) {
+      ifelse(idioma == "es", aux <- "CJ.", aux <- "HC.")
+      cluster.var <- as.factor(paste0(aux, clusters))
+    } else {
+      ifelse(input$idioma == "es", aux <- "Kmedias.", aux <- "Kmeans.")
+      cluster.var <- as.factor(paste0("K", clusters))
+    } 
+    datos[[paste0(aux, length(levels(cluster.var)))]] <- cluster.var
+    updateSelects(datos)
+    datos.reporte[[nombre.datos]] <<- datos
+    shiny::showNotification(tr("msjclusters"), duration = 5, type = "message")
+    return(datos)
+  }, error = function(e) {
+    mostrarError(e)
+  })
+}
 
 ###################### Reporte ################################################
 #' Reporte
@@ -1085,10 +1107,10 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T) {
 #' @export
 #'
 init.replist <- function(datos) {
-  env.report$codigo.reporte[[datos]][["basico"]] <- list()
-  env.report$codigo.reporte[[datos]][["acp"]] <- list()
-  env.report$codigo.reporte[[datos]][["rephc"]] <- list()
-  env.report$codigo.reporte[[datos]][["repk"]] <- list()
+  env.report$codigo.reporte[[datos]][["basico"]]  <- list()
+  env.report$codigo.reporte[[datos]][["acp"]]     <- list()
+  env.report$codigo.reporte[[datos]][["rephc"]]   <- list()
+  env.report$codigo.reporte[[datos]][["kmedias"]] <- list()
 }
 
 createLogBasico <- function(datos, titulo, codigo, vars = NULL) {
@@ -1099,32 +1121,30 @@ createLogBasico <- function(datos, titulo, codigo, vars = NULL) {
   }
 }
 
-createLogACP <- function(datos, codigo, rep.modelo = NULL, vars = NULL) {
-  aux <- paste0("Centrado: ", rep.modelo[1], ", Dimensiones: ", rep.modelo[2])
-  if(is.null(env.report$codigo.reporte[[datos]][["acp"]][["ACP"]][[aux]])){
-    env.report$codigo.reporte[[datos]][["acp"]][["ACP"]][[aux]] <- list()
+createLogACP <- function(datos, codigo, rep.modelo, vars = NULL) {
+  aux <- paste0("centrar:", rep.modelo[1], ";dimensiones:", rep.modelo[2])
+  if(is.null(env.report$codigo.reporte[[datos]][["acp"]][[aux]])){
+    env.report$codigo.reporte[[datos]][["acp"]][[aux]] <- list()
   }
-  env.report$codigo.reporte[[datos]][["acp"]][["ACP"]][[aux]][[vars]] <- codigo
+  env.report$codigo.reporte[[datos]][["acp"]][[aux]][[vars]] <- codigo
 }
 
-createLogCJ <- function(datos, codigo, rep.modelo = NULL, vars = NULL) {
-  aux <- paste0("Clusters: ", rep.modelo[1], ", Distancia: ", rep.modelo[2], 
-                ", Metodo: ", rep.modelo[3])
-  titulo <- "Clusterizacion_Jerarquica"
-  if(is.null(env.report$codigo.reporte[[datos]][["rephc"]][[titulo]][[aux]])){
-    env.report$codigo.reporte[[datos]][["rephc"]][[titulo]][[aux]] <- list()
+createLogCJ <- function(datos, codigo, rep.modelo, vars = NULL) {
+  aux <- paste0("Clusters:", rep.modelo[1], ";distancia:", rep.modelo[2],
+                ";metodo:", rep.modelo[3])
+  if(is.null(env.report$codigo.reporte[[datos]][["rephc"]][[aux]])){
+    env.report$codigo.reporte[[datos]][["rephc"]][[aux]] <- list()
   }
-  env.report$codigo.reporte[[datos]][["rephc"]][[titulo]][[aux]][[vars]] <- codigo
+  env.report$codigo.reporte[[datos]][["rephc"]][[aux]][[vars]] <- codigo
 }
 
-createLogK <- function(datos, codigo, rep.modelo = NULL, vars = NULL) {
-  aux <- paste0("Clusters: ", rep.modelo[1], ", Iteraciones: ", rep.modelo[2],
-                ", Formas Fuertes: ", rep.modelo[3], ", Algoritmo: ", rep.modelo[4])
-  titulo <- "Kmedias"
-  if(is.null(env.report$codigo.reporte[[datos]][["repk"]][[titulo]][[aux]])){
-    env.report$codigo.reporte[[datos]][["repk"]][[titulo]][[aux]] <- list()
+createLogK <- function(datos, codigo, rep.modelo, vars = NULL) {
+  aux <- paste0("Clusters:", rep.modelo[1], ";iter:", rep.modelo[2],
+                ";nstart:", rep.modelo[3], ";algoritmo:", rep.modelo[4])
+  if(is.null(env.report$codigo.reporte[[datos]][["kmedias"]][[aux]])) {
+    env.report$codigo.reporte[[datos]][["kmedias"]][[aux]] <- list()
   }
-  env.report$codigo.reporte[[datos]][["repk"]][[titulo]][[aux]][[vars]] <- codigo
+  env.report$codigo.reporte[[datos]][["kmedias"]][[aux]][[vars]] <- codigo
 }
 
 def.reporte <- function(titulo = "Sin Titulo", nombre = "PROMiDAT") {
@@ -1135,36 +1155,40 @@ def.reporte <- function(titulo = "Sin Titulo", nombre = "PROMiDAT") {
     "```{r setup, include=FALSE}\n",
     "knitr::opts_chunk$set(echo = FALSE,  fig.height = 10, fig.width = 15)\n",
     "```\n\n",
-    "```{r message=FALSE, warning=FALSE}\n",
-    "library(knitr)\nlibrary(future)\nlibrary(reshape)\nlibrary(ggplot2)\n",
-    "library(stringr)\nlibrary(stringi)\nlibrary(corrplot)\n",
-    "library(promises)\nlibrary(ggdendro)\nlibrary(rmarkdown)\n",
-    "library(dendextend)\nlibrary(factoextra)\nlibrary(FactoMineR)\n",
-    "library(scatterplot3d)\n",
-    "```\n\n", "```{r}\n", extract.code("var.numericas"), "\n\n", 
+    "```{r message=FALSE, warning=FALSE, eval = FALSE}\n",
+    "library(ggplot2)\nlibrary(stringi)\n",
+    "library(rmarkdown)\nlibrary(factoextra)\n```\n\n", 
+    "```{r}\n", extract.code("var.numericas"), "\n\n", 
     extract.code("var.categoricas"), "\n\n", extract.code("datos.disyuntivos"),
     "\n\n", extract.code("distribucion.numerico"), "\n\n", 
     extract.code("distribucion.categorico"), "\n\n", 
-    extract.code("codo.jambu"), "\n\n", extract.code("calc.centros"), "\n\n",
+    extract.code("calc.centros"), "\n\n",
     extract.code("centros.horizontal.todos"), "\n\n", 
     extract.code("centros.vertical.todos"), "\n\n",  
-    extract.code("centros.radar"), "\n```"
+    extract.code("centros.radar"), "\n```\n\n"
   )
 }
 
 limpiar.titulos <- function(x) {
+  x <- gsub(x, pattern = "ward.D2", replacement = "wardD2")
   x <- unlist(strsplit(x, split = "\\."))
-  if(length(x) > 3) {
-    x <- c(paste(x[1:2], collapse = "."), x[3:length(x)])
+  if(length(x) == 3) {
+    x <- c(x[1], paste(x[2:3], collapse = "."))
   }
-  params <- x[grepl(x, pattern = "=")]
+  x[!grepl(x, pattern = ":")] <- tr(x[!grepl(x, pattern = ":")])
+  params <- x[grepl(x, pattern = ":")]
   params <- sapply(params, function(i) {
-    aux <- unlist(strsplit(i, split = " "))
-    aux <- tr(gsub(aux, pattern = "=", replacement = ""))
-    paste(aux, collapse = " ")
+    aux <- unlist(strsplit(i, split = ";"))
+    nombres <- tr(gsub(aux, pattern = ":.*", replacement = ""))
+    nombres[grepl(nombres, pattern = "=")] <- 
+      paste(tr(unlist(strsplit(nombres[grepl(nombres, pattern = "=")],
+                               split = "="))), collapse = " = ")
+    nombres[!grepl(nombres, pattern = ":")] <- 
+      paste0(nombres[!grepl(nombres, pattern = ":")], ":")
+    valores <- gsub(aux, pattern = ".*:", replacement = "")
+    paste(nombres, valores, collapse = ", ")
   })
-  x[grepl(x, pattern = "=")] <- params
-  x <- tr(x[x != "vacio"])
+  x[grepl(x, pattern = ":")] <- params
   x <- paste("### ", x, "\n\n", collapse = "")
   return(x)
 }
@@ -1179,10 +1203,10 @@ user.reporte <- function() {
     for (analisis in names(env.report$codigo.reporte[[rep.datos]])) {
       rep.codigos <- unlist(env.report$codigo.reporte[[rep.datos]][[analisis]])
       if(!is.null(rep.codigos)) {
-        res <- paste0(res, "\n\n## ", tr(analisis), "\n\n")
         for (i in 1:length(rep.codigos)) {
+          res <- paste0(res, "\n\n## ", tr(analisis), "\n\n")
           rep.titulos <- limpiar.titulos(names(rep.codigos)[i])
-          res <- paste0(res, rep.titulos, "```{r}\n", rep.codigos[i], "\n```\n\n")
+          res <- paste0(res, rep.titulos, "```{r}\n", rep.codigos[i], "\n```")
         }
       }
     }
