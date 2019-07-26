@@ -17,7 +17,7 @@ suppressMessages({
 })
 
 shinyUI(shinydashboardPlus::dashboardPagePlus(
-  title="PROMiDAT - discoveR",
+  title = "PROMiDAT - discoveR",
   shinydashboard::dashboardHeader(
     title = tags$a(href="http://promidat.com", target = "_blank",
                    shiny::img(src = "Logo2.png", height = 55, width = "100%",

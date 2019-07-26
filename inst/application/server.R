@@ -80,7 +80,7 @@ shinyServer(function(input, output, session) {
         rowname, ruta$datapath, sep, dec, encabezado, deleteNA)
       if (isTRUE(getOption("shiny.testmode"))) {
         shinyAce::updateAceEditor(session, "fieldCodeData", value = "codigo")
-      }else {
+      } else {
         shinyAce::updateAceEditor(session, "fieldCodeData", value = codigo.carga)
       }
       eval(parse(text = codigo.carga))
@@ -220,7 +220,7 @@ shinyServer(function(input, output, session) {
     }, error = function(e) {
       return(NULL)
     })
-  }, server = F)
+  }, server = T)
 
   #' Update Transform Table
   #' @author Diego
@@ -1160,7 +1160,7 @@ shinyServer(function(input, output, session) {
       file.rename(out, paste(input$textTitulo,'-', input$textNombre, '.docx', sep=''))
       files <- c(paste(input$textTitulo,'-', input$textNombre, '.docx', sep=''), files)
 
-      zip::zip(file, files)
+      zip::zipr(file, files)
     }
   )
 })

@@ -1202,7 +1202,7 @@ user.reporte <- function() {
       rep.datos, "']]\ndatos <<- datos.originales\n```\n")
     for (analisis in names(env.report$codigo.reporte[[rep.datos]])) {
       rep.codigos <- unlist(env.report$codigo.reporte[[rep.datos]][[analisis]])
-      if(!is.null(rep.codigos)) {
+      if(!is.null(rep.codigos) & (analisis == "basico" | length(rep.codigos) > 1)) {
         for (i in 1:length(rep.codigos)) {
           res <- paste0(res, "\n\n## ", tr(analisis), "\n\n")
           rep.titulos <- limpiar.titulos(names(rep.codigos)[i])
