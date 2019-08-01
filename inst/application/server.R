@@ -170,7 +170,7 @@ shinyServer(function(input, output, session) {
         "resumenvar", "normalidad", "plotnormal", "numericas", "categoricas", 
         "resultados", "individuos", "variables", "sobreposicion", "ayudacp", 
         "vee", "cci", "ccv", "cvc", "cp", "inercia", "dendograma", "fisher",
-        "mapa", "horizontal", "vertical", "radar", "interpretacioncat", 
+        "mapa", "horizontal", "vertical", "radar", "interpretacioncat", "escalar",
         "jambu", "tituloreporte", "codreporte",  "salida", "copyright", 
         "version", "opciones", "ejecutar", "selcolor", "selcolores", "selejes",
         "cargarchivo", "subir", "header", "Rownames", "separador", "puntocoma",
@@ -717,13 +717,14 @@ shinyServer(function(input, output, session) {
   #'
   shiny::observeEvent(c(updateData$datos, input$run.hc), {
     datos       <- updateData$datos
+    centrar     <- shiny::isolate(input$cj.scale)
     cant        <- shiny::isolate(input$cant.cluster)
     dist.method <- shiny::isolate(input$sel.dist.method)
     hc.method   <- shiny::isolate(input$sel.hc.method)
     colores     <- sapply(1:cant, function(i)
       paste0("'", input[[paste0("hcColor", i)]], "'"))
     
-    codigo <- def.model(cant, dist.method, hc.method)
+    codigo <- def.model(cant, dist.method, hc.method, centrar)
     shinyAce::updateAceEditor(session, "fieldCodeModelo", value = codigo)
     
     tryCatch ({
@@ -738,7 +739,7 @@ shinyServer(function(input, output, session) {
         createLogCJ(nombre.datos, codigo, rep.hc, "modelo")
         
         output$inercia.cj = shiny::renderUI({
-          panel.inercia(hc.modelo$modelo, as.numeric(cant), datos)
+          panel.inercia(hc.modelo$modelo, as.numeric(cant), datos, centrar = centrar)
         })
         
         # Gráfico de Clusterización Jerarquica (Diagrama)
@@ -771,7 +772,8 @@ shinyServer(function(input, output, session) {
         # Gráfico de Clusterización Jerarquica (Horizontal)
         output$plot.horiz = shiny::renderPlot({
           var    <- input$selHoriz
-          codigo <- cluster.horiz(var, colores)
+          porc   <- input$checkHoriz
+          codigo <- cluster.horiz(var, colores, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeHoriz", value = codigo)
           tryCatch({
             grafico <- eval(parse(text = codigo))
@@ -785,7 +787,8 @@ shinyServer(function(input, output, session) {
         # Gráfico de Clusterización Jerarquica (Vertical)
         output$plot.vert = shiny::renderPlot({
           var    <- input$selVert
-          codigo <- cluster.vert(var, colores)
+          porc   <- input$checkVert
+          codigo <- cluster.vert(var, colores, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeVert",  value = codigo)
           tryCatch({
             grafico <- eval(parse(text = codigo))
@@ -812,7 +815,8 @@ shinyServer(function(input, output, session) {
         # Gráfico de Clusterización Jerarquica (Catégoricas)
         output$plot.bar.cat = shiny::renderPlot({
           var    <- input$selBar
-          codigo <- cluster.cat(var, colores)
+          porc <- input$checkBar
+          codigo <- cluster.cat(var, colores, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeBar", value = codigo)
           tryCatch({
             grafico <- eval(parse(text = codigo))
@@ -883,6 +887,7 @@ shinyServer(function(input, output, session) {
   #'
   shiny::observeEvent(c(updateData$datos, input$run.k), {
     datos     <- updateData$datos
+    centrar   <- shiny::isolate(input$k.scale)
     cant      <- shiny::isolate(input$cant.kmeans.cluster)
     iter.max  <- shiny::isolate(input$num.iter)
     nstart    <- shiny::isolate(input$num.nstart)
@@ -890,7 +895,7 @@ shinyServer(function(input, output, session) {
     colores   <- sapply(1:cant, function(i) 
       paste0("'", input[[paste0("kColor", i)]], "'"))
     
-    codigo <- def.k.model(data = "datos", cant, iter.max, nstart, algorithm)
+    codigo <- def.k.model(cant, iter.max, nstart, algorithm, centrar)
     shinyAce::updateAceEditor(session, "fieldCodeKModelo", value = codigo)
     
     tryCatch ({
@@ -938,7 +943,8 @@ shinyServer(function(input, output, session) {
         # Gráfico de K-medias (Horizontal)
         output$plot.khoriz = shiny::renderPlot({
           var    <- input$sel.Khoriz
-          codigo <- cluster.horiz(var, colores, F)
+          porc   <- input$checkKhoriz
+          codigo <- cluster.horiz(var, colores, F, porc)
           shinyAce::updateAceEditor(session, "fieldCodeKhoriz", value = codigo)
           tryCatch({
             grafico <- eval(parse(text = codigo))
@@ -952,7 +958,8 @@ shinyServer(function(input, output, session) {
         # Gráfico de K-medias (Vertical)
         output$plot.kvert = shiny::renderPlot({
           var    <- input$sel.Kvert
-          codigo <- cluster.vert(var, colores, F)
+          porc   <- input$checkKvert
+          codigo <- cluster.vert(var, colores, F, porc)
           shinyAce::updateAceEditor(session, "fieldCodeKvert", value = codigo)
           tryCatch({
             grafico <- eval(parse(text = codigo))
@@ -983,7 +990,8 @@ shinyServer(function(input, output, session) {
         #'
         output$plot.kcat = shiny::renderPlot({
           var    <- input$sel.Kbar
-          codigo <- cluster.cat(var, colores, F)
+          porc   <- input$checkKbar
+          codigo <- cluster.cat(var, colores, F, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeKbar", value = codigo)
           tryCatch({
             grafico <- eval(parse(text = codigo))

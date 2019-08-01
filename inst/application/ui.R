@@ -416,14 +416,16 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
         )
       ),
 
-      #Agrupaciones
+      #Clusterización Jerarquica
       shinydashboard::tabItem(tabName = "agrupacion", shinydashboard::tabBox(
         id = "tabjerar", width = NULL, title = tags$div(
-          class = "multiple-select-var",
+          class = "multiple-select-var", style = "width: 300px",
           lapply(c("Horiz", "Vert", "Bar"), function(i) {
             shiny::conditionalPanel(
               condition = paste0("input.tabjerar == 'tab", i, "'"),
-              shiny::selectInput(paste0("sel", i), NULL, ""))
+              column(width = 5, checkSwitch(paste0("check", i), NULL, "escalar")),
+              column(width = 7, shiny::selectInput(paste0("sel", i), NULL, ""))
+            )
           })
         ),
         shiny::tabPanel(
@@ -468,8 +470,11 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
           widths = c(100, 100, 100), heights = c(70, 50, 70),
           tabs.content = list(
             list(options.run("run.hc"), tags$hr(style = "margin-top: 0px;"),
-                 shiny::column(width = 9, shiny::sliderInput(
-                   "cant.cluster", labelInput("cantcluster"), 2, 10, 2),
+                 shiny::column(
+                   width = 9, 
+                   radioSwitch("cj.scale", NULL, c("centrar", "nocentrar")),
+                   shiny::sliderInput(
+                     "cant.cluster", labelInput("cantcluster"), 2, 10, 2),
                    shiny::selectInput(
                    "sel.dist.method",  labelInput("metododist"),
                    c("euclidean", "maximum", "manhattan", "canberra", 
@@ -518,11 +523,13 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
         tabName = "kmedias", shinydashboard::tabBox(
           id = "tabkmedias", width = NULL, title =
             tags$div(
-              class = "multiple-select-var",
+              class = "multiple-select-var", style = "width: 300px",
               lapply(c("Khoriz", "Kvert", "Kbar"), function(i) {
                 shiny::conditionalPanel(
                   condition = paste0("input.tabkmedias == 'tab", i, "'"),
-                  shiny::selectInput(paste0("sel.", i), NULL, ""))
+                  column(width = 5, checkSwitch(paste0("check", i), NULL, "escalar")),
+                  column(width = 7, shiny::selectInput(paste0("sel.", i), NULL, ""))
+                )
               })
             ),
           shiny::tabPanel(
@@ -571,8 +578,11 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
             tabs.content = list(
               list(
                 options.run("run.k"), tags$hr(style = "margin-top: 0px;"),
-                shiny::column(width = 9, shiny::sliderInput(
-                  "cant.kmeans.cluster", labelInput("cantcluster"), 2, 10, 2),
+                shiny::column(
+                  width = 9, 
+                  radioSwitch("k.scale", NULL, c("centrar", "nocentrar")),
+                  shiny::sliderInput(
+                    "cant.kmeans.cluster", labelInput("cantcluster"), 2, 10, 2),
                   shiny::column(width = 7, shiny::numericInput(
                     "num.nstart", labelInput("nstart"), 1, step = 10), 
                     shiny::numericInput(
@@ -666,7 +676,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
           icono = shiny::icon("info")
         ),
         infoBoxPROMiDAT(
-          labelInput("version"), "1.1.0", icono = shiny::icon("file-code-o"))
+          labelInput("version"), "1.2.0", icono = shiny::icon("file-code-o"))
       )
     ) #shinydashboard::tabItems
   ) #dashboardBody

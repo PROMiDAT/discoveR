@@ -78,6 +78,7 @@ cvc;Correlación Variables con los Componenetes;Correlation Variables with the C
 cp;Contribución de las variables Dim;Contribution of the variables Dim
 resultados;Resultados Numéricos;Numerical Results
 centrar;Centrar y Reducir;Center and Reduce
+escalar;Escalar;Scale
 nocentrar;Sin Centrar ni Reducir;Unfocused and Unreduced
 numerodim;Número de Dimensiones;Number of Dimentions
 selejes;Seleccionar Ejes:;Select Axes:
