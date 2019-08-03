@@ -676,7 +676,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
           icono = shiny::icon("info")
         ),
         infoBoxPROMiDAT(
-          labelInput("version"), "1.2.0", icono = shiny::icon("file-code-o"))
+          labelInput("version"), "1.2.1", icono = shiny::icon("file-code-o"))
       )
     ) #shinydashboard::tabItems
   ) #dashboardBody
