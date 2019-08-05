@@ -819,9 +819,13 @@ shinyServer(function(input, output, session) {
           codigo <- cluster.cat(var, colores, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeBar", value = codigo)
           tryCatch({
-            grafico <- eval(parse(text = codigo))
-            createLogCJ(nombre.datos, codigo, rep.hc, paste0("categoricas:", var))
-            return(grafico)
+            if(ncol(var.categoricas(datos)) > 0) {
+              grafico <- eval(parse(text = codigo))
+              createLogCJ(nombre.datos, codigo, rep.hc, paste0("categoricas:", var))
+              return(grafico)
+            } else {
+              mostrarError(e, n.cat = ncol(var.categoricas(datos)))
+            }
           }, error = function(e) {
             mostrarError(e, n.cat = ncol(var.categoricas(datos)))
           })
@@ -994,9 +998,13 @@ shinyServer(function(input, output, session) {
           codigo <- cluster.cat(var, colores, F, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeKbar", value = codigo)
           tryCatch({
-            grafico <- eval(parse(text = codigo))
-            createLogK(nombre.datos, codigo, rep.k, paste0("categoricas:", var))
-            return(grafico)
+            if(ncol(var.categoricas(datos)) > 0) {
+              grafico <- eval(parse(text = codigo))
+              createLogK(nombre.datos, codigo, rep.k, paste0("categoricas:", var))
+              return(grafico)
+            } else {
+              mostrarError(e, ncol(var.categoricas(datos)))
+            }
           }, error = function(e) {
             mostrarError(e, ncol(var.categoricas(datos)))
           })
