@@ -196,10 +196,10 @@ checkSwitch <- function(id, label = NULL, name) {
       tags$div(
         class = "btn-radiogroup",
         tags$button(
-          class = "btn radiobtn btn-radioswitch active",
+          class = "btn radiobtn btn-radioswitch",
           tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
           tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
-          tags$input(id=id, type="checkbox", checked = "checked", style = 
+          tags$input(id=id, type="checkbox", style = 
                        "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
           labelInput(name)
         )
@@ -208,7 +208,7 @@ checkSwitch <- function(id, label = NULL, name) {
   )
 }
 
-radioSwitch <- function(id, label = NULL, names, values = NULL) {
+radioSwitch <- function(id, label = NULL, names, values = NULL, val.def = T) {
   if(is.null(values)) values <- c(TRUE, FALSE) 
   tags$div(
     class = "form-group", `data-shinyjs-resettable-type`="RadioButtons", 
@@ -221,22 +221,38 @@ radioSwitch <- function(id, label = NULL, names, values = NULL) {
       tags$div(
         class = "btn-radiogroup",
         tags$button(
-          class = "btn radiobtn btn-radioswitch active",
+          class = ifelse(val.def, "btn radiobtn btn-radioswitch active", 
+                 "btn radiobtn btn-radioswitch"),
           tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
           tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
-          tags$input(type="radio", autocomplete="off", name=id, value=values[1], checked="checked",
-                     style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
+          
+          if(val.def) {
+            tags$input(type="radio", autocomplete="off", name=id, value=values[1], checked = "checked",
+                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
+          } else {
+            tags$input(type="radio", autocomplete="off", name=id, value=values[1],
+                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
+          },
+          
           labelInput(names[1])
         )
       ),
       tags$div(
         class = "btn-radiogroup", role = "group", 
         tags$button(
-          class = "btn radiobtn btn-radioswitch",
+          class = ifelse(val.def,"btn radiobtn btn-radioswitch", 
+                 "btn radiobtn btn-radioswitch active"),
           tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
           tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
-          tags$input(type="radio", autocomplete="off", name=id, value=values[2],
-                     style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
+          
+          if(val.def) {
+            tags$input(type="radio", autocomplete="off", name=id, value=values[2],
+                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
+          } else {
+            tags$input(type="radio", autocomplete="off", name=id, value=values[2], checked = "checked",
+                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
+          },
+          
           labelInput(names[2])
         )
       )
@@ -1119,7 +1135,8 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T, porc = T) {
       paste(colores, collapse = ","),")) +\n  ",
       "facet_wrap(~Cluster, labeller = label_both) +\n  ",
       "theme(text = element_text(size = 15)) +\n  ",
-      "labs(x = '', y = '') + guides(fill = F))"))
+      "labs(x = '', y = '') + guides(fill = F))"
+    ))
   } else {
     return(paste0(
       res, 
@@ -1128,7 +1145,8 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T, porc = T) {
       "geom_text(aes(label = paste0(..count.., '\n', scales::percent(..count../aux[..x..]))),\n", 
       "          stat = 'count', position = position_fill(vjust = 0.5)) +\n", 
       "coord_flip() + labs(y = '') +\n", 
-      "theme(axis.text.y = element_text(size = 16), axis.title.y = element_text(size = 20))"))
+      "theme(axis.text.y = element_text(size = 16), axis.title.y = element_text(size = 20)) + \n",
+      "scale_fill_brewer(palette = 'Dark2')"))
   }
 }
 

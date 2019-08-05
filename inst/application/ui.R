@@ -472,7 +472,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
             list(options.run("run.hc"), tags$hr(style = "margin-top: 0px;"),
                  shiny::column(
                    width = 9, 
-                   radioSwitch("cj.scale", NULL, c("centrar", "nocentrar")),
+                   radioSwitch("cj.scale", NULL, c("centrar", "nocentrar"), val.def = F),
                    shiny::sliderInput(
                      "cant.cluster", labelInput("cantcluster"), 2, 10, 2),
                    shiny::selectInput(
@@ -580,7 +580,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
                 options.run("run.k"), tags$hr(style = "margin-top: 0px;"),
                 shiny::column(
                   width = 9, 
-                  radioSwitch("k.scale", NULL, c("centrar", "nocentrar")),
+                  radioSwitch("k.scale", NULL, c("centrar", "nocentrar"), val.def = F),
                   shiny::sliderInput(
                     "cant.kmeans.cluster", labelInput("cantcluster"), 2, 10, 2),
                   shiny::column(width = 7, shiny::numericInput(
@@ -676,7 +676,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
           icono = shiny::icon("info")
         ),
         infoBoxPROMiDAT(
-          labelInput("version"), "1.2.1", icono = shiny::icon("file-code-o"))
+          labelInput("version"), "1.2.2", icono = shiny::icon("file-code-o"))
       )
     ) #shinydashboard::tabItems
   ) #dashboardBody
