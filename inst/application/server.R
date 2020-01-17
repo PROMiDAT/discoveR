@@ -328,7 +328,7 @@ shinyServer(function(input, output, session) {
       fisher <- tr("fisher")
       asimetria <- tr("asimetria")
       sketch = htmltools::withTags(table(
-        tags$thead(tags$tr(tags$th(), tags$th(fisher), tags$th(asimetria)))
+        tags$thead(tags$tr(tags$th(), tags$th(fisher), tags$th(asimetria), tags$th("P")))
       ))
       DT::datatable(
         res, selection = 'none', container = sketch,
@@ -489,7 +489,7 @@ shinyServer(function(input, output, session) {
     shinyAce::updateAceEditor(session, "fieldCodePCAModelo", value = codigo)
     
     if(!is.null(datos)) {
-      eval(parse(text = codigo))
+      pca.modelo <- ifelse(ncol(var.numericas(datos)) > 0, eval(parse(text = codigo)), NA)
       if(!is.null(pca.modelo)) {
         output$txtpca <- shiny::renderPrint(unclass(pca.modelo))
         createLogACP(nombre.datos, codigo, rep.acp, "modelo")

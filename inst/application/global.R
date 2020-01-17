@@ -616,10 +616,12 @@ default.calc.normal <- function(
   labelsi = "Positiva", labelno = "Negativa", 
   labelsin = "Sin Asimetría") {
   return(paste0(
-    "calc <- lapply(var.numericas(datos), function(i) fisher.calc(i)[1]) \n",
-    "calc <- as.data.frame(calc) \n",
-    "calc <- rbind(calc, lapply(calc, function(i) ifelse(i > 0, '", labelsi,
-    "',\n  ifelse(i < 0, '", labelno, "', '", labelsin, "')))) \n",
+    "calc <- lapply(var.numericas(datos), function(i) { \n",
+    "  f <- fisher.calc(i)[1] \n",
+    "  a <- ifelse(f > 0, '", labelsi, "', ifelse(f < 0, '", labelno, "', '", 
+    labelsin, "')) \n", 
+    "  c(f, a, nortest::pearson.test(i)$p.value) \n}) \n",
+    "calc <- as.data.frame(calc)  \n",
     "calc <- t(calc)\ncalc"))
 }
 
