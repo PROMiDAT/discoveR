@@ -613,14 +613,16 @@ default.normal <- function(vars = NULL, color = "#00FF22AA",
 }
 
 default.calc.normal <- function(
-  labelsi = "Positiva", labelno = "Negativa", 
-  labelsin = "Sin Asimetría") {
+  labelsi, labelno, labelsin, labelnormal, labelnonormal, 
+  alfa = 0.05, tipo = "pearson") {
   return(paste0(
     "calc <- lapply(var.numericas(datos), function(i) { \n",
     "  f <- fisher.calc(i)[1] \n",
-    "  a <- ifelse(f > 0, '", labelsi, "', ifelse(f < 0, '", labelno, "', '", 
-    labelsin, "')) \n", 
-    "  c(f, a, nortest::pearson.test(i)$p.value) \n}) \n",
+    "  test <- ", tipo, ".test(i)$p.value\n", 
+    "  a <- ifelse(f > 0, '", labelsi, "', ifelse(f < 0, '", labelno, 
+    "', '", labelsin, "')) \n", 
+    "  normal <- ifelse(test < ", alfa, ", '", labelnonormal, 
+    "', '", labelnormal, "')\n", "  c(f, a, test, normal) \n}) \n",
     "calc <- as.data.frame(calc)  \n",
     "calc <- t(calc)\ncalc"))
 }
