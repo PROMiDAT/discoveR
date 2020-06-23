@@ -1,7 +1,7 @@
 Title: Exploratory Data Analysis System
 Package: discoveR
 Type: Package
-Version: 1.2.4
+Version: 1.2.7
 Author: Oldemar Rodriguez R. with contributions from Diego Jimenez A. and Andres Navarro D.
 Maintainer: Oldemar Rodriguez <oldemar.rodriguez@ucr.ac.cr>
 Depends: R (>= 3.5)

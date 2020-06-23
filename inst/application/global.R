@@ -492,6 +492,7 @@ code.carga <- function(nombre.filas = T, ruta = NULL, separador = ";",
   }
   res <- paste0(
     "datos.originales <<- read.table('", ruta, "', header=", encabezado, 
+    ", stringsAsFactors = TRUE", 
     ", sep='", separador, "', dec = '", sep.decimal, "'", 
     ifelse(nombre.filas, ", row.names = 1", ""), ")")
   res <- paste0(res, "\n", code.NA(incluir.NA))
@@ -605,8 +606,8 @@ default.normal <- function(vars = NULL, color = "#00FF22AA",
       "hist(datos[, '", vars, "'], col = '", color, "', border=F, axes=F,\n",
       "  freq = F, ylim = range(0, max(values)), ylab = '', \n",
       "  main = '", vars, "') \n",
-      "axis(1, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025) \n",
-      "axis(2, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025) \n",
+      "axis(1, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025)\n",
+      "axis(2, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025)\n",
       "curve(dnorm(x, mean = promedio, sd = desviacion), add=T, col='blue', lwd=2)\n",
       "legend('bottom', legend = '", labelcurva, "', col = 'blue', lty=1, cex=1.5)"))
   }
@@ -623,8 +624,7 @@ default.calc.normal <- function(
     "', '", labelsin, "')) \n", 
     "  normal <- ifelse(test < ", alfa, ", '", labelnonormal, 
     "', '", labelnormal, "')\n", "  c(f, a, test, normal) \n}) \n",
-    "calc <- as.data.frame(calc)  \n",
-    "calc <- t(calc)\ncalc"))
+    "calc <- as.data.frame(calc)  \ncalc <- t(calc)\ncalc"))
 }
 
 #' Funciones Dispersión
@@ -850,10 +850,10 @@ centros.total <- function(DF) {
   apply(DF, 2, mean)
 }
 
-calc.inercia <- function(total, individuo){
+calc.inercia <- function(total, individuo) {
   return(inercia(0, 1, total, individuo))
 }
-inercia <- function(suma, i, total, individuo){
+inercia <- function(suma, i, total, individuo) {
   if(i > length(total)){
     return(as.double(suma))
   }

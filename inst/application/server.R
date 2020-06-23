@@ -12,9 +12,9 @@ shinyServer(function(input, output, session) {
         info = "", emptyTable = "", zeroRecords = "",
         paginate = list(
           "previous" = shiny::HTML('<i class="fa fa-backward"></i>'),
-          "next" = shiny::HTML('<i class="fa fa-forward"></i>'),
-          "first" =shiny::HTML('<i class="fa fa-fast-backward"></i>'), 
-          "last" = shiny::HTML('<i class="fa fa-fast-forward"></i>')))
+          "next"     = shiny::HTML('<i class="fa fa-forward"></i>'),
+          "first"    = shiny::HTML('<i class="fa fa-fast-backward"></i>'), 
+          "last"     = shiny::HTML('<i class="fa fa-fast-forward"></i>')))
     )
   )
 
