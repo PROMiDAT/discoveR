@@ -13,11 +13,7 @@
 init_discover <- function() {
   rm(envir = .GlobalEnv, list = ls(envir = .GlobalEnv))
   Sys.setenv("LANGUAGE" = "ES")
-  if(toupper(.Platform$OS.type) != "WINDOWS") {
-    options(encoding = "utf8")
-  } else {
-    options(encoding = "UTF-8")
-  }
+  options(encoding = "utf8")
   shiny::runApp(appDir = system.file("application", package = "discoveR"), 
                 launch.browser = TRUE)
 }

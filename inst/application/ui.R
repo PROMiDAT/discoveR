@@ -146,12 +146,9 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
       #test de Normalidad
       shinydashboard::tabItem(tabName = "normalidad", shinydashboard::tabBox(
         id = "BoxNormal", width = NULL, title =
-          shiny::conditionalPanel(
-            "input.BoxNormal == 'tabNormalPlot'",
-            tags$div(
-              class = "multiple-select-var",
-              shiny::selectInput(inputId = "sel.normal", label = NULL, choices = "")
-            )
+          tags$div(
+            class = "multiple-select-var",
+            shiny::selectInput(inputId = "sel.normal", label = NULL, choices =  "")
           ),
         shiny::tabPanel(
           title = labelInput("plotnormal"), value = "tabNormalPlot",
@@ -161,31 +158,19 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
           DT::DTOutput('calculo.normal')),
         tabsOptions(heights = c(50, 50, 100), tabs.content = list(
           list(shiny::h4(labelInput("opciones")), shiny::hr(),
-               shiny::conditionalPanel(
-                 "input.BoxNormal == 'tabNormalPlot'",
-                 colourpicker::colourInput(
-                   "col.normal", labelInput("selcolor"),
-                   value = "#00FF22AA", allowTransparent = T)
-               ),
-               shiny::conditionalPanel(
-                 "input.BoxNormal == 'tabNormalCalc'",
-                 selectInput("test.tipo", "Tipo de Test", width = "100%",
-                             list("Pearson" = "pearson", "Lilliefors" = "lillie",
-                                  "Cramer-von Mises" = "cvm")),
-                 sliderInput("test.alfa", "Nivel de Significancia (alfa):", 0.05, 0.95, 0.05, 0.05)
-               )
-          ),
+               colourpicker::colourInput(
+                 "col.normal", labelInput("selcolor"),
+                 value = "#00FF22AA", allowTransparent = T)),
           list(
             shiny::conditionalPanel(
               "input.BoxNormal == 'tabNormalPlot'",
-              codigo.monokai("fieldCodeNormal", height = "25vh")
-            ),
+              codigo.monokai("fieldCodeNormal", height = "25vh")),
             shiny::conditionalPanel(
               "input.BoxNormal == 'tabNormalCalc'",
-              codigo.monokai("fieldCalcNormal", height = "25vh")
-            ))
-        ))
-      )),
+              codigo.monokai("fieldCalcNormal", height = "20vh")))
+          ))
+        )
+      ),
 
       #Dispersión
       shinydashboard::tabItem(
@@ -487,7 +472,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
             list(options.run("run.hc"), tags$hr(style = "margin-top: 0px;"),
                  shiny::column(
                    width = 9, 
-                   radioSwitch("cj.scale", NULL, c("centrar", "nocentrar"), val.def = F),
+                   radioSwitch("cj.scale", NULL, c("centrar", "nocentrar")),
                    shiny::sliderInput(
                      "cant.cluster", labelInput("cantcluster"), 2, 10, 2),
                    shiny::selectInput(
@@ -595,7 +580,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
                 options.run("run.k"), tags$hr(style = "margin-top: 0px;"),
                 shiny::column(
                   width = 9, 
-                  radioSwitch("k.scale", NULL, c("centrar", "nocentrar"), val.def = F),
+                  radioSwitch("k.scale", NULL, c("centrar", "nocentrar")),
                   shiny::sliderInput(
                     "cant.kmeans.cluster", labelInput("cantcluster"), 2, 10, 2),
                   shiny::column(width = 7, shiny::numericInput(
@@ -691,7 +676,7 @@ shinyUI(shinydashboardPlus::dashboardPagePlus(
           icono = shiny::icon("info")
         ),
         infoBoxPROMiDAT(
-          labelInput("version"), "1.2.7", icono = shiny::icon("file-code-o"))
+          labelInput("version"), "1.2.8", icono = shiny::icon("file-code-o"))
       )
     ) #shinydashboard::tabItems
   ) #dashboardBody
