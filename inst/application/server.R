@@ -12,9 +12,9 @@ shinyServer(function(input, output, session) {
         info = "", emptyTable = "", zeroRecords = "",
         paginate = list(
           "previous" = shiny::HTML('<i class="fa fa-backward"></i>'),
-          "next"     = shiny::HTML('<i class="fa fa-forward"></i>'),
-          "first"    = shiny::HTML('<i class="fa fa-fast-backward"></i>'), 
-          "last"     = shiny::HTML('<i class="fa fa-fast-forward"></i>')))
+          "next" = shiny::HTML('<i class="fa fa-forward"></i>'),
+          "first" =shiny::HTML('<i class="fa fa-fast-backward"></i>'), 
+          "last" = shiny::HTML('<i class="fa fa-fast-forward"></i>')))
     )
   )
 
@@ -318,21 +318,17 @@ shinyServer(function(input, output, session) {
   #'
   output$calculo.normal = DT::renderDT({
     datos <- updateData$datos
-    labelpos <-      tr("positivo")
-    labelneg <-      tr("negativo")
-    labelsin <-      tr("sinasimetria")
-    labelnormal <-   tr("normal")
-    labelnonormal <- tr("nonormal")
-    codigo <- default.calc.normal(
-      labelpos, labelneg, labelsin, labelnormal, labelnonormal, 
-      input$test.alfa, input$test.tipo)
+    labelpos <- tr("positivo")
+    labelneg <- tr("negativo")
+    labelsin <- tr("sinasimetria")
+    codigo <- default.calc.normal(labelpos, labelneg, labelsin)
     tryCatch({
       res <- shiny::isolate(eval(parse(text = codigo)))
       shinyAce::updateAceEditor(session, "fieldCalcNormal", value = codigo)
       fisher <- tr("fisher")
       asimetria <- tr("asimetria")
       sketch = htmltools::withTags(table(
-        tags$thead(tags$tr(tags$th(), tags$th(fisher), tags$th(asimetria), tags$th("P"), tags$th("Normal")))
+        tags$thead(tags$tr(tags$th(), tags$th(fisher), tags$th(asimetria)))
       ))
       DT::datatable(
         res, selection = 'none', container = sketch,
@@ -492,128 +488,124 @@ shinyServer(function(input, output, session) {
     
     shinyAce::updateAceEditor(session, "fieldCodePCAModelo", value = codigo)
     
-    tryCatch({
-      if(!is.null(datos)) {
-        eval(parse(text = codigo))
-        if(!is.null(pca.modelo)) {
-          output$txtpca <- shiny::renderPrint(unclass(pca.modelo))
-          createLogACP(nombre.datos, codigo, rep.acp, "modelo")
-          updateSelectInput(session, "pc1.dim", choices = 1:dimensiones)
+    if(!is.null(datos)) {
+      eval(parse(text = codigo))
+      if(!is.null(pca.modelo)) {
+        output$txtpca <- shiny::renderPrint(unclass(pca.modelo))
+        createLogACP(nombre.datos, codigo, rep.acp, "modelo")
+        updateSelectInput(session, "pc1.dim", choices = 1:dimensiones)
         
-          # Gráfico PCA Individuos
-          output$plot.ind = shiny::renderPlot({
-            codigo <- pca.individuos(ind.cos, ind.col, ejes)
-            shinyAce::updateAceEditor(session, "fieldCodeInd", value = codigo)
-            tryCatch({
-              grafico.ind <<- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp,
-                           paste0("repcaind=ejes:(", ejes, ");cosind:", ind.cos))
-              return(grafico.ind)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        # Gráfico PCA Individuos
+        output$plot.ind = shiny::renderPlot({
+          codigo <- pca.individuos(ind.cos, ind.col, ejes)
+          shinyAce::updateAceEditor(session, "fieldCodeInd", value = codigo)
+          tryCatch({
+            grafico.ind <<- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp,
+                         paste0("repcaind=ejes:(", ejes, ");cosind:", ind.cos))
+            return(grafico.ind)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          # Gráfico PCA Variables
-          output$plot.var = shiny::renderPlot({
-            codigo <- pca.variables(var.cos, var.col, ejes)
-            shinyAce::updateAceEditor(session, "fieldCodeVar", value = codigo)
-            tryCatch({
-              grafico <- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp,
-                           paste0("repcavar=ejes:(", ejes, ");cosvar:", var.cos))
-              return(grafico)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        # Gráfico PCA Variables
+        output$plot.var = shiny::renderPlot({
+          codigo <- pca.variables(var.cos, var.col, ejes)
+          shinyAce::updateAceEditor(session, "fieldCodeVar", value = codigo)
+          tryCatch({
+            grafico <- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp,
+                         paste0("repcavar=ejes:(", ejes, ");cosvar:", var.cos))
+            return(grafico)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          # Gráfico PCA Sobreposición
-          output$plot.biplot = shiny::renderPlot({
-            codigo <- pca.sobreposicion(ind.cos, var.cos, ind.col, var.col, ejes)
-            shinyAce::updateAceEditor(session, "fieldCodeBi", value = codigo)
-            tryCatch({
-              grafico.bi <<- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp, paste0(
-                "repcabi=ejes:(", ejes, ");cosvar:", var.cos, ";cosind:", ind.cos))
-              return(grafico.bi)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        # Gráfico PCA Sobreposición
+        output$plot.biplot = shiny::renderPlot({
+          codigo <- pca.sobreposicion(ind.cos, var.cos, ind.col, var.col, ejes)
+          shinyAce::updateAceEditor(session, "fieldCodeBi", value = codigo)
+          tryCatch({
+            grafico.bi <<- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp, paste0(
+              "repcabi=ejes:(", ejes, ");cosvar:", var.cos, ";cosind:", ind.cos))
+            return(grafico.bi)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          #' Gráfico de PCA (Varianza Explicada para cada Eje)
-          output$plotVEE = shiny::renderPlot({
-            codigo <- code.pca.vee(tr("vee"), tr("dimensiones"), tr("porcvee"))
-            shinyAce::updateAceEditor(session, "fieldCodeVEE", value = codigo)
-            tryCatch({
-              grafico <- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp, "vee")
-              return(grafico)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        #' Gráfico de PCA (Varianza Explicada para cada Eje)
+        output$plotVEE = shiny::renderPlot({
+          codigo <- code.pca.vee(tr("vee"), tr("dimensiones"), tr("porcvee"))
+          shinyAce::updateAceEditor(session, "fieldCodeVEE", value = codigo)
+          tryCatch({
+            grafico <- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp, "vee")
+            return(grafico)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          #' Gráfico de PCA (Cosenos Cuadrados de los individuos)
-          output$plotCCI = shiny::renderPlot({
-            codigo <- code.pca.cci(tr("cci"), tr("calidadcos"))
-            shinyAce::updateAceEditor(session, "fieldCodeCCI", value = codigo)
-            tryCatch({
-              grafico <- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp, "cci")
-              return(grafico)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        #' Gráfico de PCA (Cosenos Cuadrados de los individuos)
+        output$plotCCI = shiny::renderPlot({
+          codigo <- code.pca.cci(tr("cci"), tr("calidadcos"))
+          shinyAce::updateAceEditor(session, "fieldCodeCCI", value = codigo)
+          tryCatch({
+            grafico <- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp, "cci")
+            return(grafico)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          #' Gráfico de PCA (Cosenos Cuadrados de las Variables)
-          output$plotCCV = shiny::renderPlot({
-            codigo <- code.pca.ccv(tr("ccv"), tr("calidadcos"))
-            shinyAce::updateAceEditor(session, "fieldCodeCCV", value = codigo)
-            tryCatch({
-              grafico <- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp, "ccv")
-              return(grafico)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        #' Gráfico de PCA (Cosenos Cuadrados de las Variables)
+        output$plotCCV = shiny::renderPlot({
+          codigo <- code.pca.ccv(tr("ccv"), tr("calidadcos"))
+          shinyAce::updateAceEditor(session, "fieldCodeCCV", value = codigo)
+          tryCatch({
+            grafico <- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp, "ccv")
+            return(grafico)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          #' Gráfico de PCA (Correlación Variables con los Componenetes)
-          output$plotCVC = shiny::renderPlot({
-            codigo <- code.pca.cvp(input$cvc.metodo, tr("cvc"))
-            shinyAce::updateAceEditor(session, "fieldCodeCVC", value = codigo)
-            tryCatch({
-              grafico <- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp, "cvc")
-              return(grafico)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        #' Gráfico de PCA (Correlación Variables con los Componenetes)
+        output$plotCVC = shiny::renderPlot({
+          codigo <- code.pca.cvp(input$cvc.metodo, tr("cvc"))
+          shinyAce::updateAceEditor(session, "fieldCodeCVC", value = codigo)
+          tryCatch({
+            grafico <- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp, "cvc")
+            return(grafico)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-          #' Gráfico de PCA (Contribución de las variables de la Dimensión)
-          output$plotPC1 = shiny::renderPlot({
-            dim <- input$pc1.dim
-            codigo <- code.pca.pc1(tr("cp"), tr("contribucion"), dim)
-            shinyAce::updateAceEditor(session, "fieldCodePC1", value = codigo)
-            tryCatch({
-              grafico <- eval(parse(text = codigo))
-              createLogACP(nombre.datos, codigo, rep.acp, paste0("cp:", dim))
-              return(grafico)
-            }, error = function(e) {
-              mostrarError(e, ncol(var.numericas(datos)))
-            })
+        #' Gráfico de PCA (Contribución de las variables de la Dimensión)
+        output$plotPC1 = shiny::renderPlot({
+          dim <- input$pc1.dim
+          codigo <- code.pca.pc1(tr("cp"), tr("contribucion"), dim)
+          shinyAce::updateAceEditor(session, "fieldCodePC1", value = codigo)
+          tryCatch({
+            grafico <- eval(parse(text = codigo))
+            createLogACP(nombre.datos, codigo, rep.acp, paste0("cp:", dim))
+            return(grafico)
+          }, error = function(e) {
+            mostrarError(e, ncol(var.numericas(datos)))
           })
+        })
         
-         updateData$pca.modelo <- pca.modelo
-        }
+        updateData$pca.modelo <- pca.modelo
       }
-    }, error = function(e) {
-      mostrarError(e, ncol(var.numericas(datos)))
-    })
+    }
   })
   
   observeEvent(input$slider.npc, {
@@ -827,13 +819,9 @@ shinyServer(function(input, output, session) {
           codigo <- cluster.cat(var, colores, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeBar", value = codigo)
           tryCatch({
-            if(ncol(var.categoricas(datos)) > 0) {
-              grafico <- eval(parse(text = codigo))
-              createLogCJ(nombre.datos, codigo, rep.hc, paste0("categoricas:", var))
-              return(grafico)
-            } else {
-              mostrarError(e, n.cat = ncol(var.categoricas(datos)))
-            }
+            grafico <- eval(parse(text = codigo))
+            createLogCJ(nombre.datos, codigo, rep.hc, paste0("categoricas:", var))
+            return(grafico)
           }, error = function(e) {
             mostrarError(e, n.cat = ncol(var.categoricas(datos)))
           })
@@ -916,7 +904,7 @@ shinyServer(function(input, output, session) {
         updateData$k.modelo <- k.modelo
         updateinitSelects("sel.Khoriz", 1:cant)
         output$txtk <- shiny::renderPrint(print(unclass(k.modelo)))
-        rep.k <- c(cant, iter.max, nstart, algorithm)
+        rep.k <- c(cant, iter.max, nstart, algorithm) 
         createLogK(nombre.datos, codigo, rep.k, "modelo")
         
         # Gráfico de K-medias (Inercia)
@@ -1006,13 +994,9 @@ shinyServer(function(input, output, session) {
           codigo <- cluster.cat(var, colores, F, porc = porc)
           shinyAce::updateAceEditor(session, "fieldCodeKbar", value = codigo)
           tryCatch({
-            if(ncol(var.categoricas(datos)) > 0) {
-              grafico <- eval(parse(text = codigo))
-              createLogK(nombre.datos, codigo, rep.k, paste0("categoricas:", var))
-              return(grafico)
-            } else {
-              mostrarError(e, ncol(var.categoricas(datos)))
-            }
+            grafico <- eval(parse(text = codigo))
+            createLogK(nombre.datos, codigo, rep.k, paste0("categoricas:", var))
+            return(grafico)
           }, error = function(e) {
             mostrarError(e, ncol(var.categoricas(datos)))
           })

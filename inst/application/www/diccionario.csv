@@ -2,9 +2,9 @@ key;es;en
 idioma;Idioma;Language
 selidioma;Seleccionar Idioma:;Select Language
 data;Datos;Data
-basico;Estadísticas Básicas;Basic Statistics
+basico;Estadisticas Basicas;Basic Statistics
 acp;ACP;PCA
-jerarquico;Cluster Jerárquico;Hierarchical Clustering
+jerarquico;Cluster Jerarquico;Hierarchical Clustering
 kmedias;K-Medias;K-Means
 inercia;Inercia;Inertia
 inerciaintra;Inercia Intra-Clase;Inertia Intra-Class
@@ -21,7 +21,7 @@ coma;Coma;Comma
 puntocoma;Punto y coma;Semicolon
 tab;Espacio;Tab
 separadordec;Separador Decimal;Decimal Separator
-eliminana;Acción para Datos Ausentes(NAs);Action for Missing Data(NAs)
+eliminana;Accion para Datos Ausentes(NAs);Action for Missing Data(NAs)
 eliminar;Eliminar;Delete
 imputar;Imputar;Impute
 jambu;Jambu;Jambu
@@ -33,25 +33,25 @@ cargarchivo;Cargar Archivo;Load Archive
 subir;Subir;Upload
 descarga;Descargar Datos;Download Data
 buscar;Buscar:;Search:
-numerico;Numérico;Numeric
-numericas;Numéricas;Numericals
-categorico;Categórico;Categorical
-categoricas;Categóricas;Categoricals
+numerico;Numerico;Numeric
+numericas;Numericas;Numericals
+categorico;Categorico;Categorical
+categoricas;Categoricas;Categoricals
 disyuntivo;Disyuntivo;Disjunctive
 variables;Variables;Variables
 tipo;Tipo;Type
 activa;Activa;Active
 aplicar;Aplicar;Apply
-resumen;Resumen Numérico;Numeric Summary
+resumen;Resumen Numerico;Numeric Summary
 normalidad;Test de Normalidad;Normality Test
-dispersion;Dispersión;Scatter Plot
+dispersion;Dispersion;Scatter Plot
 distribuciones;Distribuciones;Distributions
-distribucion;Distribución;Distribution
-correlacion;Correlación;Correlation
-resumenvar;Resumen Numérico por Variable;Numeric Summary by Variable
+distribucion;Distribucion;Distribution
+correlacion;Correlacion;Correlation
+resumenvar;Resumen Numerico por Variable;Numeric Summary by Variable
 selvar;Seleccionar Variable:;Select Variable:
 selvars;Seleccionar Variables:;Select Variables:
-plotnormal;Gráfico Normalidad;Normal Plot
+plotnormal;Grafico Normalidad;Normal Plot
 titulonormal;Test de normalidad de;Normal Plot of
 curvanormal;Curva Normal;Normal Curve
 densidad;Densidad;Density
@@ -59,28 +59,28 @@ opciones;Opciones;Options
 selcolor;Seleccionar Color:;Select Color:
 selcolores;Seleccionar Colores:;Select Colors:
 ejecutar;Ejecutar;Run
-titulodistribucion;Distribución y Atipicidad de;Distribution and Atipicity of
-codigo;Código;Code
+titulodistribucion;Distribucion y Atipicidad de;Distribution and Atipicity of
+codigo;Codigo;Code
 funciones;Funciones;Functions
-codigodistnum;Grafico de la Distribución (Numéricas);Distribution Plot (Numerical)
-codigodistcat;Grafico de la Distribución (Categóricas);Distribution Plot (Categorical)
+codigodistnum;Grafico de la Distribucion (Numericas);Distribution Plot (Numerical)
+codigodistcat;Grafico de la Distribucion (Categoricas);Distribution Plot (Categorical)
 cantidadcasos;Cantidad de Casos;Number of Cases
-categorias;Categorías;Categories
-selmetodo;Seleccionar Método:;Select Method:
+categorias;Categorias;Categories
+selmetodo;Seleccionar Metodo:;Select Method:
 seltipo;Seleccionar Tipo:;Select Type:
 individuos;Individuos;Individuals
-sobreposicion;Sobreposición;Overlaying
-ayudacp;Ayuda Interpretación; Interpretation Help
+sobreposicion;Sobreposicion;Overlaying
+ayudacp;Ayuda Interpretacion; Interpretation Help
 vee;Varianza Explicada por cada Eje;Variance Explained for each Axis
 cci;Cosenos Cuadrados de los Individuos;Square Cosines of Individuals
 ccv;Cosenos Cuadrados de las Variables;Square Cosines of Variables
-cvc;Correlación Variables con los Componenetes;Correlation Variables with the Componenetes
-cp;Contribución de las variables Dim;Contribution of the variables Dim
-resultados;Resultados Numéricos;Numerical Results
+cvc;Correlacion Variables con los Componenetes;Correlation Variables with the Componenetes
+cp;Contribucion de las variables Dim;Contribution of the variables Dim
+resultados;Resultados Numericos;Numerical Results
 centrar;Centrar y Reducir;Center and Reduce
 escalar;Escalar;Scale
 nocentrar;Sin Centrar ni Reducir;Unfocused and Unreduced
-numerodim;Número de Dimensiones;Number of Dimentions
+numerodim;Numero de Dimensiones;Number of Dimentions
 selejes;Seleccionar Ejes:;Select Axes:
 cosind;Coseno de los Individuos:;Cosines of Individuals:
 cosvar;Coseno de las Variables:;Cosines of Variables:
@@ -91,18 +91,18 @@ mapa;Mapa;Map
 horizontal;Horizontal;Horizontal
 vertical;Vertical;Vertical
 radar;Radar;Radar
-interpretacioncat;Interpretación Categórico;Categorical Interpretation
-cantcluster;Cantidad de Clústers:;Number of Clusters:
-numcluster;Número de Clusters;Number of Clusters
-metcluster;Método Número de Clusters:;Method Number of Clusters:
-indiceagrega;Índice de Agregación:;Aggregation Index:
-metododist;Método para la Distancia:;Distance Method:
-agregarcluster;Agregar Clústers a Tabla de Datos;Add Clusters to Dataset 
+interpretacioncat;Interpretacion Categorico;Categorical Interpretation
+cantcluster;Cantidad de Clusters:;Number of Clusters:
+numcluster;Numero de Clusters;Number of Clusters
+metcluster;Metodo Numero de Clusters:;Method Number of Clusters:
+indiceagrega;indice de Agregacion:;Aggregation Index:
+metododist;Metodo para la Distancia:;Distance Method:
+agregarcluster;Agregar Clusters a Tabla de Datos;Add Clusters to Dataset 
 todos;Todos;All
 jambu;Codo de Jambu;Jambu Elbow
 kiter;Cantidad de iteraciones para K;Number of iterations to K
 nstart;Ejecuciones en Formas Fuertes:;Executions in Strong Forms:
-niter;Número de Iteraciones:;Number of Iterations:
+niter;Numero de Iteraciones:;Number of Iterations:
 algoritmo;Algoritmo:;Algorithm:
 tituloreporte;Reporte;Report
 titulo;Digite el Titulo:;Enter the Title:
@@ -110,59 +110,57 @@ nombre;Digite su nombre:;Enter your Name:
 descargar;Descargar;Download
 salida;Salida R;R Output 
 copyright;TODOS LOS DERECHOS RESERVADOS A;ALL RIGHTS RESERVED TO
-info;MÁS INFORMACIÓN;MORE INFORMATION
-version;VERSIÓN DEL SISTEMA;SYSTEM VERSION
+info;MaS INFORMACIoN;MORE INFORMATION
+version;VERSIoN DEL SISTEMA;SYSTEM VERSION
 siguiente;Siguiente;Next
 anterior;Anterior;Previous
 primero;Primero;First
 ultimo;Ultimo;Last
 nodata;No hay datos disponibles;No data available in table
-codedist;Gráfico de la Distribución;Distribution Plot
-codecentros;Cálculo de los Centros;Calculation of Centers
-codehoriz;Gráfica todas las variables en Horizontal;Plot all the variables in Horizontal
-codevert;Gráfica todas las variables en Vertical;Plot all the variables in Vertical
-coderadar;Gráfica todas las variables en radar;Plot all the variables in Radar
-codejambu;Cálculo del Codo de Jambu;Calculation of Jambu Elbow
+codedist;Grafico de la Distribucion;Distribution Plot
+codecentros;Calculo de los Centros;Calculation of Centers
+codehoriz;Grafica todas las variables en Horizontal;Plot all the variables in Horizontal
+codevert;Grafica todas las variables en Vertical;Plot all the variables in Vertical
+coderadar;Grafica todas las variables en radar;Plot all the variables in Radar
+codejambu;Calculo del Codo de Jambu;Calculation of Jambu Elbow
 q1;Primer Cuartil;First Quartile
 mediana;Mediana;Median
 q3;Tercer Cuartil;Third Quartile
-minimo;Mínimo;Minimum
+minimo;Minimo;Minimum
 promedio;Promedio;Mean
-maximo;Máximo;Maximum
-ds;Desviación Estandar;Standard deviation
+maximo;Maximo;Maximum
+ds;Desviacion Estandar;Standard deviation
 dimensiones;Dimensiones;Dimensions
 porcvee;Porcentaje de Varianzas Explicadas;Percentage of Variances Explained
-calidadcos;Cos2 - Calidad de la Representación;Cos2 - Quality of Representation
+calidadcos;Cos2 - Calidad de la Representacion;Cos2 - Quality of Representation
 contribucion;Contribuciones (%);Contributions (%)
 positivo;Positivo;Positive
 negativo;Negativo;Negative
-sinasimetria;Sin Asimetría;Without Asymmetry
-normal;Sigue la normal;Normal
-nonormal;No sigue la normal;Non-normal
-fisher;Cálculo de Fisher;Fisher's calculation
-asimetria;Asimetría;Asymmetry
-msjclusters;Los clústeres fueron correctamente agregados.;The clusters were added correctly.
-reptransformar;Transformación de Datos;Data Transformation
-repeliminacion;Eliminación de Variables;Elimination of Variables
+sinasimetria;Sin Asimetria;Without Asymmetry
+fisher;Calculo de Fisher;"Fisher's calculation"
+asimetria;Asimetria;Asymmetry
+msjclusters;Los clusteres fueron correctamente agregados.;The clusters were added correctly.
+reptransformar;Transformacion de Datos;Data Transformation
+repeliminacion;Eliminacion de Variables;Elimination of Variables
 repmodelo;Modelo ACP;PCA Model
-rephc;Clusterización Jerarquica;Hierarchical Clusterization
+rephc;Clusterizacion Jerarquica;Hierarchical Clusterization
 repcor;Matriz de Correlaciones;Correlation Matrix
 repcaind;Plano Principal;Main Plane
 repcavar;Circulo de Correlaciones;Correlation Circle
-repcabi;Sobreposición del Circulo y el Plano;Overlap of the Circle and the Plane
-rephoriz;Interpretación Horizontal;Horizontal Interpretation
-repvert;Interpretación Vertical;Vertical Interpretation
-repradar;Gráfico Radar;Radar Plot
-repcat;Interpretación Variables Categóricas;Interpretation of Categorical Variables
-repinter;Retroalimentación;Feedback
-distancia;Método Distancia:;Distance Method:
-metodo;Método:;Method:
+repcabi;Sobreposicion del Circulo y el Plano;Overlap of the Circle and the Plane
+rephoriz;Interpretacion Horizontal;Horizontal Interpretation
+repvert;Interpretacion Vertical;Vertical Interpretation
+repradar;Grafico Radar;Radar Plot
+repcat;Interpretacion Variables Categoricas;Interpretation of Categorical Variables
+repinter;Retroalimentacion;Feedback
+distancia;Metodo Distancia:;Distance Method:
+metodo;Metodo:;Method:
 iter;Iteraciones:;Iterations:
 coseno;Coseno:;Cosine:
 ejes;Ejes:;Axes:
 repcosind;Coseno Individuos:;Individuals Cosine:
 repcosvar;Coseno Variables:;Variables Cosine:
 repdim;Dimensiones:;Dimentions:
-codreporte;Código del Reporte;Report Code
-errornum;Se necesitan variables numéricas  para esta parte.;You need numerical variables for this part.
-errorcat;Se necesitan variables categóricas  para esta parte.;You need categorical variables for this part.
+codreporte;Codigo del Reporte;Report Code
+errornum;Se necesitan variables numericas  para esta parte.;You need numerical variables for this part.
+errorcat;Se necesitan variables categoricas  para esta parte.;You need categorical variables for this part.
