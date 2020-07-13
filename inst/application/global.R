@@ -475,7 +475,7 @@ code.carga <- function(nombre.filas = T, ruta = NULL, separador = ";",
     ruta <- gsub("\\", "/", ruta, fixed = T)
   }
   res <- paste0(
-    "datos.originales <<- read.table('", ruta, "', header=", encabezado, 
+    "datos.originales <<- read.table(stringsAsFactors = T, '", ruta, "', header=", encabezado, 
     ", sep='", separador, "', dec = '", sep.decimal, "'", 
     ifelse(nombre.filas, ", row.names = 1", ""), ")")
   res <- paste0(res, "\n", code.NA(incluir.NA))
