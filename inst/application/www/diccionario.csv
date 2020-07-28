@@ -137,9 +137,7 @@ contribucion;Contribuciones (%);Contributions (%)
 positivo;Positivo;Positive
 negativo;Negativo;Negative
 sinasimetria;Sin Asimetría;Without Asymmetry
-normal;Sigue la normal;Normal
-nonormal;No sigue la normal;Non-normal
-fisher;Cálculo de Fisher;Fisher's calculation
+fisher;Cálculo de Fisher;"Fisher's calculation"
 asimetria;Asimetría;Asymmetry
 msjclusters;Los clústeres fueron correctamente agregados.;The clusters were added correctly.
 reptransformar;Transformación de Datos;Data Transformation

@@ -37,7 +37,7 @@ tr <- function(text) {
   sapply(text, function(s) {
     elem <- ifelse(is.null(translation[[s]][[input$idioma]]), s, 
                    translation[[s]][[input$idioma]])
-    Encoding(elem) <- enc
+    Encoding(elem) <- "utf8"
     elem
   }, USE.NAMES = F)
 }
@@ -196,10 +196,10 @@ checkSwitch <- function(id, label = NULL, name) {
       tags$div(
         class = "btn-radiogroup",
         tags$button(
-          class = "btn radiobtn btn-radioswitch",
+          class = "btn radiobtn btn-radioswitch active",
           tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
           tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
-          tags$input(id=id, type="checkbox", style = 
+          tags$input(id=id, type="checkbox", checked = "checked", style = 
                        "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
           labelInput(name)
         )
@@ -208,7 +208,7 @@ checkSwitch <- function(id, label = NULL, name) {
   )
 }
 
-radioSwitch <- function(id, label = NULL, names, values = NULL, val.def = T) {
+radioSwitch <- function(id, label = NULL, names, values = NULL) {
   if(is.null(values)) values <- c(TRUE, FALSE) 
   tags$div(
     class = "form-group", `data-shinyjs-resettable-type`="RadioButtons", 
@@ -221,38 +221,22 @@ radioSwitch <- function(id, label = NULL, names, values = NULL, val.def = T) {
       tags$div(
         class = "btn-radiogroup",
         tags$button(
-          class = ifelse(val.def, "btn radiobtn btn-radioswitch active", 
-                 "btn radiobtn btn-radioswitch"),
+          class = "btn radiobtn btn-radioswitch active",
           tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
           tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
-          
-          if(val.def) {
-            tags$input(type="radio", autocomplete="off", name=id, value=values[1], checked = "checked",
-                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
-          } else {
-            tags$input(type="radio", autocomplete="off", name=id, value=values[1],
-                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
-          },
-          
+          tags$input(type="radio", autocomplete="off", name=id, value=values[1], checked="checked",
+                     style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
           labelInput(names[1])
         )
       ),
       tags$div(
         class = "btn-radiogroup", role = "group", 
         tags$button(
-          class = ifelse(val.def,"btn radiobtn btn-radioswitch", 
-                 "btn radiobtn btn-radioswitch active"),
+          class = "btn radiobtn btn-radioswitch",
           tags$span(class = "radio-btn-icon-yes", tags$i(class="glyphicon glyphicon-ok")),
           tags$span(class = "radio-btn-icon-no", tags$i(class="glyphicon glyphicon-remove")),
-          
-          if(val.def) {
-            tags$input(type="radio", autocomplete="off", name=id, value=values[2],
-                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
-          } else {
-            tags$input(type="radio", autocomplete="off", name=id, value=values[2], checked = "checked",
-                       style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;")
-          },
-          
+          tags$input(type="radio", autocomplete="off", name=id, value=values[2],
+                     style = "position: absolute;clip: rect(0,0,0,0);pointer-events: none;"),
           labelInput(names[2])
         )
       )
@@ -491,8 +475,7 @@ code.carga <- function(nombre.filas = T, ruta = NULL, separador = ";",
     ruta <- gsub("\\", "/", ruta, fixed = T)
   }
   res <- paste0(
-    "datos.originales <<- read.table('", ruta, "', header=", encabezado, 
-    ", stringsAsFactors = TRUE", 
+    "datos.originales <<- read.table(stringsAsFactors = T, '", ruta, "', header=", encabezado, 
     ", sep='", separador, "', dec = '", sep.decimal, "'", 
     ifelse(nombre.filas, ", row.names = 1", ""), ")")
   res <- paste0(res, "\n", code.NA(incluir.NA))
@@ -606,25 +589,22 @@ default.normal <- function(vars = NULL, color = "#00FF22AA",
       "hist(datos[, '", vars, "'], col = '", color, "', border=F, axes=F,\n",
       "  freq = F, ylim = range(0, max(values)), ylab = '', \n",
       "  main = '", vars, "') \n",
-      "axis(1, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025)\n",
-      "axis(2, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025)\n",
+      "axis(1, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025) \n",
+      "axis(2, col=par('bg'), col.ticks='grey81', lwd.ticks=1, tck=-0.025) \n",
       "curve(dnorm(x, mean = promedio, sd = desviacion), add=T, col='blue', lwd=2)\n",
       "legend('bottom', legend = '", labelcurva, "', col = 'blue', lty=1, cex=1.5)"))
   }
 }
 
 default.calc.normal <- function(
-  labelsi, labelno, labelsin, labelnormal, labelnonormal, 
-  alfa = 0.05, tipo = "pearson") {
+  labelsi = "Positiva", labelno = "Negativa", 
+  labelsin = "Sin Asimetría") {
   return(paste0(
-    "calc <- lapply(var.numericas(datos), function(i) { \n",
-    "  f <- fisher.calc(i)[1] \n",
-    "  test <- ", tipo, ".test(i)$p.value\n", 
-    "  a <- ifelse(f > 0, '", labelsi, "', ifelse(f < 0, '", labelno, 
-    "', '", labelsin, "')) \n", 
-    "  normal <- ifelse(test < ", alfa, ", '", labelnonormal, 
-    "', '", labelnormal, "')\n", "  c(f, a, test, normal) \n}) \n",
-    "calc <- as.data.frame(calc)  \ncalc <- t(calc)\ncalc"))
+    "calc <- lapply(var.numericas(datos), function(i) fisher.calc(i)[1]) \n",
+    "calc <- as.data.frame(calc) \n",
+    "calc <- rbind(calc, lapply(calc, function(i) ifelse(i > 0, '", labelsi,
+    "',\n  ifelse(i < 0, '", labelno, "', '", labelsin, "')))) \n",
+    "calc <- t(calc)\ncalc"))
 }
 
 #' Funciones Dispersión
@@ -850,10 +830,10 @@ centros.total <- function(DF) {
   apply(DF, 2, mean)
 }
 
-calc.inercia <- function(total, individuo) {
+calc.inercia <- function(total, individuo){
   return(inercia(0, 1, total, individuo))
 }
-inercia <- function(suma, i, total, individuo) {
+inercia <- function(suma, i, total, individuo){
   if(i > length(total)){
     return(as.double(suma))
   }
@@ -1139,8 +1119,7 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T, porc = T) {
       paste(colores, collapse = ","),")) +\n  ",
       "facet_wrap(~Cluster, labeller = label_both) +\n  ",
       "theme(text = element_text(size = 15)) +\n  ",
-      "labs(x = '', y = '') + guides(fill = F))"
-    ))
+      "labs(x = '', y = '') + guides(fill = F))"))
   } else {
     return(paste0(
       res, 
@@ -1149,8 +1128,7 @@ cluster.cat <- function(var, colores = "'steelblue'", esHC = T, porc = T) {
       "geom_text(aes(label = paste0(..count.., '\n', scales::percent(..count../aux[..x..]))),\n", 
       "          stat = 'count', position = position_fill(vjust = 0.5)) +\n", 
       "coord_flip() + labs(y = '') +\n", 
-      "theme(axis.text.y = element_text(size = 16), axis.title.y = element_text(size = 20)) + \n",
-      "scale_fill_brewer(palette = 'Dark2')"))
+      "theme(axis.text.y = element_text(size = 16), axis.title.y = element_text(size = 20))"))
   }
 }
 
@@ -1275,7 +1253,7 @@ user.reporte <- function() {
       rep.datos, "']]\ndatos <<- datos.originales\n```\n")
     for (analisis in names(env.report$codigo.reporte[[rep.datos]])) {
       rep.codigos <- unlist(env.report$codigo.reporte[[rep.datos]][[analisis]])
-      if(!is.null(rep.codigos) & (analisis == "basico" | analisis == "acp" | length(rep.codigos) > 1)) {
+      if(!is.null(rep.codigos) & (analisis == "basico" | length(rep.codigos) > 1)) {
         for (i in 1:length(rep.codigos)) {
           res <- paste0(res, "\n\n## ", tr(analisis), "\n\n")
           rep.titulos <- limpiar.titulos(names(rep.codigos)[i])
@@ -1285,13 +1263,5 @@ user.reporte <- function() {
     }
   }
   return(res)
-}
-
-###################### Corrección tildes ######################################
-info.sys <- .Platform$OS.type
-if(toupper(info.sys) != "WINDOWS") {
-  enc <<- "utf8"
-} else {
-  enc <<- "UTF-8"
 }
 
