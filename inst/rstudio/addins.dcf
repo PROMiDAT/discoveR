@@ -1,4 +1,4 @@
 Name: discoveR
 Description: discoveR
-Binding: init_discover
+Binding: run_app
 Interactive: true

@@ -1,0 +1,68 @@
+/* Barra horizontal arriba */
+.skin-blue .main-sidebar {
+  background-color: #777777;
+}
+
+/* Opción al posicionar mouse */    
+.skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
+  background-color: #CBB051;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle:hover{
+  background-color: #CBB051;
+}
+
+/* Logo */  
+.skin-blue .main-header .logo {
+  background-color: #CBB051;
+}
+
+/* Logo al posicionar el mouse */  
+.skin-blue .main-header .logo:hover {
+  background-color: #CBB051;
+}
+
+/* Menu de navegación */  
+.skin-blue .main-header .navbar {
+  background-color: #777777;
+}
+
+/* Cajas */  
+.box {
+    background-color: #777777;
+    color: #CBB051;
+}
+
+.box.box-solid.box-primary {
+    border: 1px solid #CBB051;
+}
+
+.box.box-solid.box-primary > .box-header{
+  background-color: #CBB051;
+  color: white;
+}
+
+/* Caja de información */  
+.bg-promidat {
+  background-color: #CBB051;
+  color: #fff
+}
+
+.header-title {
+  position: absolute;
+  margin-top: 7px;
+  font-size: 24px;
+  color: #CBB051;
+  left: 45%;
+}
+
+/* Circulo de carga */ 
+.ring-1 {
+    width: 80px !important;
+    height: 80px !important;
+    border: 7px dashed #cab151 !important;
+}
+
+.load-container {
+    top: 15% !important;
+}

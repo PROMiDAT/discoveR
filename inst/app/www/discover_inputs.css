@@ -1,0 +1,91 @@
+.shiny-input-container:not(.shiny-input-container-inline) {
+    width: 100%;
+}
+
+/* radioSwitch */
+
+.radioGroupButtons {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+}
+
+.btn-radiogroup {
+    vertical-align: middle;
+    display: table-cell;
+    position: relative;
+    float: none;
+}
+
+.btn-radioswitch.active {
+    color: #fff;
+    background-color: #3c8dbc;
+    border-color: #367fa9;
+}
+
+.btn-radioswitch {
+    color: black;
+    background-color: #bbb;
+}
+
+.btn-radiogroup>.btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    position: relative;
+    float: left;
+    width: 100%;
+}
+
+.btn.radiobtn .radio-btn-icon-yes {
+	opacity: 0;
+	display: none;
+}
+.btn.radiobtn.active .radio-btn-icon-yes {
+	opacity: 1;
+	display: inline-block;
+}
+
+.btn.radiobtn.active .radio-btn-icon-no {
+	opacity: 0; display: none;
+}
+.btn.radiobtn .radio-btn-icon-no {
+	opacity: 1; display: inline-block;
+}
+
+/* selectInput Posicionar Horizontal */
+.multiple-select-var{
+  float: right;
+  width: 300px;
+  margin-bottom: -3px;
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 0;
+}
+
+/* Color Inputs */
+.select-color {
+  width: 50%;
+  position: relative;
+  min-height: 1px;
+  padding-left: 10px;
+  float: left;
+  margin-bottom: -5px;
+}
+
+/* Run Button */
+
+.run-button {
+  padding-left: 10px;
+  background: transparent;
+  color: green;
+  border: 0;
+  font-size: 15px;
+  float: right;
+}
+
+.run-button:active {
+  transform: translateY(4px);
+}

@@ -1,14 +1,30 @@
-Title: Exploratory Data Analysis System
 Package: discoveR
-Type: Package
-Version: 1.2.9
-Author: Oldemar Rodriguez R. with contributions from Diego Jimenez A. and Andres Navarro D.
-Maintainer: Oldemar Rodriguez <oldemar.rodriguez@ucr.ac.cr>
-Depends: R (>= 3.5)
-Imports: shiny, shinydashboard, shinydashboardPlus, shinyAce, shinyjs, colourpicker, ggplot2, DT, factoextra, rstudioapi, rmarkdown, stringi, zip
+Title: Exploratory Data Analysis System
+Version: 2.0.0
+Authors@R: 
+    c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
+             email = "oldemar.rodriguez@ucr.ac.cr"),
+      person(given = "Diego", family = "Jiménez", role = "ctb"),
+      person(given = "Andrés", family = "Navaro", role = "ctb"))
 Description: Performs an exploratory data analysis through a 'shiny' interface. It includes basic methods such as the mean, median, mode, normality test, among others. It also includes clustering techniques such as Principal Components Analysis, Hierarchical Clustering and the K-Means Method.
 License: GPL (>=2)
+Imports: 
+    DT,
+    golem,
+    shiny,
+    config,
+    plotly,
+    cluster,
+    ggplot2,
+    shinyjs,
+    shinyAce,
+    ggdendro,
+    highcharter,
+    shinydashboard,
+    shinycustomloader,
+    shinydashboardPlus
+Depends: R (>= 3.5)
 Encoding: UTF-8
 LazyData: true
 URL: http://www.promidat.com
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
