@@ -32,9 +32,15 @@ mod_dispersion_ui <- function(id) {
     tabBoxPrmdt(
       id = ns("BoxDisp"), opciones = opc_disp, title = titulo_disp,
       tabPanel(
-        title = labelInput("dispersion"), value = "tabDisp", 
-        withLoader(uiOutput(ns("plot_disp")), 
-                   type = "html", loader = "loader4")
+        title = labelInput("dispersion"), value = "tabDisp",
+        tags$div(
+          id = ns("div_disp_2D"),
+          withLoader(highchartOutput(ns("disp_2D"), height = "75vh"), 
+                     type = "html", loader = "loader4")),
+        tags$div(
+          id = ns("div_disp_3D"), style="display: none;",
+          withLoader(plotlyOutput(ns('disp_3D'), height = "75vh"), 
+                     type = "html", loader = "loader4"))
       )
     )
   )
@@ -52,15 +58,15 @@ mod_dispersion_server <- function(input, output, session, updateData) {
   })
   
   #' Choose 2D or 3D plot
-  output$plot_disp <- renderUI({
+  observeEvent(input$sel_disp, {
     vars  <- input$sel_disp
     
-    if(length(vars) == 2) {
-      highchartOutput(ns('disp_2D'), height = "70vh")
-    } else if(length(vars) == 3) {
-      plotlyOutput(ns('disp_3D'), height = "70vh")
+    if(length(vars) <= 2) {
+      shinyjs::show("div_disp_2D")
+      shinyjs::hide("div_disp_3D")
     } else {
-      highchartOutput(ns('NULL'), height = "70vh")
+      shinyjs::hide("div_disp_2D")
+      shinyjs::show("div_disp_3D")
     }
   })
   

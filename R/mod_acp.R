@@ -88,19 +88,37 @@ mod_acp_ui <- function(id) {
     tabBoxPrmdt(
       id = "tabPCA", title = title_acp, opciones = opts_acp,
       tabPanel(
-        title = labelInput("individuos"), value = "tabInd", 
-        withLoader(uiOutput(ns("pca_ind")), 
-                   type = "html", loader = "loader4")
+        title = labelInput("individuos"), value = "tabInd",
+        tags$div(
+          id = ns("div_ind_2D"),
+          withLoader(highchartOutput(ns("ind_2D"), height = "75vh"), 
+                     type = "html", loader = "loader4")),
+        tags$div(
+          id = ns("div_ind_3D"),
+          withLoader(plotlyOutput(ns("ind_3D"), height = "75vh"), 
+                     type = "html", loader = "loader4"))
       ),
       tabPanel(
         title = labelInput("variables"), value = "tabVar",
-        withLoader(uiOutput(ns("pca_var")), 
-                   type = "html", loader = "loader4")
+        tags$div(
+          id = ns("div_var_2D"),
+          withLoader(highchartOutput(ns("var_2D"), height = "75vh"), 
+                     type = "html", loader = "loader4")),
+        tags$div(
+          id = ns("div_var_3D"),
+          withLoader(plotlyOutput(ns("var_3D"), height = "75vh"), 
+                     type = "html", loader = "loader4"))
       ),
       tabPanel(
         title = labelInput("sobreposicion"), value = "tabBi",
-        withLoader(uiOutput(ns("pca_bi")), 
-                   type = "html", loader = "loader4")
+        tags$div(
+          id = ns("div_bi_2D"),
+          withLoader(highchartOutput(ns("bi_2D"), height = "75vh"), 
+                     type = "html", loader = "loader4")),
+        tags$div(
+          id = ns("div_bi_3D"),
+          withLoader(plotlyOutput(ns("bi_3D"), height = "75vh"), 
+                     type = "html", loader = "loader4"))
       ),
       tabPanel(
         title = labelInput("resultados"), value = "pca.salida",
@@ -139,39 +157,33 @@ mod_acp_server <- function(input, output, session, updateData) {
   })
   
   #' Choose 2D or 3D plot
-  output$pca_ind <- renderUI({
+  observeEvent(input$plotMode, {
     if(input$plotMode) {
       shinyjs::show("fieldCodeInd2D")
       shinyjs::hide("fieldCodeInd3D")
-      highchartOutput(ns("ind_2D"), height = "75vh")
+      shinyjs::show("fieldCodeVar2D")
+      shinyjs::hide("fieldCodeVar3D")
+      shinyjs::show("fieldCodeBi2D")
+      shinyjs::hide("fieldCodeBi3D")
+      shinyjs::show("div_ind_2D")
+      shinyjs::hide("div_ind_3D")
+      shinyjs::show("div_var_2D")
+      shinyjs::hide("div_var_3D")
+      shinyjs::show("div_bi_2D")
+      shinyjs::hide("div_bi_3D")
     } else {
       shinyjs::hide("fieldCodeInd2D")
       shinyjs::show("fieldCodeInd3D")
-      plotlyOutput(ns('ind_3D'), height = "75vh")
-    }
-  })
-  
-  output$pca_var <- renderUI({
-    if(input$plotMode) {
-      shinyjs::show("fieldCodeVar2D")
-      shinyjs::hide("fieldCodeVar3D")
-      highchartOutput(ns("var_2D"), height = "75vh")
-    } else {
       shinyjs::hide("fieldCodeVar2D")
       shinyjs::show("fieldCodeVar3D")
-      plotlyOutput(ns('var_3D'), height = "75vh")
-    }
-  })
-  
-  output$pca_bi <- renderUI({
-    if(input$plotMode) {
-      shinyjs::show("fieldCodeBi2D")
-      shinyjs::hide("fieldCodeBi3D")
-      highchartOutput(ns("bi_2D"), height = "75vh")
-    } else {
       shinyjs::hide("fieldCodeBi2D")
       shinyjs::show("fieldCodeBi3D")
-      plotlyOutput(ns('bi_3D'), height = "75vh")
+      shinyjs::hide("div_ind_2D")
+      shinyjs::show("div_ind_3D")
+      shinyjs::hide("div_var_2D")
+      shinyjs::show("div_var_3D")
+      shinyjs::hide("div_bi_2D")
+      shinyjs::show("div_bi_3D")
     }
   })
   

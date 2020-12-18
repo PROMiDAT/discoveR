@@ -27,6 +27,8 @@ app_server <- function( input, output, session ) {
     )
   )
   
+  #onStop(function() cat("Session stopped\n"))
+  
   ##################################  Variables  ##############################
   updateData <- rv(datos = NULL, originales = NULL, idioma = NULL)
   

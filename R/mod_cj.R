@@ -83,8 +83,14 @@ mod_cj_ui <- function(id) {
       ),
       tabPanel(
         title = labelInput("mapa"), value = "tabMapa",
-        withLoader(uiOutput(ns("cj_mapa"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        tags$div(
+          id = ns("div_cj_2D"),
+          withLoader(highchartOutput(ns("cj_mapa_2D"), height = "75vh"), 
+                     type = "html", loader = "loader4")),
+        tags$div(
+          id = ns("div_cj_3D"),
+          withLoader(plotlyOutput(ns('cj_mapa_3D'), height = "75vh"), 
+                     type = "html", loader = "loader4"))
       ),
       tabPanel(
         title = labelInput("horizontal"), value = "tabHoriz",
@@ -201,7 +207,6 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Generate dendrogram
   output$cj_dendrograma <- renderPlotly({
-    
     tryCatch({
       modelo   <- modelo.cj()$modelo
       clusters <- modelo.cj()$clusters
@@ -221,22 +226,22 @@ mod_cj_server <- function(input, output, session, updateData) {
   })
   
   #' Choose 2D or 3D plot
-  output$cj_mapa <- renderUI({
+  observeEvent(input$plotModeCJ, {
     cod <- paste0("modelo.pca <- PCA(var.numericas(datos))\n")
-    
     if(input$plotModeCJ) {
       cod <- paste0(
         cod, "hc_mapa(modelo.pca, modelo.cj$clusters, 'cj_mapa', c('",
         paste(cj_colors, collapse = "', '"), "'))\n")
-      updateAceEditor(session, "fieldCodeMapa", value = cod)
-      highchartOutput(ns("cj_mapa_2D"), height = "75vh")
+      shinyjs::show("div_cj_2D")
+      shinyjs::hide("div_cj_3D")
     } else {
       cod <- paste0(
         cod, "plotly_mapa(modelo.pca, modelo.cj$clusters, c('",
         paste(cj_colors, collapse = "', '"), "'))\n")
-      updateAceEditor(session, "fieldCodeMapa", value = cod)
-      plotlyOutput(ns('cj_mapa_3D'), height = "75vh")
+      shinyjs::hide("div_cj_2D")
+      shinyjs::show("div_cj_3D")
     }
+    updateAceEditor(session, "fieldCodeMapa", value = cod)
   })
   
   #' Plot Mapa 2D

@@ -88,8 +88,14 @@ mod_kmedias_ui <- function(id) {
       ),
       tabPanel(
         title = labelInput("mapa"), value = "tabKmapa",
-        withLoader(uiOutput(ns("k_mapa"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        tags$div(
+          id = ns("div_k_2D"),
+          withLoader(highchartOutput(ns("k_mapa_2D"), height = "75vh"), 
+                     type = "html", loader = "loader4")),
+        tags$div(
+          id = ns("div_k_3D"),
+          withLoader(plotlyOutput(ns('k_mapa_3D'), height = "75vh"), 
+                     type = "html", loader = "loader4"))
       ),
       tabPanel(
         title = labelInput("horizontal"), value = "tabKhoriz",
@@ -229,22 +235,22 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   })
   
   #' Choose 2D or 3D plot
-  output$k_mapa <- renderUI({
+  observeEvent(input$plotModeK, {
     cod <- paste0("modelo.pca <- PCA(var.numericas(datos))\n")
-    
     if(input$plotModeK) {
       cod <- paste0(
         cod, "hc_mapa(modelo.pca, modelo.k$clusters, 'k_mapa', c('",
         paste(k_colors, collapse = "', '"), "'))\n")
-      updateAceEditor(session, "fieldCodeKmapa", value = cod)
-      highchartOutput(ns("k_mapa_2D"), height = "75vh")
+      shinyjs::show("div_k_2D")
+      shinyjs::hide("div_k_3D")
     } else {
       cod <- paste0(
         cod, "plotly_mapa(modelo.pca, modelo.k$clusters, c('",
         paste(k_colors, collapse = "', '"), "'))\n")
-      updateAceEditor(session, "fieldCodeKmapa", value = cod)
-      plotlyOutput(ns('k_mapa_3D'), height = "75vh")
+      shinyjs::hide("div_k_2D")
+      shinyjs::show("div_k_3D")
     }
+    updateAceEditor(session, "fieldCodeKmapa", value = cod)
   })
   
   #' Plot Mapa 2D
