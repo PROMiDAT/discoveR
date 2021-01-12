@@ -33,14 +33,7 @@ mod_dispersion_ui <- function(id) {
       id = ns("BoxDisp"), opciones = opc_disp, title = titulo_disp,
       tabPanel(
         title = labelInput("dispersion"), value = "tabDisp",
-        tags$div(
-          id = ns("div_disp_2D"),
-          withLoader(highchartOutput(ns("disp_2D"), height = "75vh"), 
-                     type = "html", loader = "loader4")),
-        tags$div(
-          id = ns("div_disp_3D"), style="display: none;",
-          withLoader(plotlyOutput(ns('disp_3D'), height = "75vh"), 
-                     type = "html", loader = "loader4"))
+        echarts4rOutput(ns("disp_plot"), height = "75vh")
       )
     )
   )
@@ -57,21 +50,8 @@ mod_dispersion_server <- function(input, output, session, updateData) {
     updateSelectInput(session, "sel_disp", choices = colnames(datos))
   })
   
-  #' Choose 2D or 3D plot
-  observeEvent(input$sel_disp, {
-    vars  <- input$sel_disp
-    
-    if(length(vars) <= 2) {
-      shinyjs::show("div_disp_2D")
-      shinyjs::hide("div_disp_3D")
-    } else {
-      shinyjs::hide("div_disp_2D")
-      shinyjs::show("div_disp_3D")
-    }
-  })
-  
-  #' Scatter Plot 2D
-  output$disp_2D <- renderHighchart({
+  #' Scatter Plot
+  output$disp_plot <- renderEcharts4r({
     datos <- updateData$datos
     vars  <- input$sel_disp
     color <- input$col_disp
@@ -81,45 +61,29 @@ mod_dispersion_server <- function(input, output, session, updateData) {
       updateAceEditor(session, "fieldCodeDisp", value = cod)
       datos <- data.frame(x = datos[[vars[1]]], y = datos[[vars[2]]])
       
-      hchart(datos, "point", hcaes(x = x, y = y), color = color) %>%
-        hc_chart(zoomType = "xy") %>% hc_xAxis(title = list(text = vars[1])) %>%
-        hc_yAxis(title = list(text = vars[2])) %>% 
-        hc_tooltip(
-          pointFormat = paste0(vars[1], ": {point.x}<br>", vars[2], ": {point.y}"),
-          headerFormat = ''
-        ) %>% hc_exporting(enabled = T, filename = "dispersion")
-    } else {
-      return(NULL)
-    }
-  })
-  
-  #' Scatter Plot 3D
-  output$disp_3D <- renderPlotly({
-    datos <- updateData$datos
-    vars  <- input$sel_disp
-    color <- input$col_disp
-    
-    if(length(vars) == 3) {
+      datos %>% e_charts(x) %>% e_scatter(y, symbol_size = 10) %>%
+        e_x_axis(x) %>% e_y_axis(y) %>% e_datazoom(show = F) %>%
+        e_color(color) %>% e_axis_labels(x = vars[1], y = vars[2]) %>%
+        e_tooltip(formatter = JS(paste0(
+          "function(params) {
+            return('", vars[1], ": ' + params.value[0] + '<br />", vars[2], 
+            ": ' + params.value[1])
+          }"))
+        ) %>% e_legend(F) %>% e_show_loading()
+    } else if (length(vars) == 3) {
       cod <- code.disp.3d(vars, color)
       updateAceEditor(session, "fieldCodeDisp", value = cod)
-      
       datos <- data.frame(
         x = datos[[vars[1]]], y = datos[[vars[2]]], z = datos[[vars[3]]]
       )
       
-      plot_ly(
-        datos, x = ~x, y = ~y, z = ~z, type = 'scatter3d', 
-        mode = 'markers', marker = list(color = color),
-        hovertemplate = paste0(
-          vars[1], ": %{x:}<br>", vars[2], ": %{y:}<br>",
-          vars[3], ": %{z:}<extra></extra>"
-        )) %>% config(displaylogo = F) %>%
-        layout(paper_bgcolor = "black", scene = list(
-          xaxis = list(title = vars[1], gridcolor = "white"), 
-          yaxis = list(title = vars[2], gridcolor = "white"),
-          zaxis = list(title = vars[3], gridcolor = "white")))
-    } else {
-      return(NULL)
+      datos %>% e_charts(x) %>% e_scatter_3d(y, z) %>% e_color(color) %>%
+        e_tooltip(formatter = JS(paste0(
+          "function(params) {
+            return('", vars[1], ": ' + params.value[0] + '<br/>", vars[2], 
+          ": ' + params.value[1] + '<br/>", vars[3], ": ' + params.value[2])
+          }"))
+        ) %>% e_theme("dark") %>% e_show_loading()
     }
   })
 }
