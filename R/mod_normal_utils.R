@@ -26,31 +26,9 @@ hchistnormal <- function(data, nombrearchivo = NULL, colorbar = "steelblue", col
     name = paste0("(", h$mids - d / 2, " - ", h$mids + d / 2, ")")
   )
   
-  r <- highchart() %>%
-    hc_add_series(
-      distribu, hcaes(x = x, y = d), type = "column", 
-      name = nombres[1], color = colorbar,
-      tooltip = list(pointFormat = "<b>{point.name}</b>: {point.y}",
-                     headerFormat = "")
-    ) %>%
-    hc_add_series(
-      distribu, hcaes(x = x, y = n), type = "spline",
-      name = nombres[2], color = colorline,
-      tooltip = list(pointFormat = "<b>{point.name}</b>: {point.y}",
-                     headerFormat = "")
-    ) %>%
-    hc_plotOptions(
-      spline = list(marker = list(enabled = F), enableMouseTracking = F),
-      column = list(
-        pointPadding = 0, borderWidth = 1, groupPadding = 0, shadow = F
-      )
-    )
-  
-  if(!is.null(nombrearchivo)) {
-    r <- r %>% hc_exporting(enabled = T, filename = nombrearchivo)
-  }
-  
-  return(r)
+  distribu %>% e_charts(x) %>% e_bar(d, name = nombres[1]) %>% 
+    e_line(n, name = nombres[2]) %>% e_x_axis(scale = T) %>%
+    e_tooltip() %>% e_datazoom(show = F)
 }
 
 
@@ -73,31 +51,15 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
   x <- qnorm(c(0.25, 0.75))
   slope <- diff(y)/diff(x)
   int <- y[1L] - slope * x[1L]
+
+  data$z <- data$x * slope + int
   
-  linea   <- data.frame(x = c(min(data$x), max(data$x))) 
-  linea$y <- linea$x * slope + int
-  
-  r <- highchart() %>%
-    hc_add_series(
-      data, hcaes(x = x, y = y), color = colorpoint, type = "point", 
-      name = "QQPlot",
-      tooltip = list(pointFormat = "({point.x:.2f}, {point.y:.2f})",
-                     headerFormat = "")
-    ) %>%
-    hc_add_series(
-      linea, hcaes(x = x, y = y), color = colorline, 
-      type = "line", name = "QQLine") %>% 
-    hc_plotOptions(line = list(enableMouseTracking = F)) %>%
-    hc_chart(zoomType = "xy")
-  
-  if(!is.null(nombrearchivo)) {
-    r <- r %>% hc_exporting(enabled = T, filename = nombrearchivo)
-  }
-  
-  return(r)
+  data %>% e_charts(x) %>% e_scatter(y, name = "QQplot", symbol_size = 8) %>%
+    e_line(z, name = "QQline", symbol = 'none') %>% e_x_axis(scale = T) %>%
+    e_y_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F)
 }
 
-#' Qplot + Qline
+#' Normal data.frame
 #'
 #' @param data a data.frame object only with the numeric columns.
 #'

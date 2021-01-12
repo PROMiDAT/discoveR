@@ -51,11 +51,11 @@ mod_normal_ui <- function(id) {
       ), 
       tabPanel(
         title = labelInput("plotnormal"), value = "tabNormalPlot",
-        withLoader(highchartOutput(ns('hc_normal'), height = "70vh"), 
+        withLoader(echarts4rOutput(ns('hc_normal'), height = "70vh"), 
                    type = "html", loader = "loader4")),
       tabPanel(
         title = "Qplot + Qline", value = "tabQPlot",
-        withLoader(highchartOutput(ns('hc_qq'), height = "70vh"), 
+        withLoader(echarts4rOutput(ns('hc_qq'), height = "70vh"), 
                    type = "html", loader = "loader4")),
       tabPanel(
         title = labelInput("normalidad"), value = "tabNormalCalc",
@@ -79,7 +79,7 @@ mod_normal_server <- function(input, output, session, updateData) {
   })
   
   #' Grafico Test de normalidad
-  output$hc_normal <- renderHighchart({
+  output$hc_normal <- renderEcharts4r({
     var       <- input$sel_normal
     datos     <- updateData$datos[, var]
     colorBar  <- input$col_hist_bar
@@ -100,7 +100,7 @@ mod_normal_server <- function(input, output, session, updateData) {
   })
   
   #' Grafico qqplot + qqline
-  output$hc_qq <- renderHighchart({
+  output$hc_qq <- renderEcharts4r({
     var        <- input$sel_normal
     datos      <- updateData$datos[, var]
     colorPoint <- input$col_qq_point

@@ -47,7 +47,7 @@ app_server <- function( input, output, session ) {
       "[class^=treeview]",  " a[data-value=acp]", " a[data-value=cj]",
       " a[data-value=kmedias]", " a[data-value=reporte]")
 
-    lapply(menu.values, function(i){
+    lapply(menu.values, function(i) {
       if(is.null(updateData$datos) || ncol(updateData$datos) < 1) {
         addClass(class = "disabled", selector = paste0(element, i))
       } else {
