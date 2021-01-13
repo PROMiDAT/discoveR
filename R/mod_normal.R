@@ -29,6 +29,11 @@ mod_normal_ui <- function(id) {
            colourpicker::colourInput(
              ns("col_qq_line"), labelInput("selcolline"),
              value = "#555555", allowTransparent = T)
+         ),
+         conditionalPanel(
+           "input.BoxNormal == 'tabNormalCalc'",
+           sliderInput(ns("slide_inter"), labelInput("intervalo"), 
+                       min = 80, max = 100, step = 1, value = 95)
          )),
     list(
       conditionalPanel(
@@ -120,30 +125,41 @@ mod_normal_server <- function(input, output, session, updateData) {
   #' Resumen Test de normalidad
   output$calc_normal <- DT::renderDT({
     datos <- updateData$datos
+    confianza <- 1 - (input$slide_inter/100)
     noms  <- c(tr('asimetria', isolate(updateData$idioma)),
-               tr('normalidad', isolate(updateData$idioma)))
+               tr('normalidad', isolate(updateData$idioma)),
+               tr('sigue', isolate(updateData$idioma)))
     
     tryCatch({
       updateAceEditor(session, "fieldCalcNormal", value = "dfnormal(datos)")
       res <- dfnormal(datos)
       
+      res <- res[, c(1, 2)]
+      res$asimetria <- res$fisher > 0
+      res$asimetria <- ifelse(res$asimetria, '<i class="fa fa-plus" style="color: green;"></i>', 
+                              '<i class="fa fa-minus" style="color: red;"></i>')
+      res$normal    <- res$pearson > confianza
+      res$normal <- ifelse(res$normal, '<i class="fa fa-check" style="color: green;"></i>', 
+                           '<i class="fa fa-times" style="color: red;"></i>')
+      res <- res[, c(1, 3, 2, 4)]
+      
       sketch <- htmltools::withTags(table(
         tags$thead(
           tags$tr(
             tags$th(rowspan = 2, 'Variables'), 
-            tags$th(colspan = 1, style = "text-align: center;", 
+            tags$th(colspan = 2, style = "text-align: center;", 
                     labelInput('asimetria', noms[1])),
-            tags$th(colspan = 3, style = "text-align: center;", 
+            tags$th(colspan = 2, style = "text-align: center;", 
                     labelInput('normalidad', noms[2]))
           ),
           tags$tr(
-            tags$th('Fisher'), tags$th('Pearson'), 
-            tags$th('Lillie'), tags$th('Cvm')
+            tags$th('Fisher'), tags$th(labelInput('asimetria', noms[1])), 
+            tags$th('Pearson'), tags$th(labelInput('sigue', noms[3]))
           )
         )
       ))
       DT::datatable(
-        res, selection = 'none', container = sketch,
+        res, selection = 'none', container = sketch, escape = F,
         options = list(dom = 'frtip', scrollY = "50vh")
       )
     }, error = function(e) {

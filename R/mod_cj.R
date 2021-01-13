@@ -327,6 +327,8 @@ mod_cj_server <- function(input, output, session, updateData) {
     var <- input$selBar
     escalar <- input$scaleBar
     
+    validate(need(var != "", tr("errorcat", isolate(updateData$idioma))))
+    
     tryCatch({
       cod <- paste0(
         "hc_cat(modelo.cj$clusters, datos[['", var, "']], 'cj_cat', c('",

@@ -79,13 +79,15 @@ mod_dispersion_server <- function(input, output, session, updateData) {
     if(length(vars) == 2) {
       cod <- code.disp.2d(vars, color)
       updateAceEditor(session, "fieldCodeDisp", value = cod)
-      datos <- data.frame(x = datos[[vars[1]]], y = datos[[vars[2]]])
+      datos <- data.frame(x = datos[[vars[1]]], y = datos[[vars[2]]], 
+                          id = row.names(datos))
       
       hchart(datos, "point", hcaes(x = x, y = y), color = color) %>%
         hc_chart(zoomType = "xy") %>% hc_xAxis(title = list(text = vars[1])) %>%
         hc_yAxis(title = list(text = vars[2])) %>% 
         hc_tooltip(
-          pointFormat = paste0(vars[1], ": {point.x}<br>", vars[2], ": {point.y}"),
+          pointFormat = paste0("<b>{point.id}</b><br>", vars[1], ": {point.x}<br>",
+                               vars[2], ": {point.y}"),
           headerFormat = ''
         ) %>% hc_exporting(enabled = T, filename = "dispersion")
     } else {
@@ -104,7 +106,8 @@ mod_dispersion_server <- function(input, output, session, updateData) {
       updateAceEditor(session, "fieldCodeDisp", value = cod)
       
       datos <- data.frame(
-        x = datos[[vars[1]]], y = datos[[vars[2]]], z = datos[[vars[3]]]
+        x = datos[[vars[1]]], y = datos[[vars[2]]], 
+        z = datos[[vars[3]]]
       )
       
       plot_ly(

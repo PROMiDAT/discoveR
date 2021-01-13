@@ -57,13 +57,6 @@ mod_acp_ui <- function(id) {
                 allowTransparent = T)
             )
           )
-        ),
-        conditionalPanel(
-          condition = "input.tabPCA == 'tabCVC'",
-          selectInput(
-            inputId = ns("cvc.metodo"), label = labelInput("seltipo"),
-            choices =  c("circle", "square", "ellipse",  "number",
-                         "shade", "color", "pie"))
         )
       ),
       list(
@@ -75,10 +68,10 @@ mod_acp_ui <- function(id) {
               codigo.monokai(ns(paste0("fieldCode", i, "3D")), height = "10vh")
           )
         }),
-        lapply(c('VEE', 'CCI', 'CCV', 'CVC', 'PC1', 'PC2'), function(i) {
+        lapply(c('VEE', 'CCI', 'CCV', 'CVC', 'PC'), function(i) {
           conditionalPanel(
             condition = paste0("input.tabPCA == 'tab", i, "'"),
-            codigo.monokai(paste0("fieldCode", i), height = "15vh"))
+            codigo.monokai(ns(paste0("fieldCode", i)), height = "15vh"))
         })
       )
     )
@@ -120,6 +113,19 @@ mod_acp_ui <- function(id) {
           withLoader(plotlyOutput(ns("bi_3D"), height = "75vh"), 
                      type = "html", loader = "loader4"))
       ),
+      navbarMenu(
+        labelInput("ayudacp"),
+        tabPanel(labelInput("vee"), value = "tabVEE", 
+                 highchartOutput(ns("plotVEE"), height = "75vh")),
+        tabPanel(labelInput("cci"), value = "tabCCI",
+                 highchartOutput(ns("plotCCI"), height = "75vh")),
+        tabPanel(labelInput("ccv"), value = "tabCCV",
+                 highchartOutput(ns("plotCCV"), height = "75vh")),
+        tabPanel(labelInput("cvc"), value = "tabCVC",
+                 highchartOutput(ns("plotCVC"), height = "75vh")),
+        tabPanel(labelInput("cp"), value = "tabPC",
+                 highchartOutput(ns("plotPC"), height = "75vh"))
+      ),
       tabPanel(
         title = labelInput("resultados"), value = "pca.salida",
         div(style = "height: 75vh;overflow-y: scroll;", 
@@ -143,8 +149,9 @@ mod_acp_server <- function(input, output, session, updateData) {
     dimensiones <- 10
     if(ncol(datos) < 10) {
       dimensiones <- ncol(datos)
-      updateSliderInput(session, inputId = "slider_ejes", max = dimensiones)
     }
+    
+    updateSliderInput(session, inputId = "slider_ejes", max = dimensiones)
     
     if(nrow(datos) == 0) {
       return(NULL)
@@ -200,7 +207,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      cod <- paste0("hcpcaind(modelo, c(", paste(ejes, collapse = ", "), 
+      cod <- paste0("hcpcaind(modelo.pca, c(", paste(ejes, collapse = ", "), 
                     "), 'acp_ind', '", ind.col, "', ", ind.cos, ", '", 
                     cos.col, "', c('", titulos[1], "', '", titulos[2], "'))")
       updateAceEditor(session, "fieldCodeInd2D", value = cod)
@@ -221,7 +228,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      cod <- paste0("plotly_pcaind(modelo, c(", paste(ejes, collapse = ", "), 
+      cod <- paste0("plotly_pcaind(modelo.pca, c(", paste(ejes, collapse = ", "), 
                     "), '", ind.col, "', ", ind.cos, ", '", cos.col, 
                     "', c('", titulos[1], "', '", titulos[2], "'))")
       updateAceEditor(session, "fieldCodeInd3D", value = cod)
@@ -242,7 +249,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      cod <- paste0("hcpcavar(modelo, c(", paste(ejes, collapse = ", "), 
+      cod <- paste0("hcpcavar(modelo.pca, c(", paste(ejes, collapse = ", "), 
                     "), 'acp_var', '", var.col, "', ", var.cos, ", '", 
                     cos.col, "', c('", titulos[1], "', '", titulos[2], "'))")
       updateAceEditor(session, "fieldCodeVar2D", value = cod)
@@ -263,7 +270,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      cod <- paste0("plotly_pcavar(modelo, c(", paste(ejes, collapse = ", "), 
+      cod <- paste0("plotly_pcavar(modelo.pca, c(", paste(ejes, collapse = ", "), 
                     "), '", var.col, "', ", var.cos, ", '", cos.col, 
                     "', c('", titulos[1], "', '", titulos[2], "'))")
       updateAceEditor(session, "fieldCodeVar3D", value = cod)
@@ -287,7 +294,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      cod <- paste0("hcpcabi(modelo, c(", paste(ejes, collapse = ", "), 
+      cod <- paste0("hcpcabi(modelo.pca, c(", paste(ejes, collapse = ", "), 
                     "), 'acp_bi', '", ind.col, "', '", var.col, "', ", 
                     ind.cos, ", ", var.cos, ", '", ind.cos.col, "', '", 
                     var.cos.col, "', c('", titulos[1], "', '", titulos[2], 
@@ -314,7 +321,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      cod <- paste0("plotly_pcabi(modelo, c(", paste(ejes, collapse = ", "), 
+      cod <- paste0("plotly_pcabi(modelo.pca, c(", paste(ejes, collapse = ", "), 
                     "), '", ind.col, "', '", var.col, "', ", ind.cos, ", ", 
                     var.cos, ", '", ind.cos.col, "', '", var.cos.col, 
                     "', c('", titulos[1], "', '", titulos[2], "'))")
@@ -324,7 +331,158 @@ mod_acp_server <- function(input, output, session, updateData) {
     }
   })
   
-  #' Plot K-medias (Resultados numéricos)
+  #' Varianza Explicada por cada Eje
+  output$plotVEE <- renderHighchart({
+    modelo <- modelo.pca()
+    
+    datos <- data.frame (x = row.names(modelo$eig), y = modelo$eig[, 2])
+    if(nrow(datos) > 10) {
+      datos <- datos[1:10, ]
+    }
+    
+    cod <- paste0(
+    'datos <- data.frame (x = row.names(modelo.pca$eig), y = modelo.pca$eig[, 2])\n\n',
+    'hchart(datos, hcaes(x = x, y = y), type = "column") %>%\n',
+    '  hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%\n',
+    '  hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",\n',
+    '             headerFormat = "") %>%\n',
+    '  hc_exporting(enabled = T, filename = "plot_vee")\n')
+    updateAceEditor(session, "fieldCodeVEE", value = cod)
+    
+    hchart(datos, hcaes(x = x, y = y), type = "column") %>%
+      hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%
+      hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",
+                 headerFormat = "") %>%
+      hc_exporting(enabled = T, filename = "plot_vee")
+  })
+  
+  #' Cosenos Cuadrados de los Individuos
+  output$plotCCI <- renderHighchart({
+    modelo <- modelo.pca()
+    ejes <- isolate(input$slider_ejes)
+    
+    datos <- data.frame (x = row.names(modelo$ind$cos2), 
+                         y = apply(modelo$ind$cos2[, ejes], 1, sum))
+    datos <- datos[order(datos$y, decreasing = T), ]
+    if(nrow(datos) > 20) {
+      datos <- datos[1:20, ]
+    }
+    
+    cod <- paste0(
+      'datos <- data.frame (x = row.names(modelo.pca$ind$cos2),\n', 
+      '                     y = apply(modelo.pca$ind$cos2[, c(', paste(ejes, collapse = ","), ')], 1, sum))\n\n',
+      'hchart(datos, hcaes(x = x, y = y), type = "column") %>%\n',
+      '  hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%\n',
+      '  hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",\n',
+      '             headerFormat = "") %>%\n',
+      '  hc_exporting(enabled = T, filename = "plot_cci")\n')
+    updateAceEditor(session, "fieldCodeCCI", value = cod)
+    
+    hchart(datos, hcaes(x = x, y = y), type = "column") %>%
+      hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%
+      hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",
+                 headerFormat = "") %>%
+      hc_exporting(enabled = T, filename = "plot_cci")
+  })
+  
+  #' Cosenos Cuadrados de las Variables
+  output$plotCCV <- renderHighchart({
+    modelo <- modelo.pca()
+    ejes <- isolate(input$slider_ejes)
+    
+    datos <- data.frame (x = row.names(modelo$var$cos2), 
+                         y = apply(modelo$var$cos2[, ejes], 1, sum))
+    datos <- datos[order(datos$y, decreasing = T), ]
+    if(nrow(datos) > 20) {
+      datos <- datos[1:20, ]
+    }
+    
+    cod <- paste0(
+      'datos <- data.frame (x = row.names(modelo.pca$var$cos2),\n', 
+      '                     y = apply(modelo.pca$var$cos2[, c(', paste(ejes, collapse = ","), ')], 1, sum))\n\n',
+      'hchart(datos, hcaes(x = x, y = y), type = "column") %>%\n',
+      '  hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%\n',
+      '  hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",\n',
+      '             headerFormat = "") %>%\n',
+      '  hc_exporting(enabled = T, filename = "plot_ccv")\n')
+    updateAceEditor(session, "fieldCodeCCV", value = cod)
+    
+    hchart(datos, hcaes(x = x, y = y), type = "column") %>%
+      hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%
+      hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",
+                 headerFormat = "") %>%
+      hc_exporting(enabled = T, filename = "plot_ccv")
+  })
+  
+  #' Correlación Variables con los Componentes
+  output$plotCVC <- renderHighchart({
+    modelo <- modelo.pca()
+    
+    cod <- paste0(
+      'label.js <- JS(\n', 
+      '  "function() {return Highcharts.numberFormat(this.point.value, 2);}"\n',
+      ')\n\n',
+      'hchart(modelo.pca$var$cor) %>% hc_chart(zoomType = "xy") %>%\n',
+      '  hc_exporting(enabled = T, filename = "plot_cvc") %>%\n',
+      '  hc_plotOptions(\n',
+      '    series = list(\n',
+      '      dataLabels = list(enabled = TRUE, formatter = label.js)\n',
+      '    )\n  )\n')
+    updateAceEditor(session, "fieldCodeCVC", value = cod)
+    
+    label.js <- JS(
+      "function() {return Highcharts.numberFormat(this.point.value, 2);}"
+    )
+    hchart(modelo$var$cor) %>% hc_chart(zoomType = "xy") %>%
+      hc_exporting(enabled = T, filename = "plot_cvc") %>%
+      hc_plotOptions(
+        series = list(
+          dataLabels = list(enabled = TRUE, formatter = label.js)
+        )
+      )
+  })
+  
+  #' Contribución de las variables
+  output$plotPC <- renderHighchart({
+    modelo <- modelo.pca()
+    
+    ejes <- isolate(input$slider_ejes)
+    
+    datos <- data.frame (x = row.names(modelo$var$contrib), 
+                         y = modelo$var$contrib[, ejes[1]],
+                         z = modelo$var$contrib[, ejes[2]])
+    
+    if(nrow(datos) > 20) {
+      datos <- datos[1:20, ]
+    }
+    
+    cod <- paste0(
+      'datos <- data.frame (x = row.names(modelo.pca$var$contrib),\n', 
+      '                     y = modelo.pca$var$contrib[, ', ejes[1], '],\n',
+      '                     z = modelo.pca$var$contrib[, ', ejes[2], '])\n\n',
+      'highchart() %>%\n',
+      '  hc_add_series(datos, hcaes(x = x, y = y), type = "column",\n',
+      '                name = paste0("Comp ", ', ejes[1], ')) %>%\n',
+      '  hc_add_series(datos, hcaes(x = x, y = z), type = "column",\n',
+      '                name = paste0("Comp ", ', ejes[2], ')) %>%\n',
+      '  hc_xAxis(categories = datos$x) %>%\n',
+      '  hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",\n',
+      '             headerFormat = "") %>%\n',
+      '  hc_exporting(enabled = T, filename = "plot_pc")\n')
+    updateAceEditor(session, "fieldCodePC", value = cod)
+    
+    highchart() %>%
+      hc_add_series(datos, hcaes(x = x, y = y), type = "column",
+                    name = paste0("Comp ", ejes[1])) %>%
+      hc_add_series(datos, hcaes(x = x, y = z), type = "column",
+                    name = paste0("Comp ", ejes[2])) %>%
+      hc_xAxis(categories = datos$x) %>%
+      hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y:.3f}",
+                 headerFormat = "") %>%
+      hc_exporting(enabled = T, filename = "plot_pc")
+  })
+  
+  #' Modelo ACP (Resultados numéricos)
   output$txtpca <- renderPrint(print(modelo.pca()))
 }
     

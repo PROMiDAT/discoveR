@@ -115,9 +115,11 @@ mod_distribuciones_server <- function(input, output, session, updateData){
   #' Gráfico de Distribuciones (Categóricas)
   output$hc_cat = renderHighchart({
     var  <- input$sel_dya_cat
-    data <- updateData$datos[, var]
+    validate(need(var != "", tr("errorcat", isolate(updateData$idioma))))
     
     tryCatch({
+      data <- updateData$datos[, var]
+      
       cod <- code.dist.cat(var)
       updateAceEditor(session, "fieldCodeCat", value = cod)
       

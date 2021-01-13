@@ -14,8 +14,8 @@ reporte;Generar Reporte;Generate Report
 acercade;Acerca De;About
 cargar;Cargar;Load
 trans;Transformar;Convert
-header;Encabezado;Header 
-Rownames;Incluir nombre de filas;Rownames
+header;Nombre de Variables;Header 
+Rownames;Nombre de Individuos;Rownames
 separador;Separador;Separator
 coma;Coma;Comma
 puntocoma;Punto y coma;Semicolon
@@ -162,8 +162,8 @@ repcosind;Coseno Individuos:;Individuals Cosine:
 repcosvar;Coseno Variables:;Variables Cosine:
 repdim;Dimensiones:;Dimentions:
 codreporte;Código del Reporte;Report Code
-errornum;Se necesitan variables numéricas  para esta parte.;You need numerical variables for this part.
-errorcat;Se necesitan variables categóricas  para esta parte.;You need categorical variables for this part.
+errornum;Se necesitan variables numéricas para esta parte.;You need numerical variables for this part.
+errorcat;Se necesitan variables categóricas para esta parte.;You need categorical variables for this part.
 selcolbar;Seleccione color de las barras:;Select bar color:
 selcolline;Seleccione color de las líneas:;Select line color:
 selcolpoint;Seleccione color de los puntos:;Select point color:
@@ -176,3 +176,5 @@ colvarbien;Color de variables bien representadas:;Color of well represented vari
 colvarmal;Color de variables mal representadas:;Color of badly represented variables:
 bienr;Bien Representados;Well Represented
 malr;Mal Representados;Badly Represented
+intervalo;Intervalo de Confianza;Confidence Interval
+sigue;¿Sigue la normal?;is normally distributed?

@@ -336,6 +336,8 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     var <- input$selKbar
     escalar <- input$scaleKbar
     
+    validate(need(var != "", tr("errorcat", isolate(updateData$idioma))))
+    
     tryCatch({
       cod <- paste0(
         "hc_cat(modelo.k$clusters, datos[['", var, "']], 'k_cat', c('",
