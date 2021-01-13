@@ -149,6 +149,9 @@ mod_cj_server <- function(input, output, session, updateData) {
     
     if(nrow(data) == 0) {
       return(NULL)
+    } else if(nrow(data) > 8000) {
+      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      return(NULL)
     } else {
       if(centrar) {
         modelo <- hclust(dist(as.data.frame(scale(data)), method = dist.method), 
@@ -178,6 +181,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Inertia plot
   output$cj_inercia <- renderHighchart({
+    if(is.null(modelo.cj())) return(NULL)
+    
     centrar <- isolate(input$cj.scale)
     titulos <- c(
       tr("inercia", updateData$idioma), 
@@ -207,6 +212,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Generate dendrogram
   output$cj_dendrograma <- renderPlotly({
+    if(is.null(modelo.cj())) return(NULL)
+    
     tryCatch({
       modelo   <- modelo.cj()$modelo
       clusters <- modelo.cj()$clusters
@@ -246,6 +253,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Plot Mapa 2D
   output$cj_mapa_2D <- renderHighchart({
+    if(is.null(modelo.cj())) return(NULL)
+    
     modelo <- PCA(var.numericas(updateData$datos))
     
     if(is.null(modelo)) {
@@ -257,6 +266,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Plot Mapa 3D
   output$cj_mapa_3D <- renderPlotly({
+    if(is.null(modelo.cj())) return(NULL)
+    
     modelo <- PCA(var.numericas(updateData$datos))
     
     if(is.null(modelo)) {
@@ -268,6 +279,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Plot hclust (Horizontal)
   output$cj_horiz <- renderHighchart({
+    if(is.null(modelo.cj())) return(NULL)
+    
     centros <- modelo.cj()$centros$porcentual
     cod.centros <- "modelo.cj$centros$porcentual"
     if(!input$scaleHoriz) {
@@ -288,6 +301,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Plot hclust (Vertical)
   output$cj_vert <- renderHighchart({
+    if(is.null(modelo.cj())) return(NULL)
+    
     centros <- modelo.cj()$centros$porcentual
     cod.centros <- "modelo.cj$centros$porcentual"
     if(!input$scaleVert) {
@@ -310,6 +325,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Plot hclust (Radar)
   output$cj_radar <- renderHighchart({
+    if(is.null(modelo.cj())) return(NULL)
+    
     tryCatch({
       cod <- paste0("hc_radar(modelo.cj$centros$porcentual, 'cj_radar', c('",
                     paste(cj_colors, collapse = "', '"), "'))")
@@ -324,6 +341,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   
   #' Plot hclust (Categórico)
   output$cj_cat <- renderHighchart({
+    if(is.null(modelo.cj())) return(NULL)
+    
     var <- input$selBar
     escalar <- input$scaleBar
     
@@ -344,7 +363,10 @@ mod_cj_server <- function(input, output, session, updateData) {
   })
   
   #' Plot K-medias (Resultados numéricos)
-  output$txtcj <- renderPrint(print(modelo.cj()))
+  output$txtcj <- renderPrint({
+    if(is.null(modelo.cj())) return(NULL)
+    print(modelo.cj())
+  })
   
   #' Agregar Clusteres a tabla de datos (CJ)
   observeEvent(input$CJbtn, {

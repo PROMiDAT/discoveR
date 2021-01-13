@@ -106,7 +106,7 @@ cambiar.labels <- function() {
          'metodo', 'iter', 'coseno', 'ejes', 'repcosind', 'repcosvar', 'repdim',
          'codreporte', 'errornum', 'errorcat', 'selcolbar', 'selcolline', 
          'selcolpoint', 'histograma', '2D', '3D', 'colindbien', 'colindmal', 
-         'colvarbien', 'colvarmal')
+         'colvarbien', 'colvarmal', 'longerror')
   
   return(x)
 }

@@ -216,6 +216,10 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     centrar <- isolate(input$k.scale)
     
     data <- var.numericas(updateData$datos)
+    if(nrow(data) > 10000) {
+      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      return(NULL)
+    }
     if(centrar) {data <- as.data.frame(scale(data))}
     
     tryCatch({
@@ -255,6 +259,11 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   
   #' Plot Mapa 2D
   output$k_mapa_2D <- renderHighchart({
+    if(nrow(updateData$datos) > 10000) {
+      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      return(NULL)
+    }
+    
     modelo <- PCA(var.numericas(updateData$datos))
     
     if(is.null(modelo)) {
@@ -266,6 +275,11 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   
   #' Plot Mapa 3D
   output$k_mapa_3D <- renderPlotly({
+    if(nrow(updateData$datos) > 10000) {
+      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      return(NULL)
+    }
+    
     modelo <- PCA(var.numericas(updateData$datos))
     
     if(is.null(modelo)) {

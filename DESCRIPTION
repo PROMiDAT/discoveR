@@ -1,6 +1,6 @@
 Package: discoveR
 Title: Exploratory Data Analysis System
-Version: 2.0.2
+Version: 2.0.3
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),

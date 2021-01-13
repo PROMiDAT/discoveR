@@ -33,7 +33,7 @@ mod_normal_ui <- function(id) {
          conditionalPanel(
            "input.BoxNormal == 'tabNormalCalc'",
            sliderInput(ns("slide_inter"), labelInput("intervalo"), 
-                       min = 80, max = 100, step = 1, value = 95)
+                       min = 0, max = 0.2, step = 0.01, value = 0.05)
          )),
     list(
       conditionalPanel(
@@ -125,7 +125,7 @@ mod_normal_server <- function(input, output, session, updateData) {
   #' Resumen Test de normalidad
   output$calc_normal <- DT::renderDT({
     datos <- updateData$datos
-    confianza <- 1 - (input$slide_inter/100)
+    confianza <- as.numeric(input$slide_inter)
     noms  <- c(tr('asimetria', isolate(updateData$idioma)),
                tr('normalidad', isolate(updateData$idioma)),
                tr('sigue', isolate(updateData$idioma)))
@@ -138,7 +138,7 @@ mod_normal_server <- function(input, output, session, updateData) {
       res$asimetria <- res$fisher > 0
       res$asimetria <- ifelse(res$asimetria, '<i class="fa fa-plus" style="color: green;"></i>', 
                               '<i class="fa fa-minus" style="color: red;"></i>')
-      res$normal    <- res$pearson > confianza
+      res$normal <- res$pearson > confianza
       res$normal <- ifelse(res$normal, '<i class="fa fa-check" style="color: green;"></i>', 
                            '<i class="fa fa-times" style="color: red;"></i>')
       res <- res[, c(1, 3, 2, 4)]
