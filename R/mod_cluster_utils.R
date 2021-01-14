@@ -69,7 +69,7 @@ hc_mapa <- function(pca.model, clusters, nombre.archivo = NULL, colores = NULL, 
   ind <- data.frame(pca.model$ind$coord[, ejes])
   ind$id <- row.names(ind)
   ind$cluster <- paste0("Cluster", clusters)
-  ind$cluster <- factor(ind$cluster, levels = unique(ind$cluster))
+  ind$cluster <- factor(ind$cluster, levels = unique(ind$cluster)[order(unique(ind$cluster))])
   
   var <- data.frame(pca.model$var$coord[, ejes])
   ampliar <- min(
