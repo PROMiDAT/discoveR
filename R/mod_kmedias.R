@@ -190,8 +190,8 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   output$k_inercia <- renderHighchart({
     titulos <- c(
       tr("inercia", updateData$idioma), 
-      tr("inerciaintra", updateData$idioma),
-      tr("inerciainter", updateData$idioma)
+      tr("inerciainter", updateData$idioma),
+      tr("inerciaintra", updateData$idioma)
     )
     
     tryCatch({

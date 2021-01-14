@@ -30,7 +30,7 @@ calc.centros <- function(data, clusters) {
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' 
 hc_inercia <- function(data, nombre.archivo, titulos = c(
-  "Inercia", "Inercia Intra-Clase", "Inercia Inter-Clase")) {
+  "Inercia", "Inercia Inter-Clase", "Inercia Inter-Clase")) {
   porc <- round(data/data$total * 100, 2)
   data <- round(data, 2)
   etiq <- paste0("function() {return ", porc, " + '%<br>' + ", data, ";}")

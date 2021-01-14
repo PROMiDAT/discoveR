@@ -186,8 +186,8 @@ mod_cj_server <- function(input, output, session, updateData) {
     centrar <- isolate(input$cj.scale)
     titulos <- c(
       tr("inercia", updateData$idioma), 
-      tr("inerciaintra", updateData$idioma),
-      tr("inerciainter", updateData$idioma)
+      tr("inerciainter", updateData$idioma),
+      tr("inerciaintra", updateData$idioma)
     )
     
     tryCatch({
