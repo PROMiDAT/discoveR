@@ -21,7 +21,7 @@ hc_jambu <- function(data, max.clusters, nombre.archivo = NULL) {
     
     res <- highchart() %>% 
       hc_add_series(v, hcaes(x, y), type = "line", name = "Jambu") %>%
-      hc_tooltip(pointFormat = "<b>Inercia Inter-Clase:</b> {point.y:.2f}",
+      hc_tooltip(pointFormat = "<b>Inercia Intra-Clase:</b> {point.y:.2f}",
                  headerFormat = "")
     
     if(!is.null(nombre.archivo)) {

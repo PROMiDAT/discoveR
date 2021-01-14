@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_acercade_ui <- function(id){
+mod_acercade_ui <- function(id) {
   ns <- NS(id)
   tagList(
     img(src = "img/Logo.png",
