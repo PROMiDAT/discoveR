@@ -29,29 +29,12 @@ hcpcaind <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
   
   inercias <- round(modelo$eig[, 2], digits = 2)[axes]
   
-  label.js <- JS("function() {return(this.point.x == 0 ? '' : this.point.id)}")
-  
-  r <- hchart(ind, "scatter", hcaes(x = x, y = y, group = cos), 
-              color = colores) %>%
-    hc_xAxis(
-      title = list(text = paste0("Dim.", axes[1], " (", inercias[1], ")")),
-      plotLines = list(list(width = 2, value = 0, dashStyle = "shortdash"))
-    ) %>%
-    hc_yAxis(
-      title = list(text = paste0("Dim.", axes[2], " (", inercias[2], ")")),
-      plotLines = list(list(width = 2, value = 0, dashStyle = "shortdash"))
-    ) %>%
-    hc_plotOptions(
-      scatter = list(dataLabels = list(enabled = T, formatter = label.js))
-    ) %>% 
-    hc_chart(zoomType = "xy") %>% 
-    hc_tooltip(headerFormat = "", pointFormat = "<b>{point.id}</b>")
-  
-  if(!is.null(nombrearchivo)) {
-    r <- r %>% hc_exporting(enabled = T, filename = nombrearchivo)
-  }
-  
-  r
+  ind %>% group_by(cos) %>% e_charts(x) %>% 
+    e_scatter(y, label = list(show = F), symbol_size = 10) %>%
+    e_x_axis(scale = T) %>% e_y_axis(scale = T) %>% e_datazoom(show = F) %>%
+    e_color(colores) %>% e_tooltip() %>% e_show_loading() %>%
+    e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
+                  y = paste0("Dim.", axes[2], " (", inercias[2], ")"))
 }
 
 #' PCA plot of individuals in 3D
@@ -470,3 +453,34 @@ plotly_pcabi <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   
   r
 }
+
+# cars %>%
+#   e_charts(speed) %>%
+#   e_scatter(dist) %>%
+#   e_circle_g(
+#     z = 100,
+#     shape = list(cx = 350, cy = 200, r = 20)
+#   )
+# 
+# apply(circulo, 2, function(i) i)
+# 
+# opts <- list(
+#   xAxis = list(
+#     min = -2,
+#     max = 2
+#   ),
+#   yAxis = list(
+#     min = -1,
+#     max = 1
+#   ),
+#   series = list(
+#     list(
+#       type = 'line',
+#       data = aux,
+#       symbol = 'none'
+#     )
+#   )
+# )
+# 
+# e_charts() %>%
+#   e_list(opts) %>% e_datazoom(show = F)

@@ -31,7 +31,7 @@ mod_correlacion_ui <- function(id){
       id = ns("tabCor"), opciones = opts_cor, title = NULL,
       tabPanel(
         title = labelInput("correlacion"), value = "correlacion",
-        withLoader(highchartOutput(ns('hc_cor'), height = "70vh"), 
+        withLoader(echarts4rOutput(ns('hc_cor'), height = "70vh"), 
                    type = "html", loader = "loader4")),
       tabPanel(
         title = labelInput("resultados"), value = "cor.salida",
@@ -48,12 +48,11 @@ mod_correlacion_server <- function(input, output, session, updateData) {
   ns <- session$ns
   
   #' Gráfico de Correlaciones
-  output$hc_cor <- renderHighchart({
+  output$hc_cor <- renderEcharts4r({
     datos <- var.numericas(updateData$datos)
     col_min <- input$col_min
     col_med <- input$col_med
     col_max <- input$col_max
-    colores <- list(list(0, col_min), list(0.5, col_med), list(1, col_max))
     
     tryCatch({
       cod <- code.cor(col_min, col_med, col_max)

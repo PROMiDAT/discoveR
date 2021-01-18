@@ -91,8 +91,7 @@ mod_acp_ui <- function(id) {
         title = labelInput("individuos"), value = "tabInd",
         tags$div(
           id = ns("div_ind_2D"),
-          withLoader(highchartOutput(ns("ind_2D"), height = "75vh"), 
-                     type = "html", loader = "loader4")),
+          echarts4rOutput(ns("ind_2D"), height = "75vh")),
         tags$div(
           id = ns("div_ind_3D"),
           withLoader(plotlyOutput(ns("ind_3D"), height = "75vh"), 
@@ -188,7 +187,7 @@ mod_acp_server <- function(input, output, session, updateData) {
   })
   
   #' Plot PCA 2D (individuals)
-  output$ind_2D <- renderHighchart({
+  output$ind_2D <- renderEcharts4r({
     modelo <- modelo.pca()
     
     ejes    <- isolate(input$slider_ejes)

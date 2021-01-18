@@ -49,12 +49,10 @@ mod_distribuciones_ui <- function(id){
       id = "tabDyA", title = titulo_dist, opciones = opc_dist,
       tabPanel(
         title = labelInput("numericas"), value = "numericas",
-        withLoader(highchartOutput(ns('hc_num'), height = "75vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('hc_num'), height = "75vh")),
       tabPanel(
         title = labelInput("categoricas"), value = "categoricas",
-        withLoader(highchartOutput(ns('hc_cat'), height = "75vh"), 
-                   type = "html", loader = "loader4"))
+        echarts4rOutput(ns('hc_cat'), height = "75vh"))
     )
   )
 }
@@ -75,7 +73,7 @@ mod_distribuciones_server <- function(input, output, session, updateData){
   })
   
   #' Gráfico de Distribuciones (Númericas)
-  output$hc_num = renderHighchart({
+  output$hc_num = renderEcharts4r({
     datos      <- updateData$datos
     var        <- input$sel_dya_num
     colorBar   <- input$col_dist_bar
@@ -113,7 +111,7 @@ mod_distribuciones_server <- function(input, output, session, updateData){
   })
   
   #' Gráfico de Distribuciones (Categóricas)
-  output$hc_cat = renderHighchart({
+  output$hc_cat = renderEcharts4r({
     var  <- input$sel_dya_cat
     data <- updateData$datos[, var]
     
@@ -125,11 +123,10 @@ mod_distribuciones_server <- function(input, output, session, updateData){
         label = levels(data), 
         value = summary(data, maxsum = length(levels(data)))
       )
-      hchart(datos, hcaes(x = label, y = value, color = label), type = "column") %>%
-        hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%
-        hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y}",
-                   headerFormat = "") %>%
-        hc_exporting(enabled = T, filename = "distribucion_cat")
+      
+      datos %>% 
+        e_charts(label) %>% e_bar(value, name = var) %>% 
+        e_tooltip() %>% e_datazoom(show = F)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
