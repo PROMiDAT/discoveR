@@ -11,11 +11,11 @@ mod_cj_ui <- function(id) {
   ns <- NS(id)
   
   title_cj <- tags$div(
-    class = "multiple-select-var",
+    class = "multiple-select-var", style = "width: 550px;",
     conditionalPanel(
       condition = "input.tabjerar == 'tabBar'",
       fluidRow(
-        col_5(checkSwitch(ns("scaleBar"), NULL, "escalar")),
+        col_5(radioSwitch(ns("scaleBar"), NULL, list("porc", "abs"))),
         col_7(selectInput(ns("selBar"), NULL, ""))
       )
     ),
@@ -28,7 +28,7 @@ mod_cj_ui <- function(id) {
         condition = paste0("input.tabjerar == 'tab", i, "'"),
         tags$div(
           style = "float: right;",
-          checkSwitch(ns(paste0("scale", i)), NULL, "escalar")
+          radioSwitch(ns(paste0("scale", i)), NULL, list("porc", "abs"))
         )
       )
     })
@@ -150,7 +150,7 @@ mod_cj_server <- function(input, output, session, updateData) {
     if(nrow(data) == 0) {
       return(NULL)
     } else if(nrow(data) > 8000) {
-      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      showNotification(tr("longerror"), duration = 30, type = "warning")
       return(NULL)
     } else {
       if(centrar) {
@@ -281,9 +281,9 @@ mod_cj_server <- function(input, output, session, updateData) {
   output$cj_horiz <- renderHighchart({
     if(is.null(modelo.cj())) return(NULL)
     
-    centros <- modelo.cj()$centros$porcentual
-    cod.centros <- "modelo.cj$centros$porcentual"
-    if(!input$scaleHoriz) {
+    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(x)))
+    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(x)))"
+    if(input$scaleHoriz == "FALSE") {
       centros <- modelo.cj()$centros$real
       cod.centros <- "modelo.cj$centros$real"
     }
@@ -303,9 +303,9 @@ mod_cj_server <- function(input, output, session, updateData) {
   output$cj_vert <- renderHighchart({
     if(is.null(modelo.cj())) return(NULL)
     
-    centros <- modelo.cj()$centros$porcentual
-    cod.centros <- "modelo.cj$centros$porcentual"
-    if(!input$scaleVert) {
+    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(x)))
+    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(x)))"
+    if(input$scaleVert == "FALSE") {
       centros <- modelo.cj()$centros$real
       cod.centros <- "modelo.cj$centros$real"
     }
@@ -344,7 +344,7 @@ mod_cj_server <- function(input, output, session, updateData) {
     if(is.null(modelo.cj())) return(NULL)
     
     var <- input$selBar
-    escalar <- input$scaleBar
+    escalar <- input$scaleBar == "TRUE"
     
     validate(need(var != "", tr("errorcat", isolate(updateData$idioma))))
     

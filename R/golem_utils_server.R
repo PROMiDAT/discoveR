@@ -91,7 +91,7 @@ cambiar.labels <- function() {
          'selmetodo', 'seltipo', 'individuos', 'sobreposicion', 'ayudacp', 'vee',
          'cci', 'ccv', 'cvc', 'cp', 'resultados', 'centrar', 'escalar', 'nocentrar',
          'numerodim', 'selejes', 'cosind', 'cosvar', 'selcolorind', 'selcolorvar',
-         'dendograma', 'mapa', 'horizontal', 'vertical', 'radar', 'intervalo',
+         'dendograma', 'mapa', 'horizontal', 'vertical', 'radar', 'alfa',
          'interpretacioncat', 'cantcluster', 'numcluster', 'metcluster', 'sigue',
          'indiceagrega', 'metododist', 'agregarcluster', 'todos', 'jambu', 'kiter',
          'nstart', 'niter', 'algoritmo', 'tituloreporte', 'titulo', 'nombre',
@@ -106,7 +106,7 @@ cambiar.labels <- function() {
          'metodo', 'iter', 'coseno', 'ejes', 'repcosind', 'repcosvar', 'repdim',
          'codreporte', 'errornum', 'errorcat', 'selcolbar', 'selcolline', 
          'selcolpoint', 'histograma', '2D', '3D', 'colindbien', 'colindmal', 
-         'colvarbien', 'colvarmal', 'longerror')
+         'colvarbien', 'colvarmal', 'longerror', 'pvalue', 'porc', 'abs')
   
   return(x)
 }

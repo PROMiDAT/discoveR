@@ -11,11 +11,11 @@ mod_kmedias_ui <- function(id) {
   ns <- NS(id)
   
   title_k <- tags$div(
-    class = "multiple-select-var",
+    class = "multiple-select-var", style = "width: 550px;",
     conditionalPanel(
       condition = "input.tabkmedias == 'tabKbar'",
       fluidRow(
-        col_5(checkSwitch(ns("scaleKbar"), NULL, "escalar")),
+        col_5(radioSwitch(ns("scaleKbar"), NULL, list("porc", "abs"))),
         col_7(selectInput(ns("selKbar"), NULL, ""))
       )
     ),
@@ -28,7 +28,7 @@ mod_kmedias_ui <- function(id) {
         condition = paste0("input.tabkmedias == 'tab", i, "'"),
         tags$div(
           style = "float: right;",
-          checkSwitch(ns(paste0("scale", i)), NULL, "escalar")
+          radioSwitch(ns(paste0("scale", i)), NULL, list("porc", "abs"))
         )
       )
     })
@@ -46,8 +46,8 @@ mod_kmedias_ui <- function(id) {
                sliderInput(
                  ns("cant.kmeans.cluster"), labelInput("cantcluster"), 2, 10, 2),
                col_7(
-                 numericInput(ns("num.nstart"), labelInput("nstart"), 1, step = 10),
-                 numericInput(ns("num.iter"), labelInput("niter"), 10, step = 100)
+                 numericInput(ns("num.nstart"), labelInput("nstart"), 2, step = 10),
+                 numericInput(ns("num.iter"), labelInput("niter"), 100, step = 100)
                ),
                col_5(
                  selectInput(ns("sel.algoritmo"), labelInput("algoritmo"), 
@@ -217,7 +217,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     
     data <- var.numericas(updateData$datos)
     if(nrow(data) > 10000) {
-      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      showNotification(tr("longerror"), duration = 30, type = "warning")
       return(NULL)
     }
     if(centrar) {data <- as.data.frame(scale(data))}
@@ -260,7 +260,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   #' Plot Mapa 2D
   output$k_mapa_2D <- renderHighchart({
     if(nrow(updateData$datos) > 10000) {
-      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      showNotification(tr("longerror"), duration = 30, type = "warning")
       return(NULL)
     }
     
@@ -276,7 +276,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   #' Plot Mapa 3D
   output$k_mapa_3D <- renderPlotly({
     if(nrow(updateData$datos) > 10000) {
-      showNotification(paste0("ERROR: ", tr("longerror")), duration = 30, type = "error")
+      showNotification(tr("longerror"), duration = 30, type = "warning")
       return(NULL)
     }
     
@@ -291,9 +291,9 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   
   #' Plot K-medias (Horizontal)
   output$k_horiz <- renderHighchart({
-    centros <- modelo.k()$centros$porcentual
-    cod.centros <- "modelo.k$centros$porcentual"
-    if(!input$scaleKhoriz) {
+    centros <- data.frame(apply(modelo.k()$centros$real, 2, function(x) x / max(x)))
+    cod.centros <- "data.frame(apply(modelo.k$centros$real, 2, function(x) x / max(x)))"
+    if(input$scaleKhoriz == "FALSE") {
       centros <- modelo.k()$centros$real
       cod.centros <- "modelo.k$centros$real"
     }
@@ -311,9 +311,9 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   
   #' Plot K-medias (Vertical)
   output$k_vert <- renderHighchart({
-    centros <- modelo.k()$centros$porcentual
-    cod.centros <- "modelo.k$centros$porcentual"
-    if(!input$scaleKvert) {
+    centros <- data.frame(apply(modelo.k()$centros$real, 2, function(x) x / max(x)))
+    cod.centros <- "data.frame(apply(modelo.k$centros$real, 2, function(x) x / max(x)))"
+    if(input$scaleKvert == "FALSE") {
       centros <- modelo.k()$centros$real
       cod.centros <- "modelo.k$centros$real"
     }

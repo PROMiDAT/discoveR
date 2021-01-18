@@ -11,7 +11,7 @@ mod_normal_ui <- function(id) {
   ns <- NS(id)
   
   opc_hist <- tabsOptions(heights = c(70, 30), tabs.content = list(
-    list(h4(labelInput("opciones")), hr(),
+    list(options.run(ns("run_normal")), tags$hr(style = "margin-top: 0px;"),
          conditionalPanel(
            "input.BoxNormal == 'tabNormalPlot'",
            colourpicker::colourInput(
@@ -32,7 +32,7 @@ mod_normal_ui <- function(id) {
          ),
          conditionalPanel(
            "input.BoxNormal == 'tabNormalCalc'",
-           sliderInput(ns("slide_inter"), labelInput("intervalo"), 
+           sliderInput(ns("slide_inter"), labelInput("alfa"), 
                        min = 0, max = 0.2, step = 0.01, value = 0.05)
          )),
     list(
@@ -85,10 +85,11 @@ mod_normal_server <- function(input, output, session, updateData) {
   
   #' Grafico Test de normalidad
   output$hc_normal <- renderHighchart({
+    input$run_normal
     var       <- input$sel_normal
     datos     <- updateData$datos[, var]
-    colorBar  <- input$col_hist_bar
-    colorLine <- input$col_hist_line
+    colorBar  <- isolate(input$col_hist_bar)
+    colorLine <- isolate(input$col_hist_line)
     nombres   <- c(tr("histograma", updateData$idioma), 
                    tr("curvanormal", updateData$idioma))
     
@@ -106,10 +107,11 @@ mod_normal_server <- function(input, output, session, updateData) {
   
   #' Grafico qqplot + qqline
   output$hc_qq <- renderHighchart({
+    input$run_normal
     var        <- input$sel_normal
     datos      <- updateData$datos[, var]
-    colorPoint <- input$col_qq_point
-    colorLine  <- input$col_qq_line
+    colorPoint <- isolate(input$col_qq_point)
+    colorLine  <- isolate(input$col_qq_line)
     
     tryCatch({
       cod <- paste0("hcqq(datos[['", var, "']], 'qq', '", colorPoint,
@@ -124,23 +126,26 @@ mod_normal_server <- function(input, output, session, updateData) {
   
   #' Resumen Test de normalidad
   output$calc_normal <- DT::renderDT({
+    input$run_normal
     datos <- updateData$datos
-    confianza <- as.numeric(input$slide_inter)
+    alfa <- isolate(as.numeric(input$slide_inter))
     noms  <- c(tr('asimetria', isolate(updateData$idioma)),
                tr('normalidad', isolate(updateData$idioma)),
-               tr('sigue', isolate(updateData$idioma)))
+               tr('sigue', isolate(updateData$idioma)),
+               tr('pvalue', isolate(updateData$idioma)))
     
     tryCatch({
       updateAceEditor(session, "fieldCalcNormal", value = "dfnormal(datos)")
       res <- dfnormal(datos)
       
-      res <- res[, c(1, 2)]
+      res <- res[, c(1, 5)]
       res$asimetria <- res$fisher > 0
       res$asimetria <- ifelse(res$asimetria, '<i class="fa fa-plus" style="color: green;"></i>', 
                               '<i class="fa fa-minus" style="color: red;"></i>')
-      res$normal <- res$pearson > confianza
+      res$normal <- res$shapiro > alfa
       res$normal <- ifelse(res$normal, '<i class="fa fa-check" style="color: green;"></i>', 
                            '<i class="fa fa-times" style="color: red;"></i>')
+      res$shapiro <- paste0(res$shapiro, " > ", alfa)
       res <- res[, c(1, 3, 2, 4)]
       
       sketch <- htmltools::withTags(table(
@@ -154,7 +159,7 @@ mod_normal_server <- function(input, output, session, updateData) {
           ),
           tags$tr(
             tags$th('Fisher'), tags$th(labelInput('asimetria', noms[1])), 
-            tags$th('Pearson'), tags$th(labelInput('sigue', noms[3]))
+            tags$th(labelInput('pvalue', noms[4])), tags$th(labelInput('sigue', noms[3]))
           )
         )
       ))

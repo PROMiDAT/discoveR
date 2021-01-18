@@ -24,13 +24,16 @@ mod_distribuciones_ui <- function(id){
     widths = c(50, 100, 100), heights = c(50, 50, 35),
     tabs.content = list(
       list(
-        h4(labelInput("opciones")), hr(), 
-        colourpicker::colourInput(
-          ns("col_dist_bar"), labelInput("selcolbar"), value = "steelblue", 
-          allowTransparent = T),
-        colourpicker::colourInput(
-          ns("col_dist_point"), labelInput("selcolline"), value = "red",
-          allowTransparent = T)
+        options.run(ns("run_dist")), tags$hr(style = "margin-top: 0px;"),
+        conditionalPanel(
+          condition = "input.tabDyA == 'numericas'",
+          colourpicker::colourInput(
+            ns("col_dist_bar"), labelInput("selcolbar"), value = "steelblue", 
+            allowTransparent = T),
+          colourpicker::colourInput(
+            ns("col_dist_point"), labelInput("selcolline"), value = "red",
+            allowTransparent = T)
+        )
       ),
       list(DT::dataTableOutput(ns("mostrar.atipicos"))),
       list(
@@ -76,10 +79,11 @@ mod_distribuciones_server <- function(input, output, session, updateData){
   
   #' Gráfico de Distribuciones (Númericas)
   output$hc_num = renderHighchart({
+    input$run_dist
     datos      <- updateData$datos
     var        <- input$sel_dya_num
-    colorBar   <- input$col_dist_bar
-    colorPoint <- input$col_dist_point
+    colorBar   <- isolate(input$col_dist_bar)
+    colorPoint <- isolate(input$col_dist_point)
     titulos <- c(
       tr("minimo", updateData$idioma),
       tr("q1", updateData$idioma),

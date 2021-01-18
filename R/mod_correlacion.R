@@ -12,7 +12,7 @@ mod_correlacion_ui <- function(id){
   
   opts_cor <- tabsOptions(heights = c(70, 50), tabs.content = list(
     list(
-      h4(labelInput("opciones")), hr(),
+      options.run(ns("run_cor")), tags$hr(style = "margin-top: 0px;"),
       colourpicker::colourInput(
         ns("col_min"), labelInput("selcolor"), "#FF5733", 
         allowTransparent = T),
@@ -49,10 +49,11 @@ mod_correlacion_server <- function(input, output, session, updateData) {
   
   #' Gráfico de Correlaciones
   output$hc_cor <- renderHighchart({
+    input$run_cor
     datos <- var.numericas(updateData$datos)
-    col_min <- input$col_min
-    col_med <- input$col_med
-    col_max <- input$col_max
+    col_min <- isolate(input$col_min)
+    col_med <- isolate(input$col_med)
+    col_max <- isolate(input$col_max)
     colores <- list(list(0, col_min), list(0.5, col_med), list(1, col_max))
     
     tryCatch({

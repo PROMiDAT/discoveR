@@ -97,7 +97,7 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
   return(r)
 }
 
-#' Qplot + Qline
+#' Data.frame with normal test
 #'
 #' @param data a data.frame object only with the numeric columns.
 #'
@@ -106,13 +106,14 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
 #' @export dfnormal
 #'
 dfnormal <- function(data) {
-  data <- var.numericas(data)
+  data    <- var.numericas(data)
   fisher  <- lapply(data, function(i) fisher.calc(i))
   pearson <- lapply(data, function(i) pearson.test(i))
   lillie  <- lapply(data, function(i) lillie.test(i))
   cvm     <- lapply(data, function(i) cvm.test(i))
+  shapiro <- lapply(data, function(i) shapiro.test(i)$p.value)
   
-  data.frame(cbind(fisher, pearson, lillie, cvm))
+  data.frame(cbind(fisher, pearson, lillie, cvm, shapiro))
 }
 
 

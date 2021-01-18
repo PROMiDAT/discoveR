@@ -19,7 +19,7 @@ mod_dispersion_ui <- function(id) {
   
   opc_disp <- tabsOptions(
     heights = c(50, 40), tabs.content = list(
-      list(h4(labelInput("opciones")), hr(),
+      list(options.run(ns("run_disp")), tags$hr(style = "margin-top: 0px;"),
            colourpicker::colourInput(
              ns("col_disp"), labelInput("selcolor"), value = "steelblue", 
              allowTransparent = T)),
@@ -72,9 +72,10 @@ mod_dispersion_server <- function(input, output, session, updateData) {
   
   #' Scatter Plot 2D
   output$disp_2D <- renderHighchart({
+    input$run_disp
     datos <- updateData$datos
     vars  <- input$sel_disp
-    color <- input$col_disp
+    color <- isolate(input$col_disp)
     
     if(length(vars) == 2) {
       cod <- code.disp.2d(vars, color)
@@ -97,9 +98,10 @@ mod_dispersion_server <- function(input, output, session, updateData) {
   
   #' Scatter Plot 3D
   output$disp_3D <- renderPlotly({
+    input$run_disp
     datos <- updateData$datos
     vars  <- input$sel_disp
-    color <- input$col_disp
+    color <- isolate(input$col_disp)
     
     if(length(vars) == 3) {
       cod <- code.disp.3d(vars, color)

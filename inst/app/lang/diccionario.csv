@@ -179,3 +179,6 @@ malr;Mal Representados;Badly Represented
 alfa;Nivel de Significancia;Significance level
 sigue;¿Sigue la normal?;is normally distributed?
 longerror;La tabla de datos es muy grande para este proceso.;The dataset is too large for this process.
+pvalue;P-valor (Shapiro);P-value (Shapiro)
+porc;Porcentual;Percentage
+abs;Absoluto;Absolute

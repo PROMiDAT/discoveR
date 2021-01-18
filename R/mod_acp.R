@@ -12,7 +12,11 @@ mod_acp_ui <- function(id) {
   
   title_acp <- tags$div(
     class = "multiple-select-var", style = "width: 150px;",
-    radioSwitch(ns("plotMode"), NULL, list("2D", "3D")),
+    conditionalPanel(
+      condition = paste0(
+        "input.tabPCA == 'tabInd' || ", "input.tabPCA == 'tabVar' || ", 
+        "input.tabPCA == 'tabBi'"),
+      radioSwitch(ns("plotMode"), NULL, list("2D", "3D")))
   )
   
   opts_acp <- tabsOptions(
