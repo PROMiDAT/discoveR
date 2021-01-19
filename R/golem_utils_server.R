@@ -104,9 +104,10 @@ cambiar.labels <- function() {
          'repmodelo', 'rephc', 'repcor', 'repcaind', 'repcavar', 'repcabi',
          'rephoriz', 'repvert', 'repradar', 'repcat', 'repinter', 'distancia',
          'metodo', 'iter', 'coseno', 'ejes', 'repcosind', 'repcosvar', 'repdim',
-         'codreporte', 'errornum', 'errorcat', 'selcolbar', 'selcolline', 
+         'codreporte', 'errornum', 'errorcat', 'selcolbar', 'selcolline',
          'selcolpoint', 'histograma', '2D', '3D', 'colindbien', 'colindmal', 
-         'colvarbien', 'colvarmal', 'longerror', 'pvalue', 'porc', 'abs')
+         'colvarbien', 'colvarmal', 'longerror', 'pvalue', 'porc', 'abs', 
+         'tasim')
   
   return(x)
 }

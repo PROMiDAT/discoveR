@@ -107,11 +107,11 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
 #'
 dfnormal <- function(data) {
   data    <- var.numericas(data)
-  fisher  <- lapply(data, function(i) fisher.calc(i))
-  pearson <- lapply(data, function(i) pearson.test(i))
-  lillie  <- lapply(data, function(i) lillie.test(i))
-  cvm     <- lapply(data, function(i) cvm.test(i))
-  shapiro <- lapply(data, function(i) shapiro.test(i)$p.value)
+  fisher  <- sapply(data, function(i) fisher.calc(i))
+  pearson <- sapply(data, function(i) pearson.test(i))
+  lillie  <- sapply(data, function(i) lillie.test(i))
+  cvm     <- sapply(data, function(i) cvm.test(i))
+  shapiro <- sapply(data, function(i) shapiro.test(i)$p.value)
   
   data.frame(cbind(fisher, pearson, lillie, cvm, shapiro))
 }

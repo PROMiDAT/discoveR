@@ -182,3 +182,4 @@ longerror;La tabla de datos es muy grande para este proceso.;The dataset is too 
 pvalue;P-valor (Shapiro);P-value (Shapiro)
 porc;Porcentual;Percentage
 abs;Absoluto;Absolute
+tasim;Valor del test;Test value

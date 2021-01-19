@@ -132,13 +132,15 @@ mod_normal_server <- function(input, output, session, updateData) {
     noms  <- c(tr('asimetria', isolate(updateData$idioma)),
                tr('normalidad', isolate(updateData$idioma)),
                tr('sigue', isolate(updateData$idioma)),
-               tr('pvalue', isolate(updateData$idioma)))
+               tr('pvalue', isolate(updateData$idioma)),
+               tr('tasim', isolate(updateData$idioma)))
     
     tryCatch({
       updateAceEditor(session, "fieldCalcNormal", value = "dfnormal(datos)")
       res <- dfnormal(datos)
       
       res <- res[, c(1, 5)]
+      res <- round(res, 3)
       res$asimetria <- res$fisher > 0
       res$asimetria <- ifelse(res$asimetria, '<i class="fa fa-plus" style="color: green;"></i>', 
                               '<i class="fa fa-minus" style="color: red;"></i>')
@@ -158,7 +160,7 @@ mod_normal_server <- function(input, output, session, updateData) {
                     labelInput('normalidad', noms[2]))
           ),
           tags$tr(
-            tags$th('Fisher'), tags$th(labelInput('asimetria', noms[1])), 
+            tags$th(labelInput('tasim', noms[5])), tags$th(labelInput('asimetria', noms[1])),
             tags$th(labelInput('pvalue', noms[4])), tags$th(labelInput('sigue', noms[3]))
           )
         )
