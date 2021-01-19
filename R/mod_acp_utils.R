@@ -453,34 +453,3 @@ plotly_pcabi <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   
   r
 }
-
-# cars %>%
-#   e_charts(speed) %>%
-#   e_scatter(dist) %>%
-#   e_circle_g(
-#     z = 100,
-#     shape = list(cx = 350, cy = 200, r = 20)
-#   )
-# 
-# apply(circulo, 2, function(i) i)
-# 
-# opts <- list(
-#   xAxis = list(
-#     min = -2,
-#     max = 2
-#   ),
-#   yAxis = list(
-#     min = -1,
-#     max = 1
-#   ),
-#   series = list(
-#     list(
-#       type = 'line',
-#       data = aux,
-#       symbol = 'none'
-#     )
-#   )
-# )
-# 
-# e_charts() %>%
-#   e_list(opts) %>% e_datazoom(show = F)
