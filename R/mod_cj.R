@@ -15,7 +15,7 @@ mod_cj_ui <- function(id) {
     conditionalPanel(
       condition = "input.tabjerar == 'tabBar'",
       fluidRow(
-        col_5(radioSwitch(ns("scaleBar"), NULL, list("porc", "abs"))),
+        col_5(radioSwitch(ns("scaleBar"), NULL, list("porc", "abs"), val.def = F)),
         col_7(selectInput(ns("selBar"), NULL, ""))
       )
     ),
@@ -28,7 +28,7 @@ mod_cj_ui <- function(id) {
         condition = paste0("input.tabjerar == 'tab", i, "'"),
         tags$div(
           style = "float: right;",
-          radioSwitch(ns(paste0("scale", i)), NULL, list("porc", "abs"))
+          radioSwitch(ns(paste0("scale", i)), NULL, list("porc", "abs"), val.def = F)
         )
       )
     })
@@ -281,8 +281,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   output$cj_horiz <- renderHighchart({
     if(is.null(modelo.cj())) return(NULL)
     
-    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(x)))
-    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(x)))"
+    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(abs(x)) * 100))
+    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(abs(x)) * 100))"
     if(input$scaleHoriz == "FALSE") {
       centros <- modelo.cj()$centros$real
       cod.centros <- "modelo.cj$centros$real"
@@ -303,8 +303,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   output$cj_vert <- renderHighchart({
     if(is.null(modelo.cj())) return(NULL)
     
-    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(x)))
-    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(x)))"
+    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(abs(x)) * 100))
+    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(abs(x)) * 100))"
     if(input$scaleVert == "FALSE") {
       centros <- modelo.cj()$centros$real
       cod.centros <- "modelo.cj$centros$real"
