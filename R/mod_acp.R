@@ -101,8 +101,7 @@ mod_acp_ui <- function(id) {
         title = labelInput("variables"), value = "tabVar",
         tags$div(
           id = ns("div_var_2D"),
-          withLoader(highchartOutput(ns("var_2D"), height = "75vh"), 
-                     type = "html", loader = "loader4")),
+          echarts4rOutput(ns("var_2D"), height = "75vh")),
         tags$div(
           id = ns("div_var_3D"),
           withLoader(plotlyOutput(ns("var_3D"), height = "75vh"), 
@@ -112,8 +111,7 @@ mod_acp_ui <- function(id) {
         title = labelInput("sobreposicion"), value = "tabBi",
         tags$div(
           id = ns("div_bi_2D"),
-          withLoader(highchartOutput(ns("bi_2D"), height = "75vh"), 
-                     type = "html", loader = "loader4")),
+          echarts4rOutput(ns("bi_2D"), height = "75vh")),
         tags$div(
           id = ns("div_bi_3D"),
           withLoader(plotlyOutput(ns("bi_3D"), height = "75vh"), 
@@ -229,7 +227,7 @@ mod_acp_server <- function(input, output, session, updateData) {
   })
   
   #' Plot PCA 2D (variables)
-  output$var_2D <- renderHighchart({
+  output$var_2D <- renderEcharts4r({
     modelo  <- modelo.pca()
     
     ejes    <- isolate(input$slider_ejes)
@@ -271,7 +269,7 @@ mod_acp_server <- function(input, output, session, updateData) {
   })
   
   #' Plot PCA 2D (Biplot)
-  output$bi_2D <- renderHighchart({
+  output$bi_2D <- renderEcharts4r({
     modelo  <- modelo.pca()
     
     ejes        <- isolate(input$slider_ejes)
