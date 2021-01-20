@@ -15,7 +15,7 @@ mod_cj_ui <- function(id) {
     conditionalPanel(
       condition = "input.tabjerar == 'tabBar'",
       fluidRow(
-        col_5(radioSwitch(ns("scaleBar"), NULL, list("porc", "abs"), val.def = F)),
+        col_5(radioSwitch(ns("scaleBar"), NULL, list("ori", "porc"), c(F, T))),
         col_7(selectInput(ns("selBar"), NULL, ""))
       )
     ),
@@ -23,15 +23,13 @@ mod_cj_ui <- function(id) {
       condition = "input.tabjerar == 'tabMapa'",
       radioSwitch(ns("plotModeCJ"), NULL, list("2D", "3D"))
     ),
-    lapply(c("Horiz", "Vert"), function(i) {
-      conditionalPanel(
-        condition = paste0("input.tabjerar == 'tab", i, "'"),
-        tags$div(
-          style = "float: right;",
-          radioSwitch(ns(paste0("scale", i)), NULL, list("porc", "abs"), val.def = F)
-        )
+    conditionalPanel(
+      condition = "input.tabjerar == 'tabVert'",
+      tags$div(
+        style = "float: right;",
+        radioSwitch(ns("scaleVert"), NULL, list("ori", "res"), c(F, T))
       )
-    })
+    )
   )
   
   opts_cj <- tabsOptions(
@@ -281,12 +279,8 @@ mod_cj_server <- function(input, output, session, updateData) {
   output$cj_horiz <- renderHighchart({
     if(is.null(modelo.cj())) return(NULL)
     
-    centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(abs(x)) * 100))
-    cod.centros <- "data.frame(apply(modelo.cj$centros$real, 2, function(x) x / max(abs(x)) * 100))"
-    if(input$scaleHoriz == "FALSE") {
-      centros <- modelo.cj()$centros$real
-      cod.centros <- "modelo.cj$centros$real"
-    }
+    centros <- modelo.cj()$centros$real
+    cod.centros <- "modelo.cj$centros$real"
     tryCatch({
       cod <- paste0("hc_horiz(", cod.centros, ", 'cj_horiz', c('",
                     paste(cj_colors, collapse = "', '"), "'))")

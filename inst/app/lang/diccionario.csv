@@ -183,3 +183,5 @@ pvalue;P-valor (Shapiro);P-value (Shapiro)
 porc;Porcentual;Percentage
 abs;Absoluto;Absolute
 tasim;Valor del test;Test value
+ori;Originales;Original
+res;Reescalados;Rescaled

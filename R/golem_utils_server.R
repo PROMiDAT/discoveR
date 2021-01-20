@@ -107,7 +107,7 @@ cambiar.labels <- function() {
          'codreporte', 'errornum', 'errorcat', 'selcolbar', 'selcolline',
          'selcolpoint', 'histograma', '2D', '3D', 'colindbien', 'colindmal', 
          'colvarbien', 'colvarmal', 'longerror', 'pvalue', 'porc', 'abs', 
-         'tasim')
+         'tasim', 'ori', 'res')
   
   return(x)
 }

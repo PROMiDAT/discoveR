@@ -15,7 +15,7 @@ mod_kmedias_ui <- function(id) {
     conditionalPanel(
       condition = "input.tabkmedias == 'tabKbar'",
       fluidRow(
-        col_5(radioSwitch(ns("scaleKbar"), NULL, list("porc", "abs"), val.def = F)),
+        col_5(radioSwitch(ns("scaleKbar"), NULL, list("ori", "porc"), c(F, T))),
         col_7(selectInput(ns("selKbar"), NULL, ""))
       )
     ),
@@ -23,15 +23,13 @@ mod_kmedias_ui <- function(id) {
       condition = "input.tabkmedias == 'tabKmapa'",
       radioSwitch(ns("plotModeK"), NULL, list("2D", "3D"))
     ),
-    lapply(c("Khoriz", "Kvert"), function(i) {
-      conditionalPanel(
-        condition = paste0("input.tabkmedias == 'tab", i, "'"),
-        tags$div(
-          style = "float: right;",
-          radioSwitch(ns(paste0("scale", i)), NULL, list("porc", "abs"), val.def = F)
-        )
+    conditionalPanel(
+      condition = "input.tabkmedias == 'tabKvert'",
+      tags$div(
+        style = "float: right;",
+        radioSwitch(ns("scaleKvert"), NULL, list("ori", "res"), c(F, T))
       )
-    })
+    )
   )
   
   opts_k <- tabsOptions(
@@ -291,12 +289,9 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   
   #' Plot K-medias (Horizontal)
   output$k_horiz <- renderHighchart({
-    centros <- data.frame(apply(modelo.k()$centros$real, 2, function(x) x / max(abs(x)) * 100))
-    cod.centros <- "data.frame(apply(modelo.k$centros$real, 2, function(x) x / max(abs(x)) * 100))"
-    if(input$scaleKhoriz == "FALSE") {
-      centros <- modelo.k()$centros$real
-      cod.centros <- "modelo.k$centros$real"
-    }
+    
+    centros <- modelo.k()$centros$real
+    cod.centros <- "modelo.k$centros$real"
     tryCatch({
       cod <- paste0("hc_horiz(", cod.centros, ", 'k_horiz', c('",
                     paste(k_colors, collapse = "', '"), "'))")
