@@ -54,28 +54,27 @@ hcpcaind <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
 plotly_pcaind <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
                           cos2 = 0, colorCos = "firebrick",
                           titulos = c("Bien Representados", "Mal Representados")) {
-  ind <- data.frame(modelo$ind$coord[, axes])
-  dims <- colnames(ind)
+  ind <- data.frame(
+    x = modelo$ind$coord[, axes[1]], y = modelo$ind$coord[, axes[2]],
+    z = modelo$ind$coord[, axes[3]],
+    cos2 = apply(modelo$ind$cos2[, axes], 1, sum, na.rm = T))
+  dims <- paste0("Dim.", axes)
   ind$id <- row.names(ind)
-  ind$cos2 <- apply(modelo$ind$cos2[, axes], 1, sum, na.rm = T)
   ind$cos = factor(ifelse(ind$cos2 >= cos2, 1, 0), levels = c(1, 0), 
                    labels = titulos)
   inercias <- round(modelo$eig[axes, 2], digits = 2)
   
-  plot_ly(ind, x = as.formula(paste0("~", dims[1])), 
-          y = as.formula(paste0("~", dims[2])),
-          z = as.formula(paste0("~", dims[3])),
-          text = ~id, type = 'scatter3d', mode = 'markers', 
-          color = ~cos, colors = c(colorInd, colorCos),
-          hovertemplate = "%{text}<extra></extra>",
-          marker = list(size = 5)) %>% 
-    config(displaylogo = F) %>%
-    layout(
-      legend = list(orientation = "h", xanchor = "center", x = 0.5),
-      paper_bgcolor = "black", scene = list(
-        xaxis = list(title = paste0(dims[1], " ", inercias[1]), gridcolor = "white"), 
-        yaxis = list(title = paste0(dims[2], " ", inercias[2]), gridcolor = "white"),
-        zaxis = list(title = paste0(dims[3], " ", inercias[3]), gridcolor = "white")))
+  colores <- c(colorInd, colorCos)
+  if(sum(ind$cos == titulos[1]) == 0) colores <- colorCos
+  if(sum(ind$cos == titulos[2]) == 0) colores <- colorInd
+  
+  ind %>% group_by(cos) %>% e_charts(x) %>% 
+    e_scatter_3d(y, z, label = list(show = F), symbol_size = 10) %>%
+    e_color(colores) %>% e_tooltip() %>% e_show_loading() %>% 
+    e_legend(data = titulos) %>% 
+    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")")) %>% 
+    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")")) %>%
+    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"))
 }
 
 #' PCA plot of variables
@@ -254,12 +253,25 @@ hcpcabi <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
   ind$cos <- factor(ifelse(ind$cos2 >= cos2Ind, 1, 0), levels = c(1, 0), 
                     labels = titulos)
   
-  lista <- list(list(
-    type = 'scatter', data = apply(ind[ind$cos == titulos[1], c(1, 2)], 2, function(i) i), 
-    itemStyle = list(color = colorInd), name = paste0("Ind. ", titulos[1])))
-  lista[[2]] <- list(
-    type = 'scatter', data = apply(ind[ind$cos == titulos[2], c(1, 2)], 2, function(i) i), 
-    itemStyle = list(color = colorIndCos), name = paste0("Ind. ", titulos[2]))
+  BR <- ind[ind$cos == titulos[1], c(1, 2)]
+  MR <- ind[ind$cos == titulos[2], c(1, 2)]
+  
+  if(nrow(BR) > 0 & nrow(MR) > 0) {
+    lista <- list(list(
+      type = 'scatter', data = apply(BR, 2, function(i) i), 
+      itemStyle = list(color = colorInd), name = paste0("Ind. ", titulos[1])))
+    lista[[2]] <- list(
+      type = 'scatter', data = apply(MR, 2, function(i) i), 
+      itemStyle = list(color = colorIndCos), name = paste0("Ind. ", titulos[2]))
+  } else if(nrow(BR) > 0) {
+    lista <- list(list(
+      type = 'scatter', data = apply(BR, 2, function(i) i), 
+      itemStyle = list(color = colorInd), name = paste0("Ind. ", titulos[1])))
+  } else {
+    lista <- list(list(
+      type = 'scatter', data = apply(MR, 2, function(i) i), 
+      itemStyle = list(color = colorIndCos), name = paste0("Ind. ", titulos[2])))
+  }
   
   for (i in 1:nrow(var)) {
     nombre <- paste0("Var. ", titulos[1])
@@ -268,7 +280,7 @@ hcpcabi <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
       nombre <- paste0("Var. ", titulos[2])
       color  <- colorVarCos
     }
-    lista[[i + 2]] <- list(
+    lista[[i + length(lista)]] <- list(
       type = 'line', name = nombre, itemStyle = list(color = color),
       label = list(show = T, position = 'top', color = "black", 
                    formatter = JS(paste0(
