@@ -70,7 +70,12 @@ tr <- function(text, idioma = "es") {
   sapply(text, function(s) {
     elem <- ifelse(is.null(translation[[s]][[idioma]]), s,
                    translation[[s]][[idioma]])
-    Encoding(elem) <- "utf8"
+    if(toupper(.Platform$OS.type) != "WINDOWS") {
+      Encoding(elem) <- "utf8"
+    } else {
+      Encoding(elem) <- "UTF-8"
+    }
+    
     elem
   }, USE.NAMES = F)
 }

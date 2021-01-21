@@ -6,6 +6,12 @@
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 run_app <- function(...) {
+  Sys.setenv("LANGUAGE" = "ES")
+  if(toupper(.Platform$OS.type) != "WINDOWS") {
+    options(encoding = "utf8")
+  } else {
+     options(encoding = "UTF-8")
+  }
   with_golem_options(
     app = shinyApp(
       ui = app_ui, 

@@ -369,7 +369,8 @@ menu.idioma <- function() {
     tags$ul(
       class="treeview-menu", style="display: none;", `data-expanded`="Idioma",
       radioButtons('idioma', labelInput("selidioma"),
-                   c('Espa\u00f1ol'='es', 'English'='en')),
+                   choiceNames = c(tr('espanol', 'es'), 'English'),
+                   choiceValues = c("es", "en")),
       tags$br()))
 }
 

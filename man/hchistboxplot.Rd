@@ -10,7 +10,7 @@ hchistboxplot(
   colorBar = "steelblue",
   colorPoint = "red",
   outlier.name = "",
-  titulos = c("Mínimo", "Primer Cuartil", "Mediana", "Tercer Cuartil", "Máximo")
+  titulos = c("Minimo", "Primer Cuartil", "Mediana", "Tercer Cuartil", "Maximo")
 )
 }
 \arguments{

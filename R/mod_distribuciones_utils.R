@@ -27,8 +27,8 @@ get_hist_data <- function(x) {
 #' 
 hchistboxplot <- function(data, nombrearchivo = NULL, colorBar = "steelblue",
                           colorPoint = "red", outlier.name = "",
-                          titulos = c("M\u00EDnimo", "Primer Cuartil", "Mediana", 
-                                      "Tercer Cuartil", "M\u00E1ximo")) {
+                          titulos = c("Minimo", "Primer Cuartil", "Mediana", 
+                                      "Tercer Cuartil", "Maximo")) {
   atipicos <- boxplot(data, plot = F)
   distribu <- get_hist_data(data)
   
