@@ -21,7 +21,7 @@ calc.centros <- function(data, clusters) {
 #' Inertia plot of clusterization
 #'
 #' @param data a data.frame object with the inertia values.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #' @param titulos a character vector of length 3 specifying the titles to use on legend.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
@@ -56,7 +56,7 @@ hc_inercia <- function(data, nombre.archivo, titulos = c(
 #'
 #' @param pca.model an object of class PCA [FactoMineR].
 #' @param clusters a vector specifying the cluster of each individual.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #' @param colores a vector of color for each cluster.
 #' @param ejes a numeric vector of length 2 specifying the dimensions to be plotted.
 #'
@@ -180,7 +180,7 @@ plotly_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) 
 #' Horizontal representation for centers of clusters.
 #'
 #' @param centros a data.frame object with the centers of the clusters.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #' @param colors a vector of color for each cluster.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
@@ -227,7 +227,7 @@ hc_horiz <- function(centros, nombre.archivo = NULL, colors = NULL) {
 #' Vertical representation for centers of clusters.
 #'
 #' @param centros a data.frame object with the centers of the clusters.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #' @param colors a vector of color for each cluster.
 #' @param btntext a character value for the label of button to back.
 #'
@@ -277,7 +277,7 @@ hc_vert <- function(centros, nombre.archivo = NULL, colors = NULL, btntext = "Vo
 #' Radar representation for centers of clusters.
 #'
 #' @param centros a data.frame object with the centers of the clusters.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #' @param colores a vector of color for each cluster.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
@@ -316,7 +316,7 @@ hc_radar <- function(centros, nombre.archivo, colores = NULL) {
 #'
 #' @param clusters a vector specifying the cluster of each individual.
 #' @param var a factor column of a data.frame.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #' @param colores a vector of color for each cluster.
 #' @param escalar a boolean value specifying if use percentage or real values.
 #'

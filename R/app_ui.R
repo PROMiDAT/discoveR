@@ -7,6 +7,8 @@
 #' @import shinydashboard
 #' @import shinydashboardPlus
 #' @importFrom shinyjs useShinyjs show hide addClass removeClass
+#' @importFrom stats cor cutree hclust kmeans median na.omit
+#' @importFrom utils read.table write.csv
 #' @noRd
 #' 
 app_ui <- function(request) {

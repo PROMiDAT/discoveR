@@ -2,7 +2,7 @@
 #'
 #' @param data a data.frame object.
 #' @param max.clusters a numeric value specifying the number of times to generate the model.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return Highchart plot
@@ -35,13 +35,14 @@ hc_jambu <- function(data, max.clusters, nombre.archivo = NULL) {
 #'
 #' @param data a data.frame object.
 #' @param max.clusters a numeric value specifying the number of times to generate the model.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return Highchart plot
 #' @export hc_silhouette
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' @importFrom cluster silhouette
+#' @importFrom stats dist
 #'
 hc_silhouette <- function(data, max.clusters, nombre.archivo = NULL) {
   if(nrow(data) <= max.clusters) {

@@ -1,9 +1,12 @@
 ###################### Estadisticas Basicas ###################################
-#' Funciones Resumen Numérico
-#' @author Diego
-#' @return functions
-#' @export
+#' Returns HTML for numeric data summary
 #'
+#' @return HTML
+#' @noRd
+#' 
+#' @examples
+#' resumen.numerico(iris, "Sepal.Length")
+#' 
 resumen.numerico <- function(data, variable, idioma = "es") {
   datos.numericos <- list(
     Q1 = list(
@@ -49,12 +52,14 @@ resumen.numerico <- function(data, variable, idioma = "es") {
   return(res)
 }
 
-###################### Estadisticas Basicas ###################################
-#' Funciones Resumen Categórico
-#' @author Diego
-#' @return functions
-#' @export
+#' Returns HTML for category data summary
 #'
+#' @return HTML
+#' @noRd
+#' 
+#' @examples
+#' resumen.categorico(iris, "Sepal.Length")
+#' 
 resumen.categorico <- function(data, variable){
   color <- c("red","yellow","aqua","navy","teal","olive","purple","maroon",
              "black","blue","lime","orange","light-blue","green","fuchsia")

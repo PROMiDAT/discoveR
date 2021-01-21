@@ -7,9 +7,9 @@
 WP(DF, clusters)
 }
 \arguments{
-\item{clusters}{a vector specifying the cluster of each individual.}
+\item{DF}{a data.frame object.}
 
-\item{data}{a data.frame object.}
+\item{clusters}{a vector specifying the cluster of each individual.}
 }
 \value{
 numeric

@@ -10,6 +10,8 @@
 #' @return Highchart plot
 #' @export hchistnormal
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @importFrom graphics hist
+#' @importFrom stats dnorm sd
 #'
 hchistnormal <- function(data, nombrearchivo = NULL, colorbar = "steelblue", colorline = "gray",
                          nombres = c("Histograma", "Curva Normal")) {
@@ -65,6 +67,7 @@ hchistnormal <- function(data, nombrearchivo = NULL, colorbar = "steelblue", col
 #' @return Highchart plot
 #' @export hcqq
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @importFrom stats qnorm qqnorm quantile
 #'
 hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline = "gray") {
   data <- data.frame(qqnorm(data, plot = F))
@@ -104,6 +107,7 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return data.frame
 #' @export dfnormal
+#' @importFrom stats complete.cases pchisq pnorm shapiro.test
 #'
 dfnormal <- function(data) {
   data    <- var.numericas(data)

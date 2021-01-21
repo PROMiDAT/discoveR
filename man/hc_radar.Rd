@@ -9,9 +9,9 @@ hc_radar(centros, nombre.archivo, colores = NULL)
 \arguments{
 \item{centros}{a data.frame object with the centers of the clusters.}
 
-\item{colores}{a vector of color for each cluster.}
+\item{nombre.archivo}{a character value specifying the name to use when the plot is downloaded.}
 
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
+\item{colores}{a vector of color for each cluster.}
 }
 \value{
 Highchart plot

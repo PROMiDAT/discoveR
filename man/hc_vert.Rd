@@ -9,11 +9,11 @@ hc_vert(centros, nombre.archivo = NULL, colors = NULL, btntext = "Volver")
 \arguments{
 \item{centros}{a data.frame object with the centers of the clusters.}
 
+\item{nombre.archivo}{a character value specifying the name to use when the plot is downloaded.}
+
 \item{colors}{a vector of color for each cluster.}
 
 \item{btntext}{a character value for the label of button to back.}
-
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
 }
 \value{
 Highchart plot

@@ -7,15 +7,15 @@
 hc_inercia(
   data,
   nombre.archivo,
-  titulos = c("Inercia", "Inercia Intra-Clase", "Inercia Inter-Clase")
+  titulos = c("Inercia", "Inercia Inter-Clase", "Inercia Inter-Clase")
 )
 }
 \arguments{
 \item{data}{a data.frame object with the inertia values.}
 
-\item{titulos}{a character vector of length 3 specifying the titles to use on legend.}
+\item{nombre.archivo}{a character value specifying the name to use when the plot is downloaded.}
 
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
+\item{titulos}{a character vector of length 3 specifying the titles to use on legend.}
 }
 \value{
 Highchart plot

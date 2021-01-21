@@ -11,11 +11,11 @@ hc_cat(clusters, var, nombre.archivo = NULL, colores = NULL, escalar = T)
 
 \item{var}{a factor column of a data.frame.}
 
+\item{nombre.archivo}{a character value specifying the name to use when the plot is downloaded.}
+
 \item{colores}{a vector of color for each cluster.}
 
 \item{escalar}{a boolean value specifying if use percentage or real values.}
-
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
 }
 \value{
 Highchart plot

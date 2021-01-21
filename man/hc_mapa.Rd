@@ -17,11 +17,11 @@ hc_mapa(
 
 \item{clusters}{a vector specifying the cluster of each individual.}
 
+\item{nombre.archivo}{a character value specifying the name to use when the plot is downloaded.}
+
 \item{colores}{a vector of color for each cluster.}
 
 \item{ejes}{a numeric vector of length 2 specifying the dimensions to be plotted.}
-
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
 }
 \value{
 Highchart plot

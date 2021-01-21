@@ -23,11 +23,12 @@ get_hist_data <- function(x) {
 #' @return Highchart plot
 #' @export hchistboxplot
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @importFrom graphics boxplot
 #' 
 hchistboxplot <- function(data, nombrearchivo = NULL, colorBar = "steelblue",
                           colorPoint = "red", outlier.name = "",
-                          titulos = c("Mínimo", "Primer Cuartil", "Mediana", 
-                                      "Tercer Cuartil", "Máximo")) {
+                          titulos = c("M\u00EDnimo", "Primer Cuartil", "Mediana", 
+                                      "Tercer Cuartil", "M\u00E1ximo")) {
   atipicos <- boxplot(data, plot = F)
   distribu <- get_hist_data(data)
   

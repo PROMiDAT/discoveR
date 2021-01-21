@@ -1,5 +1,5 @@
 ############################### Generar Código ################################
-code.cor<- function(color1, color2, color3) {
+code.cor <- function(color1, color2, color3) {
   paste0(
     "colores <- list(list(0, '", color1, "'), list(0.5, '", color2, "'), list(1, '", color3, "'))\n",
     "label.js <- JS(\n",

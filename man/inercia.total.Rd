@@ -7,7 +7,7 @@
 inercia.total(DF)
 }
 \arguments{
-\item{data}{a data.frame object.}
+\item{DF}{a data.frame object.}
 }
 \value{
 numeric

@@ -125,7 +125,7 @@ mod_cj_ui <- function(id) {
 mod_cj_server <- function(input, output, session, updateData) {
   ns <- session$ns
   
-  cj_colors <<- NULL
+  cj_colors <- rv(colors = NULL)
   
   #' Mostrar Colores (Cluster jerarquico)
   observeEvent(input$cant.cluster, {
@@ -159,7 +159,7 @@ mod_cj_server <- function(input, output, session, updateData) {
       }
       clusters <- as.factor(cutree(modelo, k = cant.cluster))
       centros  <- calc.centros(data, clusters)
-      cj_colors <<- sapply(levels(clusters), function(i) 
+      cj_colors$colors <- sapply(levels(clusters), function(i) 
         isolate(input[[paste0("hcColor", i)]]))
       
       cod <- code.cj(centrar, dist.method, hc.method, cant.cluster)
@@ -216,9 +216,9 @@ mod_cj_server <- function(input, output, session, updateData) {
       modelo   <- modelo.cj()$modelo
       clusters <- modelo.cj()$clusters
       
-      p <- gg_dendrograma(modelo, clusters, c("gray", cj_colors))
+      p <- gg_dendrograma(modelo, clusters, c("gray", isolate(cj_colors$colors)))
       
-      cod <- code.dendro(cj_colors)
+      cod <- code.dendro(isolate(cj_colors$colors))
       updateAceEditor(session, "fieldCodeDendo", value = cod)
       
       ggplotly(p, tooltip = c("y", "cluster", "clusters", "label")) %>% 
@@ -236,13 +236,13 @@ mod_cj_server <- function(input, output, session, updateData) {
     if(input$plotModeCJ) {
       cod <- paste0(
         cod, "hc_mapa(modelo.pca, modelo.cj$clusters, 'cj_mapa', c('",
-        paste(cj_colors, collapse = "', '"), "'))\n")
+        paste(isolate(cj_colors$colors), collapse = "', '"), "'))\n")
       shinyjs::show("div_cj_2D")
       shinyjs::hide("div_cj_3D")
     } else {
       cod <- paste0(
         cod, "plotly_mapa(modelo.pca, modelo.cj$clusters, c('",
-        paste(cj_colors, collapse = "', '"), "'))\n")
+        paste(isolate(cj_colors$colors), collapse = "', '"), "'))\n")
       shinyjs::hide("div_cj_2D")
       shinyjs::show("div_cj_3D")
     }
@@ -258,7 +258,7 @@ mod_cj_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      hc_mapa(modelo, modelo.cj()$clusters, "cj_mapa", cj_colors)
+      hc_mapa(modelo, modelo.cj()$clusters, "cj_mapa", isolate(cj_colors$colors))
     }
   })
   
@@ -271,7 +271,7 @@ mod_cj_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      plotly_mapa(modelo, modelo.cj()$clusters, array(cj_colors))
+      plotly_mapa(modelo, modelo.cj()$clusters, array(isolate(cj_colors$colors)))
     }
   })
   
@@ -283,10 +283,10 @@ mod_cj_server <- function(input, output, session, updateData) {
     cod.centros <- "modelo.cj$centros$real"
     tryCatch({
       cod <- paste0("hc_horiz(", cod.centros, ", 'cj_horiz', c('",
-                    paste(cj_colors, collapse = "', '"), "'))")
+                    paste(isolate(cj_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeHoriz", value = cod)
       
-      hc_horiz(centros, "cj_horiz", cj_colors)
+      hc_horiz(centros, "cj_horiz", isolate(cj_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -307,10 +307,10 @@ mod_cj_server <- function(input, output, session, updateData) {
     titulo <- ifelse(updateData$idioma == "es", "Volver", "Back")
     tryCatch({
       cod <- paste0("hc_vert(", cod.centros, ", 'cj_vertical', c('",
-                    paste(cj_colors, collapse = "', '"), "', '", titulo, "'))")
+                    paste(isolate(cj_colors$colors), collapse = "', '"), "', '", titulo, "'))")
       updateAceEditor(session, "fieldCodeVert", value = cod)
       
-      hc_vert(centros, "cj_vertical", cj_colors, titulo)
+      hc_vert(centros, "cj_vertical", isolate(cj_colors$colors), titulo)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -323,10 +323,10 @@ mod_cj_server <- function(input, output, session, updateData) {
     
     tryCatch({
       cod <- paste0("hc_radar(modelo.cj$centros$porcentual, 'cj_radar', c('",
-                    paste(cj_colors, collapse = "', '"), "'))")
+                    paste(isolate(cj_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeRadar", value = cod)
       
-      hc_radar(modelo.cj()$centros$porcentual, "cj_radar", cj_colors)
+      hc_radar(modelo.cj()$centros$porcentual, "cj_radar", isolate(cj_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -345,11 +345,11 @@ mod_cj_server <- function(input, output, session, updateData) {
     tryCatch({
       cod <- paste0(
         "hc_cat(modelo.cj$clusters, datos[['", var, "']], 'cj_cat', c('",
-        paste(cj_colors, collapse = "', '"), "'), ", escalar, ")")
+        paste(isolate(cj_colors$colors), collapse = "', '"), "'), ", escalar, ")")
       updateAceEditor(session, "fieldCodeBar", value = cod)
       
       hc_cat(modelo.cj()$clusters, updateData$datos[, var], "cj_cat", 
-             cj_colors, escalar)
+             isolate(cj_colors$colors), escalar)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)

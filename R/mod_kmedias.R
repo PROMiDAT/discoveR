@@ -130,7 +130,7 @@ mod_kmedias_ui <- function(id) {
 mod_kmedias_server <- function(input, output, session, updateData) {
   ns <- session$ns
   
-  k_colors <<- NULL
+  k_colors <- rv(colors = NULL)
   
   #' Mostrar Colores (Cluster jerarquico)
   observeEvent(input$cant.kmeans.cluster, {
@@ -166,7 +166,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
       
       clusters <- as.factor(modelo$cluster)
       centros  <- calc.centros(data, clusters)
-      k_colors <<- sapply(levels(clusters), function(i) 
+      k_colors$colors <- sapply(levels(clusters), function(i) 
         isolate(input[[paste0("kColor", i)]]))
       
       cod <- code.k(centrar, cant.cluster, num.nstart, num.iter, sel.algoritmo)
@@ -242,13 +242,13 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     if(input$plotModeK) {
       cod <- paste0(
         cod, "hc_mapa(modelo.pca, modelo.k$clusters, 'k_mapa', c('",
-        paste(k_colors, collapse = "', '"), "'))\n")
+        paste(isolate(k_colors$colors), collapse = "', '"), "'))\n")
       shinyjs::show("div_k_2D")
       shinyjs::hide("div_k_3D")
     } else {
       cod <- paste0(
         cod, "plotly_mapa(modelo.pca, modelo.k$clusters, c('",
-        paste(k_colors, collapse = "', '"), "'))\n")
+        paste(isolate(k_colors$colors), collapse = "', '"), "'))\n")
       shinyjs::hide("div_k_2D")
       shinyjs::show("div_k_3D")
     }
@@ -267,7 +267,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      hc_mapa(modelo, modelo.k()$clusters, "k_mapa", k_colors)
+      hc_mapa(modelo, modelo.k()$clusters, "k_mapa", isolate(k_colors$colors))
     }
   })
   
@@ -283,7 +283,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     if(is.null(modelo)) {
       return(NULL)
     } else {
-      plotly_mapa(modelo, modelo.k()$clusters, array(k_colors))
+      plotly_mapa(modelo, modelo.k()$clusters, array(isolate(k_colors$colors)))
     }
   })
   
@@ -294,10 +294,10 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     cod.centros <- "modelo.k$centros$real"
     tryCatch({
       cod <- paste0("hc_horiz(", cod.centros, ", 'k_horiz', c('",
-                    paste(k_colors, collapse = "', '"), "'))")
+                    paste(isolate(k_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeKhoriz", value = cod)
       
-      hc_horiz(centros, "k_horiz", k_colors)
+      hc_horiz(centros, "k_horiz", isolate(k_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -316,10 +316,10 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     titulo <- ifelse(updateData$idioma == "es", "Volver", "Back")
     tryCatch({
       cod <- paste0("hc_vert(", cod.centros, ", 'k_vertical', c('",
-                    paste(k_colors, collapse = "', '"), "'))")
+                    paste(isolate(k_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeKvert", value = cod)
       
-      hc_vert(centros, "k_vertical", k_colors, titulo)
+      hc_vert(centros, "k_vertical", isolate(k_colors$colors), titulo)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -330,10 +330,10 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   output$k_radar <- renderHighchart({
     tryCatch({
       cod <- paste0("hc_radar(modelo.k$centros$porcentual, 'k_radar', c('",
-                    paste(k_colors, collapse = "', '"), "'))")
+                    paste(isolate(k_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeKradar", value = cod)
       
-      hc_radar(modelo.k()$centros$porcentual, "k_radar", k_colors)
+      hc_radar(modelo.k()$centros$porcentual, "k_radar", isolate(k_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -350,11 +350,11 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     tryCatch({
       cod <- paste0(
         "hc_cat(modelo.k$clusters, datos[['", var, "']], 'k_cat', c('",
-        paste(k_colors, collapse = "', '"), "'), ", escalar, ")")
+        paste(isolate(k_colors$colors), collapse = "', '"), "'), ", escalar, ")")
       updateAceEditor(session, "fieldCodeKbar", value = cod)
       
       hc_cat(modelo.k()$clusters, updateData$datos[, var], "k_cat", 
-             k_colors, escalar)
+             isolate(k_colors$colors), escalar)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)

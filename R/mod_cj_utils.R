@@ -14,7 +14,7 @@ inercia <- function(suma, i, total, individuo){
 
 #' Calculate total inertia
 #'
-#' @param data a data.frame object.
+#' @param DF a data.frame object.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return numeric
@@ -26,7 +26,7 @@ inercia.total <- function(DF) {
 
 #' Calculate inter-class inertia
 #'
-#' @param data a data.frame object.
+#' @param DF a data.frame object.
 #' @param clusters a vector specifying the cluster of each individual.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
@@ -47,7 +47,7 @@ BP2 <- function(suma, i, DF, c.total, cant, clusters) {
 
 #' Calculate intra-class inertia
 #'
-#' @param data a data.frame object.
+#' @param DF a data.frame object.
 #' @param clusters a vector specifying the cluster of each individual.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>

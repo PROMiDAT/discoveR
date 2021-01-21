@@ -67,6 +67,7 @@ hcpcaind <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
 #' @return plotly plot
 #' @export plotly_pcaind
 #' @importFrom plotly plot_ly config layout
+#' @importFrom stats as.formula
 #' 
 plotly_pcaind <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
                           cos2 = 0, colorCos = "firebrick",
