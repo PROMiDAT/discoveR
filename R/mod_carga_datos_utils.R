@@ -5,6 +5,8 @@
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return data.frame
 #' @export var.numericas
+#' @examples
+#' var.numericas(iris)
 #' 
 var.numericas <- function(data) {
   if(is.null(data)) return(NULL)
@@ -18,6 +20,8 @@ var.numericas <- function(data) {
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return data.frame
 #' @export var.categoricas
+#' @examples
+#' var.categoricas(iris)
 #' 
 var.categoricas <- function(data) {
   if(is.null(data)) return(NULL)
@@ -32,6 +36,8 @@ var.categoricas <- function(data) {
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return data.frame
 #' @export datos.disyuntivos
+#' @examples
+#' datos.disyuntivos(iris, "Species")
 #' 
 datos.disyuntivos <- function(data, var) {
   if(is.null(data)) {

@@ -12,6 +12,9 @@
 #' @return Highchart plot
 #' @export hcpcaind
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' hcpcaind(p)
 #' 
 hcpcaind <- function(modelo, axes = c(1, 2), nombrearchivo = NULL, 
                      colorInd = "steelblue", cos2 = 0, colorCos = "firebrick",
@@ -68,6 +71,9 @@ hcpcaind <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
 #' @export plotly_pcaind
 #' @importFrom plotly plot_ly config layout
 #' @importFrom stats as.formula
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' plotly_pcaind(p)
 #' 
 plotly_pcaind <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
                           cos2 = 0, colorCos = "firebrick",
@@ -110,6 +116,9 @@ plotly_pcaind <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
 #' @return Highchart plot
 #' @export hcpcavar
 #' @importFrom highcharter highchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' hcpcavar(p)
 #' 
 hcpcavar <- function(modelo, axes = c(1, 2), nombrearchivo = NULL, 
                      colorVar = "forestgreen", cos2 = 0, colorCos = "darkorchid",
@@ -204,6 +213,9 @@ hcpcavar <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
 #' @return plotly plot
 #' @export plotly_pcavar
 #' @importFrom plotly plot_ly add_trace config layout
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' plotly_pcavar(p)
 #' 
 plotly_pcavar <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
                           cos2 = 0, colorCos = "darkorchid",
@@ -285,6 +297,9 @@ plotly_pcavar <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
 #' @return Highchart plot
 #' @export hcpcabi
 #' @importFrom highcharter highchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' hcpcabi(p)
 #' 
 hcpcabi <- function(modelo, axes = c(1, 2), nombrearchivo = NULL, 
                     colorInd = "steelblue", colorVar = "forestgreen", 
@@ -399,6 +414,9 @@ hcpcabi <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
 #' @return plotly plot
 #' @export plotly_pcabi
 #' @importFrom plotly plot_ly add_trace config layout
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' plotly_pcabi(p)
 #' 
 plotly_pcabi <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
                          colorVar = "forestgreen", cos2Ind = 0,  cos2Var = 0,

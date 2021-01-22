@@ -32,7 +32,10 @@ inercia.total <- function(DF) {
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return numeric
 #' @export BP
-#' 
+#' @examples
+#' m <- hclust(dist(iris[, -5]))
+#' BP(iris[, -5], cutree(m, 3))
+#'
 BP <- function(DF, clusters) {
   BP2(0, 1, DF, centros.total(DF), length(unique(clusters)), clusters)
 }
@@ -53,8 +56,12 @@ BP2 <- function(suma, i, DF, c.total, cant, clusters) {
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return numeric
 #' @export WP
-#' 
+#' @examples
+#' m <- hclust(dist(iris[, -5]))
+#' WP(iris[, -5], cutree(m, 3))
+#'
 WP <- function(DF, clusters) {
+  cant <- length(unique(clusters))
   centros.cluster <- lapply(1:cant, function(i) centros.total(DF[clusters == i, ]))
   res <- sapply(1:nrow(DF), function(i) 
     calc.inercia(DF[i, ], centros.cluster[[clusters[i]]]))

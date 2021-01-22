@@ -17,6 +17,11 @@ numeric
 \description{
 Calculate intra-class inertia
 }
+\examples{
+m <- hclust(dist(iris[, -5]))
+WP(iris[, -5], cutree(m, 3))
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

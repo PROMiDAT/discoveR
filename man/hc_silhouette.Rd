@@ -19,6 +19,10 @@ Highchart plot
 \description{
 Silhouette plot
 }
+\examples{
+hc_silhouette(iris[, -5], 10)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

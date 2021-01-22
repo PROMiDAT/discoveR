@@ -15,6 +15,10 @@ data.frame
 \description{
 Filter numeric variables of a data.frame
 }
+\examples{
+var.numericas(iris)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

@@ -32,6 +32,11 @@ plotly plot
 \description{
 PCA plot of variables in 3D
 }
+\examples{
+p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+plotly_pcavar(p)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

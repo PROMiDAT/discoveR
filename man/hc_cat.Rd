@@ -23,6 +23,11 @@ Highchart plot
 \description{
 Barplot for categoric variable by clusters.
 }
+\examples{
+clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+hc_cat(clusters, iris[, 5], colores = c("steelblue", "pink", "forestgreen"))
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

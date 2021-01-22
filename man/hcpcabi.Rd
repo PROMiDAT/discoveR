@@ -44,6 +44,11 @@ Highchart plot
 \description{
 PCA biplot
 }
+\examples{
+p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+hcpcabi(p)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

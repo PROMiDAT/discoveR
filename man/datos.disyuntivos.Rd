@@ -17,6 +17,10 @@ data.frame
 \description{
 Create disjunctive columns to a data.frame.
 }
+\examples{
+datos.disyuntivos(iris, "Species")
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

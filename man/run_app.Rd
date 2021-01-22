@@ -12,3 +12,10 @@ run_app(...)
 \description{
 Run the Shiny Application
 }
+\examples{
+if(interactive()) {
+  run_app()
+}
+
+
+}

@@ -21,6 +21,12 @@ Highchart plot
 \description{
 Vertical representation for centers of clusters.
 }
+\examples{
+clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+c <- calc.centros(iris[, -5], clusters)
+hc_vert(c$real, 'vertical', c("steelblue", "pink", "forestgreen"))
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

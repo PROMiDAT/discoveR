@@ -7,6 +7,9 @@
 #' @return list
 #' @export calc.centros
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' calc.centros(iris[, -5], clusters)
 #' 
 calc.centros <- function(data, clusters) {
   if(is.null(clusters)) return(NULL)
@@ -64,6 +67,10 @@ hc_inercia <- function(data, nombre.archivo, titulos = c(
 #' @return Highchart plot
 #' @export hc_mapa
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' hc_mapa(p, clusters, "map", c("steelblue", "pink", "forestgreen"))
 #' 
 hc_mapa <- function(pca.model, clusters, nombre.archivo = NULL, colores = NULL, ejes = c(1, 2)) {
   ind <- data.frame(pca.model$ind$coord[, ejes])
@@ -112,6 +119,8 @@ hc_mapa <- function(pca.model, clusters, nombre.archivo = NULL, colores = NULL, 
     ) %>%
     hc_tooltip(headerFormat = "", pointFormat = "<b>{point.id}</b>") %>% 
     hc_exporting(enabled = T, filename = nombre.archivo)
+  
+  return(res)
 }
 
 #' PCA plot of individuals colored by clusters
@@ -125,6 +134,10 @@ hc_mapa <- function(pca.model, clusters, nombre.archivo = NULL, colores = NULL, 
 #' @return plotly plot
 #' @export plotly_mapa
 #' @importFrom plotly plot_ly config layout
+#' @examples
+#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' plotly_mapa(p, clusters, c("steelblue", "pink", "forestgreen"))
 #' 
 plotly_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) {
   ind <- data.frame(pca.model$ind$coord[, ejes])
@@ -187,6 +200,10 @@ plotly_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) 
 #' @return Highchart plot
 #' @export hc_horiz
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' c <- calc.centros(iris[, -5], clusters)
+#' hc_horiz(c$real, 'horizontal', c("steelblue", "pink", "forestgreen"))
 #' 
 hc_horiz <- function(centros, nombre.archivo = NULL, colors = NULL) {
   data <- data.frame(x = character(), y = numeric(), grupo = factor())
@@ -235,6 +252,10 @@ hc_horiz <- function(centros, nombre.archivo = NULL, colors = NULL) {
 #' @return Highchart plot
 #' @export hc_vert
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' c <- calc.centros(iris[, -5], clusters)
+#' hc_vert(c$real, 'vertical', c("steelblue", "pink", "forestgreen"))
 #' 
 hc_vert <- function(centros, nombre.archivo = NULL, colors = NULL, btntext = "Volver") {
   lang <- getOption("highcharter.lang")
@@ -284,6 +305,10 @@ hc_vert <- function(centros, nombre.archivo = NULL, colors = NULL, btntext = "Vo
 #' @return Highchart plot
 #' @export hc_radar
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' c <- calc.centros(iris[, -5], clusters)
+#' hc_radar(c$porcentual, 'radar', c("steelblue", "pink", "forestgreen"))
 #' 
 hc_radar <- function(centros, nombre.archivo, colores = NULL) {
   res <- highchart() %>%
@@ -324,6 +349,9 @@ hc_radar <- function(centros, nombre.archivo, colores = NULL) {
 #' @return Highchart plot
 #' @export hc_cat
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @examples
+#' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+#' hc_cat(clusters, iris[, 5], colores = c("steelblue", "pink", "forestgreen"))
 #' 
 hc_cat <- function(clusters, var, nombre.archivo = NULL, colores = NULL, escalar = T) {
   data <- data.frame(table(clusters, var))

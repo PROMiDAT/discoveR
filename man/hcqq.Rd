@@ -21,6 +21,10 @@ Highchart plot
 \description{
 Qplot + Qline
 }
+\examples{
+hcqq(iris$Sepal.Length)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

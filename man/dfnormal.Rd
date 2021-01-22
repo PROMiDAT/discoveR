@@ -15,6 +15,10 @@ data.frame
 \description{
 Data.frame with normal test
 }
+\examples{
+dfnormal(iris[, -5])
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

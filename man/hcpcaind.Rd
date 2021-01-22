@@ -35,6 +35,11 @@ Highchart plot
 \description{
 PCA plot of individuals
 }
+\examples{
+p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+hcpcaind(p)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

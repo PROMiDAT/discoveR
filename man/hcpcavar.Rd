@@ -35,6 +35,11 @@ Highchart plot
 \description{
 PCA plot of variables
 }
+\examples{
+p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+hcpcavar(p)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

@@ -41,6 +41,11 @@ plotly plot
 \description{
 PCA biplot in 3D
 }
+\examples{
+p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+plotly_pcabi(p)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

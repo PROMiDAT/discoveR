@@ -8,7 +8,9 @@
 #' @return Highchart plot
 #' @export hc_jambu
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
-#'
+#' @examples
+#' hc_jambu(iris[, -5], 10)
+#' 
 hc_jambu <- function(data, max.clusters, nombre.archivo = NULL) {
     if(nrow(data) <= max.clusters) {
       max.clusters <- nrow(data) - 1
@@ -43,7 +45,9 @@ hc_jambu <- function(data, max.clusters, nombre.archivo = NULL) {
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' @importFrom cluster silhouette
 #' @importFrom stats dist
-#'
+#' @examples
+#' hc_silhouette(iris[, -5], 10)
+#' 
 hc_silhouette <- function(data, max.clusters, nombre.archivo = NULL) {
   if(nrow(data) <= max.clusters) {
     max.clusters <- nrow(data) - 1

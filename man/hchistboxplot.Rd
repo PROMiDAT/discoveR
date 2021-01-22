@@ -32,6 +32,10 @@ Highchart plot
 \description{
 Histogram + boxplot
 }
+\examples{
+hchistboxplot(iris$Sepal.Width)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

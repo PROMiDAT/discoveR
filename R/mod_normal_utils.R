@@ -12,7 +12,9 @@
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' @importFrom graphics hist
 #' @importFrom stats dnorm sd
-#'
+#' @examples
+#' hchistnormal(iris$Sepal.Length)
+#' 
 hchistnormal <- function(data, nombrearchivo = NULL, colorbar = "steelblue", colorline = "gray",
                          nombres = c("Histograma", "Curva Normal")) {
   h <- hist(data, plot = F)
@@ -68,7 +70,9 @@ hchistnormal <- function(data, nombrearchivo = NULL, colorbar = "steelblue", col
 #' @export hcqq
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' @importFrom stats qnorm qqnorm quantile
-#'
+#' @examples
+#' hcqq(iris$Sepal.Length)
+#' 
 hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline = "gray") {
   data <- data.frame(qqnorm(data, plot = F))
   
@@ -108,7 +112,9 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
 #' @return data.frame
 #' @export dfnormal
 #' @importFrom stats complete.cases pchisq pnorm shapiro.test
-#'
+#' @examples
+#' dfnormal(iris[, -5])
+#' 
 dfnormal <- function(data) {
   data    <- var.numericas(data)
   fisher  <- sapply(data, function(i) fisher.calc(i))

@@ -17,6 +17,11 @@ list
 \description{
 Calculation of the center of clusters
 }
+\examples{
+clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+calc.centros(iris[, -5], clusters)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

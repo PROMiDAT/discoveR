@@ -24,6 +24,8 @@ get_hist_data <- function(x) {
 #' @export hchistboxplot
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' @importFrom graphics boxplot
+#' @examples
+#' hchistboxplot(iris$Sepal.Width)
 #' 
 hchistboxplot <- function(data, nombrearchivo = NULL, colorBar = "steelblue",
                           colorPoint = "red", outlier.name = "",

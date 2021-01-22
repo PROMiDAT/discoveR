@@ -15,6 +15,10 @@ data.frame
 \description{
 Filter category variables of a data.frame
 }
+\examples{
+var.categoricas(iris)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

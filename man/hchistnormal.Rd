@@ -29,6 +29,10 @@ Highchart plot
 \description{
 Normal plot
 }
+\examples{
+hchistnormal(iris$Sepal.Length)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

@@ -21,6 +21,12 @@ plotly plot
 \description{
 PCA plot of individuals colored by clusters
 }
+\examples{
+p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+clusters <- factor(kmeans(iris[, -5], 3)$cluster)
+plotly_mapa(p, clusters, c("steelblue", "pink", "forestgreen"))
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }

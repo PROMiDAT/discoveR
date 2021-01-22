@@ -5,6 +5,12 @@
 #' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
+#' @examples
+#' if(interactive()) {
+#'   run_app()
+#' }
+#'
+#'
 run_app <- function(...) {
   Sys.setenv("LANGUAGE" = "ES")
   if(toupper(.Platform$OS.type) != "WINDOWS") {

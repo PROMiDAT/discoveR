@@ -19,6 +19,10 @@ Highchart plot
 \description{
 Jambu Elbow plot
 }
+\examples{
+hc_jambu(iris[, -5], 10)
+
+}
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>
 }
