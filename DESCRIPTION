@@ -4,8 +4,7 @@ Version: 2.1.6
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),
-      person(given = "Diego", family = "Jiménez", role = "ctb"),
-      person(given = "Andrés", family = "Navaro", role = "ctb"))
+      person(given = "Diego", family = "Jiménez", role = "ctb"))
 Description: Performs an exploratory data analysis through a 'shiny' interface. It includes basic methods such as the mean, median, mode, normality test, among others. It also includes clustering techniques such as Principal Components Analysis, Hierarchical Clustering and the K-Means Method.
 License: GPL (>=2)
 Imports:
