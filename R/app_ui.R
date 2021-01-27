@@ -2,6 +2,7 @@
 #' 
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
+#' @import rlang
 #' @import shiny
 #' @import shinyAce
 #' @import shinydashboard

@@ -1,6 +1,6 @@
 Package: discoveR
 Title: Exploratory Data Analysis System
-Version: 2.1.6
+Version: 2.1.7
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),
@@ -9,6 +9,7 @@ Description: Performs an exploratory data analysis through a 'shiny' interface. 
 License: GPL (>=2)
 Imports:
     DT,
+    rlang,
     stats,
     golem,
     shiny,
