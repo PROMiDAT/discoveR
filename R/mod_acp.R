@@ -103,8 +103,7 @@ mod_acp_ui <- function(id) {
           echarts4rOutput(ns("var_2D"), height = "75vh")),
         tags$div(
           id = ns("div_var_3D"),
-          withLoader(plotlyOutput(ns("var_3D"), height = "75vh"), 
-                     type = "html", loader = "loader4"))
+          echarts4rOutput(ns("var_3D"), height = "75vh"))
       ),
       tabPanel(
         title = labelInput("sobreposicion"), value = "tabBi",
@@ -113,8 +112,7 @@ mod_acp_ui <- function(id) {
           echarts4rOutput(ns("bi_2D"), height = "75vh")),
         tags$div(
           id = ns("div_bi_3D"),
-          withLoader(plotlyOutput(ns("bi_3D"), height = "75vh"), 
-                     type = "html", loader = "loader4"))
+          echarts4rOutput(ns("bi_3D"), height = "75vh"))
       ),
       tabPanel(
         title = labelInput("resultados"), value = "pca.salida",
@@ -247,7 +245,7 @@ mod_acp_server <- function(input, output, session, updateData) {
   })
   
   #' Plot PCA 3D (variables)
-  output$var_3D <- renderPlotly({
+  output$var_3D <- renderEcharts4r({
     modelo  <- modelo.pca()
     
     ejes    <- isolate(input$slider_ejes)
@@ -281,6 +279,7 @@ mod_acp_server <- function(input, output, session, updateData) {
     titulos <- c(tr("bienr", updateData$idioma), tr("malr", updateData$idioma))
     
     if(is.null(modelo)) {
+      print("ENTRA")
       return(NULL)
     } else {
       cod <- paste0("hcpcabi(modelo, c(", paste(ejes, collapse = ", "), 
@@ -295,7 +294,7 @@ mod_acp_server <- function(input, output, session, updateData) {
   })
   
   #' Plot PCA 3D (Biplot)
-  output$bi_3D <- renderPlotly({
+  output$bi_3D <- renderEcharts4r({
     modelo  <- modelo.pca()
     
     ejes        <- isolate(input$slider_ejes)
