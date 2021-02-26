@@ -4,14 +4,12 @@
 \alias{hc_jambu}
 \title{Jambu Elbow plot}
 \usage{
-hc_jambu(data, max.clusters, nombre.archivo = NULL)
+hc_jambu(data, max.clusters)
 }
 \arguments{
 \item{data}{a data.frame object.}
 
 \item{max.clusters}{a numeric value specifying the number of times to generate the model.}
-
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
 }
 \value{
 Highchart plot

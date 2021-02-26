@@ -4,24 +4,16 @@
 \alias{hc_mapa}
 \title{PCA plot of individuals colored by clusters}
 \usage{
-hc_mapa(
-  pca.model,
-  clusters,
-  nombre.archivo = NULL,
-  colores = NULL,
-  ejes = c(1, 2)
-)
+hc_mapa(pca.model, clusters, ejes = c(1, 2), colores = NULL)
 }
 \arguments{
 \item{pca.model}{an object of class PCA [FactoMineR].}
 
 \item{clusters}{a vector specifying the cluster of each individual.}
 
-\item{colores}{a vector of color for each cluster.}
-
 \item{ejes}{a numeric vector of length 2 specifying the dimensions to be plotted.}
 
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
+\item{colores}{a vector of color for each cluster.}
 }
 \value{
 Highchart plot

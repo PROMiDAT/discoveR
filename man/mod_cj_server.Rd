@@ -16,10 +16,7 @@ cj Server Function
 \keyword{(Radar)}
 \keyword{(Resultados}
 \keyword{(Vertical)}
-\keyword{2D}
-\keyword{3D}
 \keyword{Agregar}
-\keyword{Choose}
 \keyword{Clusteres}
 \keyword{Colores}
 \keyword{Generate}
@@ -40,6 +37,5 @@ cj Server Function
 \keyword{load}
 \keyword{numéricos)}
 \keyword{on}
-\keyword{or}
 \keyword{plot}
 \keyword{tabla}

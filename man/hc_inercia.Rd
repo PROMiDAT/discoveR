@@ -7,7 +7,7 @@
 hc_inercia(
   data,
   nombre.archivo,
-  titulos = c("Inercia", "Inercia Intra-Clase", "Inercia Inter-Clase")
+  titulos = c("Inercia", "Inercia Inter-Clase", "Inercia Intra-Clase")
 )
 }
 \arguments{

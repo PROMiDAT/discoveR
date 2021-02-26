@@ -2,7 +2,7 @@
 % Please edit documentation in R/mod_normal_utils.R
 \name{dfnormal}
 \alias{dfnormal}
-\title{Qplot + Qline}
+\title{Normal data.frame}
 \usage{
 dfnormal(data)
 }
@@ -13,7 +13,7 @@ dfnormal(data)
 data.frame
 }
 \description{
-Qplot + Qline
+Normal data.frame
 }
 \author{
 Diego Jimenez <diego.jimenez@promidat.com>

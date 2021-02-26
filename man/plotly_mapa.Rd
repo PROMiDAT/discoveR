@@ -4,16 +4,16 @@
 \alias{plotly_mapa}
 \title{PCA plot of individuals colored by clusters}
 \usage{
-plotly_mapa(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3))
+plotly_mapa(pca.model, clusters, ejes = c(1, 2, 3), colores = NULL)
 }
 \arguments{
 \item{pca.model}{an object of class PCA [FactoMineR].}
 
 \item{clusters}{a vector specifying the cluster of each individual.}
 
-\item{colores}{a vector of color for each cluster.}
-
 \item{ejes}{a numeric vector of length 3 specifying the dimensions to be plotted.}
+
+\item{colores}{a vector of color for each cluster.}
 }
 \value{
 plotly plot

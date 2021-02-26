@@ -4,7 +4,7 @@
 \alias{hc_cat}
 \title{Barplot for categoric variable by clusters.}
 \usage{
-hc_cat(clusters, var, nombre.archivo = NULL, colores = NULL, escalar = T)
+hc_cat(clusters, var, colores = NULL, escalar = T)
 }
 \arguments{
 \item{clusters}{a vector specifying the cluster of each individual.}
@@ -14,8 +14,6 @@ hc_cat(clusters, var, nombre.archivo = NULL, colores = NULL, escalar = T)
 \item{colores}{a vector of color for each cluster.}
 
 \item{escalar}{a boolean value specifying if use percentage or real values.}
-
-\item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
 }
 \value{
 Highchart plot

@@ -4,12 +4,12 @@
 \alias{hc_horiz}
 \title{Horizontal representation for centers of clusters.}
 \usage{
-hc_horiz(centros, nombre.archivo = NULL, colors = NULL)
+hc_horiz(centros, nombre.archivo = NULL, colores = NULL)
 }
 \arguments{
 \item{centros}{a data.frame object with the centers of the clusters.}
 
-\item{colors}{a vector of color for each cluster.}
+\item{colores}{a vector of color for each cluster.}
 
 \item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
 }

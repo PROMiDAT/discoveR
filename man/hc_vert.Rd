@@ -4,16 +4,16 @@
 \alias{hc_vert}
 \title{Vertical representation for centers of clusters.}
 \usage{
-hc_vert(centros, nombre.archivo = NULL, colors = NULL, btntext = "Volver")
+hc_vert(centros, nombre.archivo = NULL, colores = NULL)
 }
 \arguments{
 \item{centros}{a data.frame object with the centers of the clusters.}
 
-\item{colors}{a vector of color for each cluster.}
-
-\item{btntext}{a character value for the label of button to back.}
+\item{colores}{a vector of color for each cluster.}
 
 \item{nombrearchivo}{a character value specifying the name to use when the plot is downloaded.}
+
+\item{btntext}{a character value for the label of button to back.}
 }
 \value{
 Highchart plot

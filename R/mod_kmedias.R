@@ -78,43 +78,36 @@ mod_kmedias_ui <- function(id) {
       id = "tabkmedias", title = title_k, opciones = opts_k,
       tabPanel(
         title = labelInput("inercia"), value = "tabKinercia",
-        withLoader(highchartOutput(ns("k_inercia"), height = "75vh"), 
+        withLoader(echarts4rOutput(ns("k_inercia"), height = "75vh"), 
                    type = "html", loader = "loader4")
       ),
       tabPanel(
         title = labelInput("numcluster"), value = "tabJambu",
-        withLoader(highchartOutput(ns('k_jambu'), height = "70vh"), 
+        withLoader(echarts4rOutput(ns('k_jambu'), height = "70vh"), 
                    type = "html", loader = "loader4")
       ),
       tabPanel(
         title = labelInput("mapa"), value = "tabKmapa",
-        tags$div(
-          id = ns("div_k_2D"),
-          withLoader(highchartOutput(ns("k_mapa_2D"), height = "75vh"), 
-                     type = "html", loader = "loader4")),
-        tags$div(
-          id = ns("div_k_3D"),
-          withLoader(plotlyOutput(ns('k_mapa_3D'), height = "75vh"), 
-                     type = "html", loader = "loader4"))
+        echarts4rOutput(ns("k_mapa"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("horizontal"), value = "tabKhoriz",
-        withLoader(highchartOutput(ns("k_horiz"), height = "75vh"), 
+        withLoader(echarts4rOutput(ns("k_horiz"), height = "75vh"), 
                    type = "html", loader = "loader4")
       ),
       tabPanel(
         title = labelInput("vertical"), value = "tabKvert",
-        withLoader(highchartOutput(ns("k_vert"), height = "75vh"), 
+        withLoader(echarts4rOutput(ns("k_vert"), height = "75vh"), 
                    type = "html", loader = "loader4")
       ),
       tabPanel(
         title = labelInput("radar"), value = "tabKradar",
-        withLoader(highchartOutput(ns("k_radar"), height = "75vh"), 
+        withLoader(echarts4rOutput(ns("k_radar"), height = "75vh"), 
                    type = "html", loader = "loader4")
       ),
       tabPanel(
         title = labelInput("interpretacioncat"), value = "tabKbar",
-        withLoader(highchartOutput(ns("k_cat"), height = "75vh"), 
+        withLoader(echarts4rOutput(ns("k_cat"), height = "75vh"), 
                    type = "html", loader = "loader4")
       ),
       tabPanel(
@@ -168,8 +161,8 @@ mod_kmedias_server <- function(input, output, session, updateData) {
       
       clusters <- as.factor(modelo$cluster)
       centros  <- calc.centros(data, clusters)
-      k_colors <<- sapply(levels(clusters), function(i) 
-        isolate(input[[paste0("kColor", i)]]))
+      k_colors <<- unname(sapply(levels(clusters), function(i) 
+        isolate(input[[paste0("kColor", i)]])))
       
       cod <- code.k(centrar, cant.cluster, num.nstart, num.iter, sel.algoritmo)
       updateAceEditor(session, "fieldCodeKModelo", value = cod)
@@ -187,7 +180,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   })
   
   #' Inertia plot
-  output$k_inercia <- renderHighchart({
+  output$k_inercia <- renderEcharts4r({
     titulos <- c(
       tr("inercia", updateData$idioma), 
       tr("inerciaintra", updateData$idioma),
@@ -211,7 +204,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   })
   
   #' Jambu Elbow
-  output$k_jambu <- renderHighchart({
+  output$k_jambu <- renderEcharts4r({
     input$run_k
     centrar <- isolate(input$k.scale)
     
@@ -222,11 +215,11 @@ mod_kmedias_server <- function(input, output, session, updateData) {
       if(input$radiojambu == "wss") {
         cod <- "hc_jambu(datos.aux, 10, 'jambu')"
         updateAceEditor(session, "fieldCodeJambu", value = cod)
-        hc_jambu(data, 10, "jambu")
+        hc_jambu(data, 10)
       } else {
         cod <- "hc_silhouette(datos.aux, 10, 'silhouette')"
         updateAceEditor(session, "fieldCodeJambu", value = cod)
-        hc_silhouette(data, 10, "silhouette")
+        hc_silhouette(data, 10)
       }
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
@@ -234,49 +227,34 @@ mod_kmedias_server <- function(input, output, session, updateData) {
     })
   })
   
-  #' Choose 2D or 3D plot
-  observeEvent(input$plotModeK, {
+  #' Plot Mapa
+  output$k_mapa <- renderEcharts4r({
+    modelo <- PCA(var.numericas(updateData$datos))
+    
+    if(is.null(modelo)) {
+      return(NULL)
+    }
+    
     cod <- paste0("modelo.pca <- PCA(var.numericas(datos))\n")
     if(input$plotModeK) {
       cod <- paste0(
         cod, "hc_mapa(modelo.pca, modelo.k$clusters, 'k_mapa', c('",
         paste(k_colors, collapse = "', '"), "'))\n")
-      shinyjs::show("div_k_2D")
-      shinyjs::hide("div_k_3D")
+      
+      updateAceEditor(session, "fieldCodeKmapa", value = cod)
+      hc_mapa(modelo, modelo.k()$clusters, colores = k_colors)
     } else {
       cod <- paste0(
         cod, "plotly_mapa(modelo.pca, modelo.k$clusters, c('",
         paste(k_colors, collapse = "', '"), "'))\n")
-      shinyjs::hide("div_k_2D")
-      shinyjs::show("div_k_3D")
-    }
-    updateAceEditor(session, "fieldCodeKmapa", value = cod)
-  })
-  
-  #' Plot Mapa 2D
-  output$k_mapa_2D <- renderHighchart({
-    modelo <- PCA(var.numericas(updateData$datos))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      hc_mapa(modelo, modelo.k()$clusters, "k_mapa", k_colors)
-    }
-  })
-  
-  #' Plot Mapa 3D
-  output$k_mapa_3D <- renderPlotly({
-    modelo <- PCA(var.numericas(updateData$datos))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      plotly_mapa(modelo, modelo.k()$clusters, array(k_colors))
+      
+      updateAceEditor(session, "fieldCodeKmapa", value = cod)
+      plotly_mapa(modelo, modelo.k()$clusters, colores = k_colors)
     }
   })
   
   #' Plot K-medias (Horizontal)
-  output$k_horiz <- renderHighchart({
+  output$k_horiz <- renderEcharts4r({
     centros <- modelo.k()$centros$porcentual
     cod.centros <- "modelo.k$centros$porcentual"
     if(!input$scaleKhoriz) {
@@ -296,7 +274,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   })
   
   #' Plot K-medias (Vertical)
-  output$k_vert <- renderHighchart({
+  output$k_vert <- renderEcharts4r({
     centros <- modelo.k()$centros$porcentual
     cod.centros <- "modelo.k$centros$porcentual"
     if(!input$scaleKvert) {
@@ -310,7 +288,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
                     paste(k_colors, collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeKvert", value = cod)
       
-      hc_vert(centros, "k_vertical", k_colors, titulo)
+      hc_vert(centros, "k_vertical", k_colors)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -318,7 +296,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   })
   
   #' Plot K-medias (Radar)
-  output$k_radar <- renderHighchart({
+  output$k_radar <- renderEcharts4r({
     tryCatch({
       cod <- paste0("hc_radar(modelo.k$centros$porcentual, 'k_radar', c('",
                     paste(k_colors, collapse = "', '"), "'))")
@@ -332,7 +310,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
   })
   
   #' Plot K-medias (Categórico)
-  output$k_cat <- renderHighchart({
+  output$k_cat <- renderEcharts4r({
     var <- input$selKbar
     escalar <- input$scaleKbar
     
@@ -342,8 +320,7 @@ mod_kmedias_server <- function(input, output, session, updateData) {
         paste(k_colors, collapse = "', '"), "'), ", escalar, ")")
       updateAceEditor(session, "fieldCodeKbar", value = cod)
       
-      hc_cat(modelo.k()$clusters, updateData$datos[, var], "k_cat", 
-             k_colors, escalar)
+      hc_cat(modelo.k()$clusters, updateData$datos[, var], k_colors, escalar)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
