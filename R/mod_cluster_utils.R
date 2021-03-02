@@ -111,7 +111,7 @@ hc_mapa <- function(pca.model, clusters, ejes = c(1, 2), colores = NULL) {
   var$id <- row.names(var)
   
   r <- ind %>% group_by(cluster) %>% e_charts(x) %>% 
-    e_scatter(y, symbol_size = 10)
+    e_scatter(y, symbol_size = 10, bind = id)
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -138,7 +138,12 @@ hc_mapa <- function(pca.model, clusters, ejes = c(1, 2), colores = NULL) {
   
   r %>% e_show_loading() %>% e_datazoom(show = F) %>%
     e_axis_labels(x = paste0(dims[1], " (", inercias[1], ")"), 
-                  y = paste0(dims[2], " (", inercias[2], ")"))
+                  y = paste0(dims[2], " (", inercias[2], ")")) %>% 
+    e_tooltip(formatter = htmlwidgets::JS(
+      "function(params) {
+        return('<strong>' + params.name + '</strong>: (' + 
+               params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + ')') 
+      }"))
 }
 
 #' PCA plot of individuals colored by clusters
@@ -175,7 +180,7 @@ plotly_mapa <- function(pca.model, clusters, ejes = c(1, 2, 3), colores = NULL) 
   var$id <- row.names(var)
   
   r <- ind %>% group_by(cluster) %>% e_charts(x) %>% 
-    e_scatter_3d(y, z, symbol_size = 10) %>% e_legend()
+    e_scatter_3d(y, z, symbol_size = 10, bind = id) %>% e_legend()
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -199,10 +204,19 @@ plotly_mapa <- function(pca.model, clusters, ejes = c(1, 2, 3), colores = NULL) 
     r <- r %>% e_color(colores)
   }
   
-  r %>% e_show_loading() %>%
-    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")")) %>% 
-    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")")) %>%
-    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"))
+  r %>% e_show_loading() %>% e_theme("dark") %>% 
+    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>% 
+    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_tooltip(formatter = htmlwidgets::JS(
+      "function(params) {
+         return('<strong>' + params.name + '</strong>: (' + 
+                params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + 
+                ', ' + params.value[2].toFixed(3) + ')') 
+      }"))
 }
 
 #' Horizontal representation for centers of clusters.
@@ -321,13 +335,12 @@ hc_vert <- function(centros, nombre.archivo = NULL, colores = NULL) {
 hc_radar <- function(centros, nombre.archivo, colores = NULL) {
   data <- data.frame(t(centros))
   data <- data + 10
-  data <- round(data, 2)
   colnames(data) <- paste0("Cluster", 1:ncol(data))
   data$vars <- row.names(data)
   
   text_tooltip <- ""
   for (i in 1:nrow(data)) {
-    text_tooltip <- paste0(text_tooltip, "'<br/>", data$vars[i], ": ' + (params.value[", i-1, "]-10)")
+    text_tooltip <- paste0(text_tooltip, "'<br/>", data$vars[i], ": ' + (params.value[", i-1, "]-10).toFixed(3)")
     if(i < nrow(data)) text_tooltip <- paste0(text_tooltip, " + ")
   }
   

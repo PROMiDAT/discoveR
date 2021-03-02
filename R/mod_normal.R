@@ -51,12 +51,10 @@ mod_normal_ui <- function(id) {
       ), 
       tabPanel(
         title = labelInput("plotnormal"), value = "tabNormalPlot",
-        withLoader(echarts4rOutput(ns('hc_normal'), height = "70vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('hc_normal'), height = "70vh")),
       tabPanel(
         title = "Qplot + Qline", value = "tabQPlot",
-        withLoader(echarts4rOutput(ns('hc_qq'), height = "70vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('hc_qq'), height = "70vh")),
       tabPanel(
         title = labelInput("normalidad"), value = "tabNormalCalc",
         withLoader(DT::DTOutput(ns('calc_normal')), 

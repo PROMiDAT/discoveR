@@ -30,11 +30,16 @@ hcpcaind <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
   inercias <- round(modelo$eig[, 2], digits = 2)[axes]
   
   ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter(y, label = list(show = F), symbol_size = 10) %>%
+    e_scatter(y, label = list(show = F), symbol_size = 10, bind = id) %>%
     e_x_axis(scale = T) %>% e_y_axis(scale = T) %>% e_datazoom(show = F) %>%
-    e_color(colores) %>% e_tooltip() %>% e_show_loading() %>%
+    e_color(colores) %>% e_show_loading() %>%
     e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
-                  y = paste0("Dim.", axes[2], " (", inercias[2], ")"))
+                  y = paste0("Dim.", axes[2], " (", inercias[2], ")")) %>% 
+    e_tooltip(formatter = htmlwidgets::JS(
+      "function(params) {
+        return('<strong>' + params.name + '</strong>: (' + 
+               params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + ')') 
+      }"))
 }
 
 #' PCA plot of individuals in 3D
@@ -69,12 +74,21 @@ plotly_pcaind <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   if(sum(ind$cos == titulos[2]) == 0) colores <- colorInd
   
   ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter_3d(y, z, label = list(show = F), symbol_size = 10) %>%
-    e_color(colores) %>% e_tooltip() %>% e_show_loading() %>% 
+    e_scatter_3d(y, z, label = list(show = F), symbol_size = 10, bind = id) %>%
+    e_color(colores) %>% e_show_loading() %>% e_theme("dark") %>%
     e_legend(data = titulos) %>% 
-    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")")) %>% 
-    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")")) %>%
-    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"))
+    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>% 
+    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>% 
+    e_tooltip(formatter = htmlwidgets::JS(
+      "function(params) {
+         return('<strong>' + params.name + '</strong>: (' + 
+                params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + 
+                ', ' + params.value[2].toFixed(3) + ')') 
+      }"))
 }
 
 #' PCA plot of variables
@@ -127,7 +141,7 @@ hcpcavar <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
   }
   
   opts <- list(
-    xAxis = list(min = -2, max = 2),
+    xAxis = list(min = -1, max = 1),
     yAxis = list(min = -1, max = 1),
     legend = list(data = titulos),
     series = lista
@@ -225,9 +239,13 @@ plotly_pcavar <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
   
   r$x$opts$legend$data <- titulos
   r %>% e_color(c(colorVar, colorCos)) %>% e_show_loading() %>% 
-    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")")) %>% 
-    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")")) %>%
-    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"))
+    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>% 
+    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_theme("dark")
 }
 
 #' PCA biplot
@@ -281,7 +299,7 @@ hcpcabi <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
   colores <- colores[leyenda %in% c(as.character(unique(ind$cos)), as.character(unique(var$cos)))]
   
   r <- ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter(y, symbol_size = 10)
+    e_scatter(y, symbol_size = 10, bind = id)
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -306,7 +324,12 @@ hcpcabi <- function(modelo, axes = c(1, 2), nombrearchivo = NULL,
   
   r %>% e_color(colores) %>% e_show_loading() %>% e_datazoom(show = F) %>%
     e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
-                  y = paste0("Dim.", axes[2], " (", inercias[2], ")"))
+                  y = paste0("Dim.", axes[2], " (", inercias[2], ")")) %>% 
+    e_tooltip(formatter = htmlwidgets::JS(
+      "function(params) {
+        return('<strong>' + params.name + '</strong>: (' + 
+               params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + ')') 
+      }"))
 }
 
 #' PCA biplot in 3D
@@ -359,7 +382,7 @@ plotly_pcabi <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   colores <- colores[leyenda %in% c(as.character(unique(ind$cos)), as.character(unique(var$cos)))]
   
   r <- ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter_3d(y, z, symbol_size = 10)
+    e_scatter_3d(y, z, symbol_size = 10, bind = id)
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -382,7 +405,17 @@ plotly_pcabi <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   r$x$opts$legend$data <- leyenda
   
   r %>% e_color(colores) %>% e_show_loading() %>%
-    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")")) %>% 
-    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")")) %>%
-    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"))
+    e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>% 
+    e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
+                axisLine = list(lineStyle = list(color = "white"))) %>%
+    e_theme("dark") %>% 
+    e_tooltip(formatter = htmlwidgets::JS(
+      "function(params) {
+         return('<strong>' + params.name + '</strong>: (' + 
+                params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + 
+                ', ' + params.value[2].toFixed(3) + ')') 
+      }"))
 }

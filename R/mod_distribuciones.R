@@ -29,7 +29,7 @@ mod_distribuciones_ui <- function(id){
           ns("col_dist_bar"), labelInput("selcolbar"), value = "steelblue", 
           allowTransparent = T),
         colourpicker::colourInput(
-          ns("col_dist_point"), labelInput("selcolline"), value = "red",
+          ns("col_dist_point"), labelInput("selcolpoint"), value = "red",
           allowTransparent = T)
       ),
       list(DT::dataTableOutput(ns("mostrar.atipicos"))),
@@ -91,8 +91,7 @@ mod_distribuciones_server <- function(input, output, session, updateData){
                     colorBar, "', '", colorPoint, "', '", var, "', c('", 
                     paste(titulos, collapse = "', '"), "'))\n")
       updateAceEditor(session, "fieldCodeNum", value = cod)
-      hchistboxplot(datos[[var]], "distribucion_num", colorBar, 
-                    colorPoint, var, titulos)
+      hchistboxplot(datos[[var]], var, colorBar, colorPoint, titulos)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)

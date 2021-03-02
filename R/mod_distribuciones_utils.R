@@ -26,7 +26,7 @@ addoutliersh <- function (e, serie, i) {
 #' Generate horizontal boxplot
 #' @keywords internal
 e_hboxplot <- function (e, serie, name = NULL, outliers = TRUE, ...) {
-  serie <- deparse(substitute(serie))
+  #serie <- deparse(substitute(serie))
   if (missing(serie)) {
     stop("must pass serie", call. = FALSE)
   }
@@ -39,8 +39,7 @@ e_hboxplot <- function (e, serie, name = NULL, outliers = TRUE, ...) {
                                             list(vector))
       }
       else {
-        box <- list(name = nm, type = "boxplot", data = list(vector), 
-                    ...)
+        box <- list(name = nm, type = "boxplot", data = list(vector), ...)
         e$x$opts$series <- append(e$x$opts$series, list(box))
       }
       if (isTRUE(outliers)) {
@@ -49,6 +48,8 @@ e_hboxplot <- function (e, serie, name = NULL, outliers = TRUE, ...) {
       e$x$opts$yAxis[[1]]$data <- append(e$x$opts$yAxis[[1]]$data, 
                                          list(nm))
       e$x$opts$yAxis[[1]]$type <- "category"
+      e$x$opts$yAxis[[1]]$show <- F
+      e$x$opts$xAxis[[1]]$splitLine <- list(show = F)
     }
     else {
       e$x$opts$options[[i]]$series <- append(e$x$opts$options[[i]]$series, 
@@ -66,10 +67,9 @@ e_hboxplot <- function (e, serie, name = NULL, outliers = TRUE, ...) {
 #' Histogram + boxplot
 #'
 #' @param data a numeric column of a data.frame.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param var.name a character value specifying the name of the variable.
 #' @param colorBar a color for the bars.
 #' @param colorPoint a color for the points.
-#' @param outlier.name a character value specifying the name to use on the tooltip of points.
 #' @param titulos a character vector of length 5 specifying the titles to use on legend.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
@@ -77,15 +77,18 @@ e_hboxplot <- function (e, serie, name = NULL, outliers = TRUE, ...) {
 #' @export hchistboxplot
 #' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
 #' 
-hchistboxplot <- function(data, nombrearchivo = NULL, colorBar = "steelblue",
-                          colorPoint = "red", outlier.name = "",
-                          titulos = c("Mínimo", "Primer Cuartil", "Mediana", 
-                                      "Tercer Cuartil", "Máximo")) {
-  r <- data.frame(x = 1:length(data), y = data) %>% e_charts(x) %>% 
-    e_hboxplot(y) %>% e_histogram(y, x_index = 1, y_index = 1) %>%
-    e_grid(height = "50%") %>% e_grid(height = "30%", top = "60%") %>%
+hchistboxplot <- function(
+  data, var.name, colorBar = "steelblue", colorPoint = "red", titulos = c(
+    "Mínimo", "Primer Cuartil", "Mediana", "Tercer Cuartil", "Máximo")) {
+  data <- data.frame(x = 1:length(data), y = data)
+  colnames(data) <- c("x", var.name)
+  
+  r <- data %>% e_charts(x) %>% e_hboxplot(var.name) %>% 
+    e_histogram_(var.name, x_index = 1, y_index = 1) %>% 
+    e_grid(height = "50%") %>% e_grid(height = "30%", top = "60%") %>% 
     e_y_axis(gridIndex = 1) %>% e_x_axis(gridIndex = 1) %>% 
-    e_x_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F)
+    e_x_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F) %>% 
+    e_color(c(colorPoint, colorBar))
   
   r$x$opts$xAxis[[2]]$scale <- TRUE
   

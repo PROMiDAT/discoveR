@@ -22,13 +22,15 @@ hchistnormal <- function(data, nombrearchivo = NULL, colorbar = "steelblue", col
   d <- diff(h$breaks)[1]
   
   distribu <- data.frame(
-    x = h$mids, d = h$density, n = normalidad,
+    x = round(h$mids, 3), d = round(h$density, 3), n = round(normalidad, 3),
     name = paste0("(", h$mids - d / 2, " - ", h$mids + d / 2, ")")
   )
   
   distribu %>% e_charts(x) %>% e_bar(d, name = nombres[1]) %>% 
     e_line(n, name = nombres[2]) %>% e_x_axis(scale = T) %>%
-    e_tooltip() %>% e_datazoom(show = F)
+    e_axis_labels(x = "", y = "Densidad") %>% 
+    e_color(c(colorbar, colorline)) %>% e_tooltip() %>% 
+    e_datazoom(show = F) %>% e_show_loading()
 }
 
 
@@ -53,10 +55,12 @@ hcqq <- function(data, nombrearchivo = NULL, colorpoint = "steelblue", colorline
   int <- y[1L] - slope * x[1L]
 
   data$z <- data$x * slope + int
+  data <- round(data, 3)
   
   data %>% e_charts(x) %>% e_scatter(y, name = "QQplot", symbol_size = 8) %>%
     e_line(z, name = "QQline", symbol = 'none') %>% e_x_axis(scale = T) %>%
-    e_y_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F)
+    e_y_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F) %>% 
+    e_color(c(colorpoint, colorline)) %>% e_show_loading()
 }
 
 #' Normal data.frame

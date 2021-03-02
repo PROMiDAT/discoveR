@@ -58,7 +58,8 @@ mod_correlacion_server <- function(input, output, session, updateData) {
       cod <- code.cor(col_min, col_med, col_max)
       updateAceEditor(session, "fieldCodeCor", value = cod)
       
-      cor(datos) %>% e_charts() %>% 
+      data <- round(cor(datos), 3)
+      data %>% e_charts() %>% 
         e_correlations(
           order = "hclust", label = list(show = T),
           inRange = list(color = c(col_min, col_med, col_max)),
@@ -66,7 +67,7 @@ mod_correlacion_server <- function(input, output, session, updateData) {
             borderWidth = 2,
             borderColor = "#fff"
           )
-        ) %>% e_tooltip() %>% e_datazoom(show = F)
+        ) %>% e_datazoom(show = F) %>% e_tooltip()
       
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
