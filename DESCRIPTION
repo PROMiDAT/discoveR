@@ -1,6 +1,6 @@
 Package: discoveR
 Title: Exploratory Data Analysis System
-Version: 2.1.7
+Version: 2.2.0
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),
@@ -23,8 +23,9 @@ Imports:
     graphics,
     shinyAce,
     ggdendro,
+    echarts4r,
     htmltools,
-    highcharter,
+    htmlwidgets,
     colourpicker,
     shinydashboard,
     shinycustomloader,

@@ -9,9 +9,6 @@ mod_dispersion_server(input, output, session, updateData)
 \description{
 dispersion Server Function
 }
-\keyword{2D}
-\keyword{3D}
-\keyword{Choose}
 \keyword{Plot}
 \keyword{Scatter}
 \keyword{Update}
@@ -19,5 +16,3 @@ dispersion Server Function
 \keyword{internal}
 \keyword{load}
 \keyword{on}
-\keyword{or}
-\keyword{plot}

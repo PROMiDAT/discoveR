@@ -1,30 +1,32 @@
 ############################### Generar Código ################################
 code.disp.2d <- function(vars, color) {
   res <- paste0(
-    "datos.plot <- data.frame(x = datos[['", vars[1], "']], y = datos[['", vars[2], "']])\n\n",
-    "hchart(datos.plot, 'point', hcaes(x = x, y = y), color = '", color, "') %>%\n",
-    "  hc_chart(zoomType = 'xy') %>% hc_xAxis(title = list(text = '", vars[1], "')) %>%\n",
-    "  hc_yAxis(title = list(text = ", vars[2], ")) %>%\n",
-    "  hc_tooltip(\n",
-    "    pointFormat = paste0('", vars[1], "', ': {point.x}<br>', '", vars[2], "', ': {point.y}'),\n",
-    "    headerFormat = ''\n",     
-    "  ) %>% hc_exporting(enabled = T, filename = 'dispersion')\n"
+    "datos.plot <- data.frame(x = datos[['", vars[1], "'], y = datos[['", vars[2], "']],\n",
+    "                         id = row.names(datos))\n\n",
+    "datos.plot %>% e_charts(x) %>% e_scatter(y, bind = id, symbol_size = 10) %>%\n",
+    "  e_x_axis(x) %>% e_y_axis(y) %>% e_datazoom(show = F) %>%\n",
+    "  e_color('", color, "') %>% e_axis_labels(x = '", vars[1], "', y = '", vars[2], "') %>%\n",
+    "  e_tooltip(formatter = JS(\n",
+    "    \"function(params) {\n",
+    "       return('<b>' + params.name + '</b><br/>", vars[1], ": ' + params.value[0] + '<br/>", vars[2], ": ' + params.value[1])\n",
+    "    }\")\n",
+    "  ) %>% e_legend(F) %>% e_show_loading()\n"
   )
 }
 
 code.disp.3d <- function(vars, color) {
   res <- paste0(
-    "datos.plot <- data.frame(x = datos[['", vars[1], "']], y = datos[['", vars[2], "']], z = datos[['", vars[3], "']])\n\n",
-    "plot_ly(\n",
-    "  datos.plot, x = ~x, y = ~y, z = ~z, type = 'scatter3d',\n",
-    "  mode = 'markers', marker = list(color = '", color, "'),\n",
-    "  hovertemplate = paste0(\n",
-    "    '", vars[1], "', ': %{x:}<br>', '", vars[2], "', ': %{y:}<br>',\n",
-    "    '", vars[3], "', ': %{z:}<extra></extra>'\n",
-    "  )) %>% config(displaylogo = F) %>%\n",
-    "  layout(paper_bgcolor = 'black', scene = list(\n",
-    "    xaxis = list(title = '", vars[1], "', gridcolor = 'white'),\n",
-    "    yaxis = list(title = '", vars[2], "', gridcolor = 'white'),\n",
-    "    zaxis = list(title = '", vars[3], "', gridcolor = 'white')))\n"
+    "datos.plot <- data.frame(x = datos[['", vars[1], "'], y = datos[['", vars[2], "']],\n",
+    "                         z = datos[['", vars[3], "']], id = row.names(datos))\n\n",
+    "datos.plot %>% e_charts(x) %>% e_scatter_3d(y, z, bind = id) %>% e_color('", color, "') %>%\n",
+    "  e_x_axis_3d(name = '", vars[1], "', axisLine = list(lineStyle = list(color = 'white'))) %>%\n",
+    "  e_y_axis_3d(name = '", vars[2], "', axisLine = list(lineStyle = list(color = 'white'))) %>%\n",
+    "  e_z_axis_3d(name = '", vars[3], "', axisLine = list(lineStyle = list(color = 'white'))) %>%\n",
+    "  e_tooltip(formatter = JS(\n",
+    "    \"function(params) {\n",
+    "       return('<b>' + params.name + '</b><br/>", vars[1], 
+    ": ' + params.value[0] + '<br/>", vars[2], ": ' + params.value[1] + '<br/>", vars[3], ": ' + params.value[2])\n",
+    "    }\")\n",
+    "  ) %>% e_theme('dark') %>% e_show_loading()\n"
   )
 }

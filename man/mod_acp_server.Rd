@@ -13,10 +13,7 @@ acp Server Function
 \keyword{(Resultados}
 \keyword{(individuals)}
 \keyword{(variables)}
-\keyword{2D}
-\keyword{3D}
 \keyword{ACP}
-\keyword{Choose}
 \keyword{Componentes}
 \keyword{Contribución}
 \keyword{Correlación}
@@ -41,7 +38,5 @@ acp Server Function
 \keyword{los}
 \keyword{numéricos)}
 \keyword{on}
-\keyword{or}
-\keyword{plot}
 \keyword{por}
 \keyword{variables}

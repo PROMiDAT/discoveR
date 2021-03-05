@@ -52,12 +52,10 @@ mod_distribuciones_ui <- function(id){
       id = "tabDyA", title = titulo_dist, opciones = opc_dist,
       tabPanel(
         title = labelInput("numericas"), value = "numericas",
-        withLoader(highchartOutput(ns('hc_num'), height = "75vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('plot_num'), height = "75vh")),
       tabPanel(
         title = labelInput("categoricas"), value = "categoricas",
-        withLoader(highchartOutput(ns('hc_cat'), height = "75vh"), 
-                   type = "html", loader = "loader4"))
+        echarts4rOutput(ns('plot_cat'), height = "75vh"))
     )
   )
 }
@@ -78,7 +76,7 @@ mod_distribuciones_server <- function(input, output, session, updateData){
   })
   
   #' Gráfico de Distribuciones (Númericas)
-  output$hc_num = renderHighchart({
+  output$plot_num = renderEcharts4r({
     input$run_dist
     datos      <- updateData$datos
     var        <- input$sel_dya_num
@@ -93,12 +91,11 @@ mod_distribuciones_server <- function(input, output, session, updateData){
     )
     
     tryCatch({
-      cod <- paste0("hchistboxplot(datos[['", var, "']], 'distribucion_num', '", 
-                    colorBar, "', '", colorPoint, "', '", var, "', c('", 
+      cod <- paste0("e_histboxplot(datos[['", var, "']], '", var, "', '", 
+                    colorBar, "', '", colorPoint, "', c('", 
                     paste(titulos, collapse = "', '"), "'))\n")
       updateAceEditor(session, "fieldCodeNum", value = cod)
-      hchistboxplot(datos[[var]], "distribucion_num", colorBar, 
-                    colorPoint, var, titulos)
+      e_histboxplot(datos[[var]], var, colorBar, colorPoint, titulos)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -117,25 +114,23 @@ mod_distribuciones_server <- function(input, output, session, updateData){
   })
   
   #' Gráfico de Distribuciones (Categóricas)
-  output$hc_cat = renderHighchart({
+  output$plot_cat = renderEcharts4r({
     var  <- input$sel_dya_cat
     validate(need(var != "", tr("errorcat", isolate(updateData$idioma))))
     
     tryCatch({
-      data <- updateData$datos[, var]
+      datos.plot <- updateData$datos[, var]
       
       cod <- code.dist.cat(var)
       updateAceEditor(session, "fieldCodeCat", value = cod)
       
-      datos <- data.frame (
-        label = levels(data), 
-        value = summary(data, maxsum = length(levels(data)))
+      datos.plot <- data.frame (
+        label = levels(datos.plot),
+        value = summary(datos.plot, maxsum = length(levels(datos.plot)))
       )
-      hchart(datos, hcaes(x = label, y = value, color = label), type = "column") %>%
-        hc_xAxis(title = list(text = "")) %>% hc_yAxis(title = list(text = "")) %>%
-        hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.y}",
-                   headerFormat = "") %>%
-        hc_exporting(enabled = T, filename = "distribucion_cat")
+      
+      datos.plot %>% e_charts(label) %>% e_bar(value, name = var) %>%
+        e_tooltip() %>% e_datazoom(show = F) %>% e_show_loading()
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)

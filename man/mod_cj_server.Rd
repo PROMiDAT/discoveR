@@ -13,19 +13,16 @@ cj Server Function
 \keyword{(Categórico)}
 \keyword{(Cluster}
 \keyword{(Horizontal)}
+\keyword{(Mapa)}
 \keyword{(Radar)}
 \keyword{(Resultados}
 \keyword{(Vertical)}
-\keyword{2D}
-\keyword{3D}
 \keyword{Agregar}
-\keyword{Choose}
 \keyword{Clusteres}
 \keyword{Colores}
 \keyword{Generate}
 \keyword{Inertia}
 \keyword{K-medias}
-\keyword{Mapa}
 \keyword{Mostrar}
 \keyword{Plot}
 \keyword{Update}
@@ -40,6 +37,5 @@ cj Server Function
 \keyword{load}
 \keyword{numéricos)}
 \keyword{on}
-\keyword{or}
 \keyword{plot}
 \keyword{tabla}

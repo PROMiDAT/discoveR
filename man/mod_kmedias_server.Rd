@@ -13,13 +13,11 @@ kmedias Server Function
 \keyword{(Cluster}
 \keyword{(Horizontal)}
 \keyword{(K-medias)}
+\keyword{(Mapa)}
 \keyword{(Radar)}
 \keyword{(Resultados}
 \keyword{(Vertical)}
-\keyword{2D}
-\keyword{3D}
 \keyword{Agregar}
-\keyword{Choose}
 \keyword{Clusteres}
 \keyword{Colores}
 \keyword{Elbow}
@@ -27,7 +25,6 @@ kmedias Server Function
 \keyword{Inertia}
 \keyword{Jambu}
 \keyword{K-medias}
-\keyword{Mapa}
 \keyword{Mostrar}
 \keyword{Plot}
 \keyword{Update}
@@ -40,6 +37,5 @@ kmedias Server Function
 \keyword{load}
 \keyword{numéricos)}
 \keyword{on}
-\keyword{or}
 \keyword{plot}
 \keyword{tabla}

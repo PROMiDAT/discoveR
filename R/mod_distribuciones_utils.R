@@ -1,132 +1,110 @@
-#' Calculate Histogram
+#' List outliers
 #' @keywords internal
-get_hist_data <- function(x) {
-  aux <- hist(x, plot = F)
-  d <- diff(aux$breaks)[1]
-  df <- data.frame(
-    x = aux$mids,
-    y = aux$counts,
-    name = paste0("(", aux$mids - d / 2, " - ", aux$mids + d / 2, ")")
-  )
+listoutliers  <- function (e, out) {
+  x <- length(e$x$opts$series[[1]]$data) - 1
+  x <- rep(x, length(out))
+  matrix <- cbind(out, x)
+  apply(unname(matrix), 1, as.list)
+}
+
+#' Add outliers Horizontal
+#' @keywords internal
+addoutliersh <- function (e, serie, i) {
+  outliers <- get_outliers(e, serie, i)
+  outliers <- listoutliers(e, outliers)
+  scatter <- list(type = "scatter", data = outliers)
+  if (length(e$x$opts$series) == 2) {
+    e$x$opts$series[[2]]$data <- rev(append(e$x$opts$series[[2]]$data, 
+                                            outliers))
+  }
+  else {
+    e$x$opts$series <- rev(append(e$x$opts$series, list(scatter)))
+  }
+  e
+}
+
+#' Generate horizontal boxplot
+#' @keywords internal
+e_boxplot <- function (e, serie, name = NULL, outliers = TRUE, ...) {
+  if (missing(serie)) {
+    stop("must pass serie", call. = FALSE)
+  }
+  for (i in 1:length(e$x$data)) {
+    vector <- build_boxplot(e, serie, i)
+    if (!e$x$tl) {
+      nm <- name_it(e, serie, name, i)
+      if (length(e$x$opts$series) >= 1) {
+        e$x$opts$series[[1]]$data <- append(e$x$opts$series[[1]]$data, 
+                                            list(vector))
+      }
+      else {
+        box <- list(name = nm, type = "boxplot", data = list(vector), ...)
+        e$x$opts$series <- append(e$x$opts$series, list(box))
+      }
+      if (isTRUE(outliers)) {
+        e <- addoutliersh(e, serie, i)
+      }
+      e$x$opts$yAxis[[1]]$data <- append(e$x$opts$yAxis[[1]]$data, 
+                                         list(nm))
+      e$x$opts$yAxis[[1]]$type <- "category"
+      e$x$opts$yAxis[[1]]$show <- F
+      e$x$opts$xAxis[[1]]$splitLine <- list(show = F)
+    }
+    else {
+      e$x$opts$options[[i]]$series <- append(e$x$opts$options[[i]]$series, 
+                                             list(list(data = vector)))
+    }
+  }
+  if (isTRUE(e$x$tl)) {
+    serie_opts <- list(type = "boxplot", ...)
+    e$x$opts$baseOption$series <- append(e$x$opts$baseOption$series, 
+                                         list(serie_opts))
+  }
+  e
 }
 
 #' Histogram + boxplot
 #'
 #' @param data a numeric column of a data.frame.
-#' @param nombrearchivo a character value specifying the name to use when the plot is downloaded.
+#' @param var.name a character value specifying the name of the variable.
 #' @param colorBar a color for the bars.
 #' @param colorPoint a color for the points.
-#' @param outlier.name a character value specifying the name to use on the tooltip of points.
 #' @param titulos a character vector of length 5 specifying the titles to use on legend.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
-#' @return Highchart plot
-#' @export hchistboxplot
-#' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
-#' @importFrom graphics boxplot
+#' @return echarts4r plot
+#' @export e_histboxplot
+#' @import echarts4r
 #' @examples
-#' hchistboxplot(iris$Sepal.Width)
+#' e_histboxplot(iris$Sepal.Width, "Sepal.Width")
 #' 
-hchistboxplot <- function(data, nombrearchivo = NULL, colorBar = "steelblue",
-                          colorPoint = "red", outlier.name = "",
+e_histboxplot <- function(data, var.name, colorBar = "steelblue", colorPoint = "red",
                           titulos = c("Minimo", "Primer Cuartil", "Mediana", 
                                       "Tercer Cuartil", "Maximo")) {
-  atipicos <- boxplot(data, plot = F)
-  distribu <- get_hist_data(data)
+  data <- data.frame(x = 1:length(data), y = data)
+  colnames(data) <- c("x", var.name)
   
-  pos    <- (max(distribu$y) * 0.20) * -1
-  line_w <- c(2, 2, 7, 2, 2)
-  line_s <- c(pos * 0.25, pos * 0.5, pos * 0.5, pos * 0.5, pos * 0.25)
-  v      <- atipicos$stats
-  l      <- titulos
+  r <- data %>% e_charts(x) %>% e_boxplot(var.name) %>% 
+    e_histogram_(var.name, x_index = 1, y_index = 1) %>% 
+    e_grid(height = "50%") %>% e_grid(height = "30%", top = "60%") %>% 
+    e_y_axis(gridIndex = 1) %>% e_x_axis(gridIndex = 1) %>% 
+    e_x_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F) %>% 
+    e_color(c(colorPoint, colorBar)) %>% e_show_loading()
   
-  r <- highchart() %>%
-    hc_add_series(
-      distribu, hcaes(x = x, y = y), type = "column", color = colorBar,
-      tooltip = list(pointFormat = "<b>{point.name}</b>: {point.y}", 
-                     headerFormat = "")
-    ) %>%
-    hc_plotOptions(
-      line = list(marker = list(enabled = F)),
-      column = list(
-        pointPadding = 0, borderWidth = 1, groupPadding = 0, shadow = F
-      )
-    ) %>% hc_legend(enabled = F)
+  r$x$opts$xAxis[[2]]$scale <- TRUE
   
-  for (i in 1:length(v)) {
-    r <- r %>% hc_add_series(
-      type = "line", color = colorBar, lineWidth = line_w[i],
-      marker = list(symbol = "triangle-down"),
-      tooltip = list(pointFormat = paste0(l[i], ": {point.x}"), headerFormat = ""),
-      data = list(list(x = v[i], y = pos + line_s[i]),
-                  list(x = v[i], y = pos - line_s[i]))
-    )
-  }
-  
-  r <- r %>% hc_add_series(
-    type = "line", color = colorBar, lineWidth = 2,
-    enableMouseTracking = F,
-    data = list(list(x = v[1], y = pos), list(x = v[2], y = pos))
-  )
-  
-  r <- r %>% hc_add_series(
-    type = "line", color = colorBar, lineWidth = 2,
-    enableMouseTracking = F,
-    data = list(list(x = v[2], y = pos * 1.5),
-                list(x = v[4], y = pos * 1.5))
-  )
-  
-  r <- r %>% hc_add_series(
-    type = "line", color = colorBar, lineWidth = 2,
-    enableMouseTracking = F,
-    data = list(list(x = v[2], y = pos * 0.5),
-                list(x = v[4], y = pos * 0.5))
-  )
-  
-  r <- r %>% hc_add_series(
-    type = "line", color = colorBar, lineWidth = 2,
-    enableMouseTracking = F,
-    data = list(list(x = v[4], y = pos), list(x = v[5], y = pos))
-  )
-  
-  for (atipico in atipicos$out) {
-    r <- r %>% hc_add_series(
-      type = "scatter", color = colorPoint, marker = list(symbol = "circle"),
-      tooltip = list(pointFormat = paste0(outlier.name, ": {point.x}"), headerFormat = ""),
-      data = list(list(x = atipico, y = pos))
-    )
-  }
-  
-  r <- r %>% hc_yAxis(
-    labels = list(
-      formatter = JS(
-        "function() {
-          if(this.value < 0)
-            return '';
-          else
-            return this.value;
-        }")
-    )
-  )
-  
-  if(!is.null(nombrearchivo)) {
-    r <- r %>% hc_exporting(enabled = T, filename = nombrearchivo)
-  }
-  
-  r
+  return(r)
 }
 
 ############################### Generar Código ################################
 code.dist.cat <- function(var) {
   paste0(
     "datos.plot <- data.frame (\n",
-    "  label = levels(datos[['", var, "']]),\n",
-    "  value = summary(datos[['", var, "']], maxsum = length(levels(datos[['", var, "']])))\n",
-    ")\n",
-    "hchart(datos.plot, hcaes(x = label, y = value, color = label), type = 'column') %>%\n",
-    "hc_tooltip(pointFormat = '<b>{point.name}:</b> {point.y}',\n",
-    "           headerFormat = '') %>%\n",
-    "hc_exporting(enabled = T, filename = 'distribucion_cat')\n"
+    "  label = levels(datos[['", var, "']]), value = summary(datos[['", var, "']],\n",
+    "  maxsum = length(levels(datos[['", var, "']])))\n",
+    ")\n\n",
+    "datos.plot %>% e_charts(label) %>% e_bar(value, name = var) %>%\n",
+    "  e_tooltip() %>% e_datazoom(show = F) %>% e_show_loading()\n"
   )
 }
 

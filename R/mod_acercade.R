@@ -24,16 +24,15 @@ mod_acercade_ui <- function(id){
     ),
     
     infoBoxPROMiDAT(
-      labelInput("version"), "2.1.7", icono = icon("file-code-o"))
-    )
+      labelInput("version"), "2.2.0", icono = icon("file-code-o"))
+  )
 }
     
 #' acercade Server Function
 #'
 #' @noRd 
-mod_acercade_server <- function(input, output, session){
+mod_acercade_server <- function(input, output, session) {
   ns <- session$ns
-  
 }
     
 ## To be copied in the UI

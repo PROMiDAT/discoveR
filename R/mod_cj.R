@@ -71,8 +71,7 @@ mod_cj_ui <- function(id) {
       id = "tabjerar", title = title_cj, opciones = opts_cj,
       tabPanel(
         title = labelInput("inercia"), value = "tabInercia",
-        withLoader(highchartOutput(ns("cj_inercia"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        echarts4rOutput(ns("cj_inercia"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("dendograma"), value = "tabDendo",
@@ -81,34 +80,23 @@ mod_cj_ui <- function(id) {
       ),
       tabPanel(
         title = labelInput("mapa"), value = "tabMapa",
-        tags$div(
-          id = ns("div_cj_2D"),
-          withLoader(highchartOutput(ns("cj_mapa_2D"), height = "75vh"), 
-                     type = "html", loader = "loader4")),
-        tags$div(
-          id = ns("div_cj_3D"),
-          withLoader(plotlyOutput(ns('cj_mapa_3D'), height = "75vh"), 
-                     type = "html", loader = "loader4"))
+        echarts4rOutput(ns("cj_mapa"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("horizontal"), value = "tabHoriz",
-        withLoader(highchartOutput(ns("cj_horiz"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        echarts4rOutput(ns("cj_horiz"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("vertical"), value = "tabVert",
-        withLoader(highchartOutput(ns("cj_vert"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        echarts4rOutput(ns("cj_vert"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("radar"), value = "tabRadar",
-        withLoader(highchartOutput(ns("cj_radar"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        echarts4rOutput(ns("cj_radar"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("interpretacioncat"), value = "tabBar",
-        withLoader(highchartOutput(ns("cj_cat"), height = "75vh"), 
-                   type = "html", loader = "loader4")
+        echarts4rOutput(ns("cj_cat"), height = "75vh")
       ),
       tabPanel(
         title = labelInput("resultados"), value = "salida.cj",
@@ -159,8 +147,8 @@ mod_cj_server <- function(input, output, session, updateData) {
       }
       clusters <- as.factor(cutree(modelo, k = cant.cluster))
       centros  <- calc.centros(data, clusters)
-      cj_colors$colors <- sapply(levels(clusters), function(i) 
-        isolate(input[[paste0("hcColor", i)]]))
+      cj_colors$colors <- unname(sapply(levels(clusters), function(i) 
+        isolate(input[[paste0("hcColor", i)]])))
       
       cod <- code.cj(centrar, dist.method, hc.method, cant.cluster)
       updateAceEditor(session, "fieldCodeModelo", value = cod)
@@ -178,7 +166,7 @@ mod_cj_server <- function(input, output, session, updateData) {
   })
   
   #' Inertia plot
-  output$cj_inercia <- renderHighchart({
+  output$cj_inercia <- renderEcharts4r({
     if(is.null(modelo.cj())) return(NULL)
     
     centrar <- isolate(input$cj.scale)
@@ -201,7 +189,7 @@ mod_cj_server <- function(input, output, session, updateData) {
       cod <- code.inercia(titulos)
       updateAceEditor(session, "fieldCodeInercia", value = cod)
       
-      hc_inercia(inercias, "cj_inercia", titulos)
+      e_inercia(inercias, titulos)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -230,63 +218,42 @@ mod_cj_server <- function(input, output, session, updateData) {
     })
   })
   
-  #' Choose 2D or 3D plot
-  observeEvent(input$plotModeCJ, {
-    cod <- paste0("modelo.pca <- PCA(var.numericas(datos))\n")
+  #' Plot hclust (Mapa)
+  output$cj_mapa <- renderEcharts4r({
+    modelo <- PCA(var.numericas(updateData$datos))
+    if(is.null(modelo)) return(NULL)
+    
     if(input$plotModeCJ) {
       cod <- paste0(
-        cod, "hc_mapa(modelo.pca, modelo.cj$clusters, 'cj_mapa', c('",
+        "modelo.pca <- PCA(var.numericas(datos))\n",
+        "e_mapa(modelo.pca, modelo.cj$clusters, c('",
         paste(isolate(cj_colors$colors), collapse = "', '"), "'))\n")
-      shinyjs::show("div_cj_2D")
-      shinyjs::hide("div_cj_3D")
+      updateAceEditor(session, "fieldCodeMapa", value = cod)
+      
+      e_mapa(modelo, modelo.cj()$clusters, isolate(cj_colors$colors))
     } else {
       cod <- paste0(
-        cod, "plotly_mapa(modelo.pca, modelo.cj$clusters, c('",
+        "modelo.pca <- PCA(var.numericas(datos))\n",
+        "e_mapa_3D(modelo.pca, modelo.cj$clusters, c('",
         paste(isolate(cj_colors$colors), collapse = "', '"), "'))\n")
-      shinyjs::hide("div_cj_2D")
-      shinyjs::show("div_cj_3D")
-    }
-    updateAceEditor(session, "fieldCodeMapa", value = cod)
-  })
-  
-  #' Plot Mapa 2D
-  output$cj_mapa_2D <- renderHighchart({
-    if(is.null(modelo.cj())) return(NULL)
-    
-    modelo <- PCA(var.numericas(updateData$datos))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      hc_mapa(modelo, modelo.cj()$clusters, "cj_mapa", isolate(cj_colors$colors))
-    }
-  })
-  
-  #' Plot Mapa 3D
-  output$cj_mapa_3D <- renderPlotly({
-    if(is.null(modelo.cj())) return(NULL)
-    
-    modelo <- PCA(var.numericas(updateData$datos))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      plotly_mapa(modelo, modelo.cj()$clusters, array(isolate(cj_colors$colors)))
+      updateAceEditor(session, "fieldCodeMapa", value = cod)
+      
+      e_mapa_3D(modelo, modelo.cj()$clusters, isolate(cj_colors$colors))
     }
   })
   
   #' Plot hclust (Horizontal)
-  output$cj_horiz <- renderHighchart({
+  output$cj_horiz <- renderEcharts4r({
     if(is.null(modelo.cj())) return(NULL)
     
     centros <- modelo.cj()$centros$real
     cod.centros <- "modelo.cj$centros$real"
     tryCatch({
-      cod <- paste0("hc_horiz(", cod.centros, ", 'cj_horiz', c('",
+      cod <- paste0("e_horiz(", cod.centros, ", c('",
                     paste(isolate(cj_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeHoriz", value = cod)
       
-      hc_horiz(centros, "cj_horiz", isolate(cj_colors$colors))
+      e_horiz(centros, isolate(cj_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -294,7 +261,7 @@ mod_cj_server <- function(input, output, session, updateData) {
   })
   
   #' Plot hclust (Vertical)
-  output$cj_vert <- renderHighchart({
+  output$cj_vert <- renderEcharts4r({
     if(is.null(modelo.cj())) return(NULL)
     
     centros <- data.frame(apply(modelo.cj()$centros$real, 2, function(x) x / max(abs(x)) * 100))
@@ -304,13 +271,12 @@ mod_cj_server <- function(input, output, session, updateData) {
       cod.centros <- "modelo.cj$centros$real"
     }
     
-    titulo <- ifelse(updateData$idioma == "es", "Volver", "Back")
     tryCatch({
-      cod <- paste0("hc_vert(", cod.centros, ", 'cj_vertical', c('",
-                    paste(isolate(cj_colors$colors), collapse = "', '"), "', '", titulo, "'))")
+      cod <- paste0("e_vert(", cod.centros, ", c('",
+                    paste(isolate(cj_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeVert", value = cod)
       
-      hc_vert(centros, "cj_vertical", isolate(cj_colors$colors), titulo)
+      e_vert(centros, isolate(cj_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -318,15 +284,15 @@ mod_cj_server <- function(input, output, session, updateData) {
   })
   
   #' Plot hclust (Radar)
-  output$cj_radar <- renderHighchart({
+  output$cj_radar <- renderEcharts4r({
     if(is.null(modelo.cj())) return(NULL)
     
     tryCatch({
-      cod <- paste0("hc_radar(modelo.cj$centros$porcentual, 'cj_radar', c('",
+      cod <- paste0("e_radar(modelo.cj$centros$porcentual, c('",
                     paste(isolate(cj_colors$colors), collapse = "', '"), "'))")
       updateAceEditor(session, "fieldCodeRadar", value = cod)
       
-      hc_radar(modelo.cj()$centros$porcentual, "cj_radar", isolate(cj_colors$colors))
+      e_radar(modelo.cj()$centros$porcentual, isolate(cj_colors$colors))
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -334,7 +300,7 @@ mod_cj_server <- function(input, output, session, updateData) {
   })
   
   #' Plot hclust (Categórico)
-  output$cj_cat <- renderHighchart({
+  output$cj_cat <- renderEcharts4r({
     if(is.null(modelo.cj())) return(NULL)
     
     var <- input$selBar
@@ -344,12 +310,12 @@ mod_cj_server <- function(input, output, session, updateData) {
     
     tryCatch({
       cod <- paste0(
-        "hc_cat(modelo.cj$clusters, datos[['", var, "']], 'cj_cat', c('",
+        "e_cat(modelo.cj$clusters, datos[['", var, "']], c('",
         paste(isolate(cj_colors$colors), collapse = "', '"), "'), ", escalar, ")")
       updateAceEditor(session, "fieldCodeBar", value = cod)
       
-      hc_cat(modelo.cj()$clusters, updateData$datos[, var], "cj_cat", 
-             isolate(cj_colors$colors), escalar)
+      e_cat(modelo.cj()$clusters, updateData$datos[, var], 
+            isolate(cj_colors$colors), escalar)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)

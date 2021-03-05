@@ -2,53 +2,49 @@
 #'
 #' @param data a data.frame object.
 #' @param max.clusters a numeric value specifying the number of times to generate the model.
-#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
-#' @return Highchart plot
-#' @export hc_jambu
-#' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @return echarts4r plot
+#' @export e_jambu
+#' @import echarts4r
 #' @examples
-#' hc_jambu(iris[, -5], 10)
+#' e_jambu(iris[, -5], 10)
 #' 
-hc_jambu <- function(data, max.clusters, nombre.archivo = NULL) {
-    if(nrow(data) <= max.clusters) {
-      max.clusters <- nrow(data) - 1
-    }
-    v <- sapply(1:max.clusters, function(i) {
-      k <- kmeans(data, centers = i, iter.max = 100, nstart = 100)
-      k$tot.withinss
-    })
-    v <- data.frame(x = 1:max.clusters, y = v)
-    
-    res <- highchart() %>% 
-      hc_add_series(v, hcaes(x, y), type = "line", name = "Jambu") %>%
-      hc_tooltip(pointFormat = "<b>Inercia Intra-Clase:</b> {point.y:.2f}",
-                 headerFormat = "")
-    
-    if(!is.null(nombre.archivo)) {
-      res <- res %>% hc_exporting(enabled = T, filename = nombre.archivo)
-    }
-    
-    res
+e_jambu <- function(data, max.clusters) {
+  if(nrow(data) <= max.clusters) {
+    max.clusters <- nrow(data) - 1
+  }
+  v <- sapply(1:max.clusters, function(i) {
+    k <- kmeans(data, centers = i, iter.max = 100, nstart = 100)
+    k$tot.withinss
+  })
+  Jambu <- NULL
+  v <- data.frame(x = 1:max.clusters, Jambu = v)
+  v <- round(v, 2)
+  
+  v %>% e_charts(x) %>% e_line(Jambu) %>% e_tooltip(
+    formatter = htmlwidgets::JS(
+      "function(params) {
+      return('Inercia Intra-Clase: ' + params.value[1])
+    }")
+  )
 }
 
 #' Silhouette plot
 #'
 #' @param data a data.frame object.
 #' @param max.clusters a numeric value specifying the number of times to generate the model.
-#' @param nombre.archivo a character value specifying the name to use when the plot is downloaded.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
-#' @return Highchart plot
-#' @export hc_silhouette
-#' @importFrom highcharter hchart hc_add_series hc_plotOptions hc_exporting hc_chart hc_xAxis hc_yAxis
+#' @return echarts4r plot
+#' @export e_silhouette
+#' @import echarts4r
 #' @importFrom cluster silhouette
 #' @importFrom stats dist
 #' @examples
-#' hc_silhouette(iris[, -5], 10)
+#' e_silhouette(iris[, -5], 10)
 #' 
-hc_silhouette <- function(data, max.clusters, nombre.archivo = NULL) {
+e_silhouette <- function(data, max.clusters) {
   if(nrow(data) <= max.clusters) {
     max.clusters <- nrow(data) - 1
   }
@@ -57,20 +53,19 @@ hc_silhouette <- function(data, max.clusters, nombre.archivo = NULL) {
     k <- kmeans(data, centers = i, iter.max = 100, nstart = 100)
     mean(silhouette(k$cluster, dist(data))[, 3])
   })
-  v <- data.frame(x = 1:max.clusters, y = c(0, v))
+  Silhouette <- NULL
+  v <- data.frame(x = 1:max.clusters, Silhouette = c(0, v))
+  m <- which.max(v$Silhouette)
+  v <- round(v, 2)
   
-  res <- highchart() %>% 
-    hc_add_series(v, hcaes(x, y), type = "line", name = "Silhouette") %>%
-    hc_tooltip(pointFormat = "<b>Silhouette:</b> {point.y:.2f}",
-               headerFormat = "") %>%
-    hc_xAxis(plotLines = list(list(
-      value = which.max(v$y), width = 2, dashStyle = "Dash")))
-  
-  if(!is.null(nombre.archivo)) {
-    res <- res %>% hc_exporting(enabled = T, filename = nombre.archivo)
-  }
-  
-  res
+  v %>% e_charts(x) %>% e_line(Silhouette) %>% 
+    e_tooltip(
+      formatter = htmlwidgets::JS(
+        "function(params) {
+        return('Inercia Intra-Clase: ' + params.value[1])
+      }")
+    ) %>% e_mark_line(data = list(xAxis = m), title = "", silent = T,
+                      lineStyle = list(normal = list(width = 3)))
 }
 
 ############################### Generar Código ################################

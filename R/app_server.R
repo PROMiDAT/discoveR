@@ -4,7 +4,6 @@
 #' DO NOT REMOVE.
 #' @import shiny
 #' @import shinycustomloader
-#' @import highcharter
 #' @import plotly
 #' @importFrom DT tableHeader formatStyle
 #' @keywords internal

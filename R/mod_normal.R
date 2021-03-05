@@ -56,12 +56,10 @@ mod_normal_ui <- function(id) {
       ), 
       tabPanel(
         title = labelInput("plotnormal"), value = "tabNormalPlot",
-        withLoader(highchartOutput(ns('hc_normal'), height = "70vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('plot_normal'), height = "70vh")),
       tabPanel(
         title = "Qplot + Qline", value = "tabQPlot",
-        withLoader(highchartOutput(ns('hc_qq'), height = "70vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('plot_qq'), height = "70vh")),
       tabPanel(
         title = labelInput("normalidad"), value = "tabNormalCalc",
         withLoader(DT::DTOutput(ns('calc_normal')), 
@@ -84,7 +82,7 @@ mod_normal_server <- function(input, output, session, updateData) {
   })
   
   #' Grafico Test de normalidad
-  output$hc_normal <- renderHighchart({
+  output$plot_normal <- renderEcharts4r({
     input$run_normal
     var       <- input$sel_normal
     datos     <- updateData$datos[, var]
@@ -94,11 +92,11 @@ mod_normal_server <- function(input, output, session, updateData) {
                    tr("curvanormal", updateData$idioma))
     
     tryCatch({
-      cod <- paste0("hchistnormal(datos[['", var, "']], 'normal', '", colorBar,
+      cod <- paste0("e_histnormal(datos[['", var, "']], '", colorBar,
                     "', '", colorLine, "', c('", nombres[1], "', '", 
                     nombres[2], "'))")
       updateAceEditor(session, "fieldCodeNormal", value = cod)
-      hchistnormal(datos, "normal", colorBar, colorLine, nombres)
+      e_histnormal(datos, colorBar, colorLine, nombres)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
@@ -106,7 +104,7 @@ mod_normal_server <- function(input, output, session, updateData) {
   })
   
   #' Grafico qqplot + qqline
-  output$hc_qq <- renderHighchart({
+  output$plot_qq <- renderEcharts4r({
     input$run_normal
     var        <- input$sel_normal
     datos      <- updateData$datos[, var]
@@ -114,10 +112,10 @@ mod_normal_server <- function(input, output, session, updateData) {
     colorLine  <- isolate(input$col_qq_line)
     
     tryCatch({
-      cod <- paste0("hcqq(datos[['", var, "']], 'qq', '", colorPoint,
+      cod <- paste0("e_qq(datos[['", var, "']], '", colorPoint,
                     "', '", colorLine, "')")
       updateAceEditor(session, "fieldCodeQplot", value = cod)
-      hcqq(datos, "qq", colorPoint, colorLine)
+      e_qq(datos, colorPoint, colorLine)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)

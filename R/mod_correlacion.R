@@ -31,8 +31,7 @@ mod_correlacion_ui <- function(id){
       id = ns("tabCor"), opciones = opts_cor, title = NULL,
       tabPanel(
         title = labelInput("correlacion"), value = "correlacion",
-        withLoader(highchartOutput(ns('hc_cor'), height = "70vh"), 
-                   type = "html", loader = "loader4")),
+        echarts4rOutput(ns('plot_cor'), height = "70vh")),
       tabPanel(
         title = labelInput("resultados"), value = "cor.salida",
         div(style = "height: 75vh;overflow-y: scroll;",
@@ -48,7 +47,7 @@ mod_correlacion_server <- function(input, output, session, updateData) {
   ns <- session$ns
   
   #' Gráfico de Correlaciones
-  output$hc_cor <- renderHighchart({
+  output$plot_cor <- renderEcharts4r({
     input$run_cor
     datos <- var.numericas(updateData$datos)
     col_min <- isolate(input$col_min)
@@ -60,17 +59,17 @@ mod_correlacion_server <- function(input, output, session, updateData) {
       cod <- code.cor(col_min, col_med, col_max)
       updateAceEditor(session, "fieldCodeCor", value = cod)
       
-      label.js <- JS(
-        "function() {return Highcharts.numberFormat(this.point.value, 2);}"
-      )
-      hchart(cor(datos)) %>% hc_chart(zoomType = "xy") %>%
-        hc_exporting(enabled = T, filename = "correlaciones") %>%
-        hc_colorAxis(stops = NULL) %>%
-        hc_colorAxis(stops = colores, min = -1, max = 1) %>%
-        hc_plotOptions(
-          series = list(
-            dataLabels = list(enabled = TRUE, formatter = label.js)
-          )
+      datos.plot <- round(cor(datos), 3)
+      datos.plot %>% e_charts() %>% 
+        e_correlations(
+          order = "hclust", label = list(show = T),
+          inRange = list(color = c(col_min, col_med, col_max)),
+          itemStyle = list(borderWidth = 2, borderColor = "#fff")
+        ) %>% e_datazoom(show = F) %>% e_show_loading() %>% e_tooltip(
+          formatter = htmlwidgets::JS(paste0(
+            "function(params) {\n",
+            "  return(params.value[1] + ' ~ ' + params.value[0] + ': ' + parseFloat(params.value[2]).toFixed(3))\n", 
+            "}"))
         )
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
