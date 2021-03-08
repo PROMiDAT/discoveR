@@ -138,8 +138,13 @@ e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2)) {
   }
   
   if(!is.null(colores)) {
+    orden <- as.numeric(sapply(r$x$opts$legend$data, function(x) strsplit(x, "r")[[1]][2]))
+    colores <- colores[orden]
     r <- r %>% e_color(colores)
   }
+  
+  label_clusters <- as.character(unique(ind$cluster))
+  r$x$opts$legend$data <- lapply(label_clusters[order(label_clusters)], function(x) x)
   
   r %>% e_show_loading() %>% e_datazoom(show = F) %>%
     e_axis_labels(x = paste0(dims[1], " (", inercias[1], ")"), 
@@ -210,8 +215,13 @@ e_mapa_3D <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) {
   }
   
   if(!is.null(colores)) {
+    orden <- as.numeric(sapply(names(r$x$data), function(x) strsplit(x, "r")[[1]][2]))
+    colores <- colores[orden]
     r <- r %>% e_color(colores)
   }
+  
+  label_clusters <- as.character(unique(ind$cluster))
+  r$x$opts$legend$data <- lapply(label_clusters[order(label_clusters)], function(x) x)
   
   r %>% e_show_loading() %>% e_theme("dark") %>% 
     e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
