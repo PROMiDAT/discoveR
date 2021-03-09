@@ -210,7 +210,7 @@ e_mapa_3D <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) {
       label = list(show = T, formatter = htmlwidgets::JS(paste0(
         "function(data) {\n",
         "    return '", var$id[i], "';\n",
-        "}")))
+        "}")), textStyle = list(color = "white"))
     )
   }
   

@@ -89,7 +89,7 @@ e_histboxplot <- function(data, var.name, colorBar = "steelblue", colorPoint = "
     e_grid(height = "50%") %>% e_grid(height = "30%", top = "60%") %>% 
     e_y_axis(gridIndex = 1) %>% e_x_axis(gridIndex = 1) %>% 
     e_x_axis(scale = T) %>% e_tooltip() %>% e_datazoom(show = F) %>% 
-    e_color(c(colorPoint, colorBar)) %>% e_show_loading()
+    e_color(c(colorPoint, colorBar, colorBar)) %>% e_show_loading()
   
   r$x$opts$xAxis[[2]]$scale <- TRUE
   

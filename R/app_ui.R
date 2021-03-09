@@ -5,8 +5,8 @@
 #' @import rlang
 #' @import shiny
 #' @import shinyAce
-#' @import shinydashboard
 #' @import shinydashboardPlus
+#' @importFrom shinydashboard dashboardBody menuItem menuSubItem sidebarMenu tabBox tabItem tabItems
 #' @importFrom shinyjs useShinyjs show hide addClass removeClass
 #' @importFrom stats cor cutree hclust kmeans median na.omit
 #' @importFrom utils read.table write.csv
@@ -17,9 +17,9 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     
-    shinydashboardPlus::dashboardPagePlus(
+    dashboardPage(
       title = "PROMiDAT - discoveR",
-      shinydashboard::dashboardHeader(
+      dashboardHeader(
         title = HTML(paste0(
           '<span class = "logo-lg">
             <a href = "https://promidat.com" target = "_blank">
