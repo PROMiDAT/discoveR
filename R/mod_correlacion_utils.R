@@ -47,10 +47,10 @@ e_cor <- function(x, colors = c("#FF5733", "#F8F5F5", "#2E86C1")) {
 }
 
 ############################### Generar Código ################################
-code.cor <- function(color1, color2, color3) {
+code.cor <- function(colores) {
   paste0(
-    "colores <- c('", color1, "', '", color2, "', '", color3, "')\n",
+    "colores <- c('", colores[1], "', '", colores[2], "', '", colores[3], "')\n",
     "datos.plot <- round(cor(datos), 3)\n",
-    "e_cor(datos.plot)\n"
+    "e_cor(datos.plot, colores)\n"
   )
 }

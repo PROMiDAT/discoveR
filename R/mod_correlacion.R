@@ -14,14 +14,15 @@ mod_correlacion_ui <- function(id){
     list(
       options.run(ns("run_cor")), tags$hr(style = "margin-top: 0px;"),
       colourpicker::colourInput(
-        ns("col_min"), labelInput("selcolor"), "#FF5733", 
+        ns("col_max"), labelInput("selcolor"), "#2E86C1", 
         allowTransparent = T),
       colourpicker::colourInput(
         ns("col_med"), labelInput("selcolor"), "#F8F5F5", 
         allowTransparent = T),
       colourpicker::colourInput(
-        ns("col_max"), labelInput("selcolor"), "#2E86C1", 
+        ns("col_min"), labelInput("selcolor"), "#FF5733", 
         allowTransparent = T)
+      
     ),
     list(codigo.monokai(ns("fieldCodeCor"),  height = "30vh"))
   ))
@@ -50,17 +51,14 @@ mod_correlacion_server <- function(input, output, session, updateData) {
   output$plot_cor <- renderEcharts4r({
     input$run_cor
     datos <- var.numericas(updateData$datos)
-    col_min <- isolate(input$col_min)
-    col_med <- isolate(input$col_med)
-    col_max <- isolate(input$col_max)
-    colores <- list(list(0, col_min), list(0.5, col_med), list(1, col_max))
+    colores <- list(isolate(input$col_min), isolate(input$col_med), isolate(input$col_max))
     
     tryCatch({
-      cod <- code.cor(col_min, col_med, col_max)
+      cod <- code.cor(colores)
       updateAceEditor(session, "fieldCodeCor", value = cod)
       
       datos.plot <- round(cor(datos), 3)
-      e_cor(datos.plot)
+      e_cor(datos.plot, colores)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
       return(NULL)
