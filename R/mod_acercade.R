@@ -10,7 +10,7 @@
 mod_acercade_ui <- function(id){
   ns <- NS(id)
   tagList(
-    img(src = "img/Logo.png",
+    img(src = "img/logo.png",
         style = paste0("padding-bottom:20px;margin-left: auto;",
                        "margin-right: auto;display: block;width: 50%;")),
     infoBoxPROMiDAT(
@@ -24,7 +24,7 @@ mod_acercade_ui <- function(id){
     ),
     
     infoBoxPROMiDAT(
-      labelInput("version"), "2.2.2", icono = icon("file-code-o"))
+      labelInput("version"), "2.2.4", icono = icon("file-code-o"))
   )
 }
     

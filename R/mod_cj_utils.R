@@ -70,23 +70,30 @@ WP <- function(DF, clusters) {
 
 #' Dendrogram plot
 #'
-#' @param modelo an object of class hclust.
-#' @param clusters a vector specifying the cluster of each individual.
-#' @param colores a vector of color for each cluster.
+#' @param model an object of class hclust.
+#' @param k a vector specifying the cluster of each individual.
+#' @param colors a vector of color for each cluster.
 #' 
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return ggplot
 #' @export gg_dendrograma
 #' @importFrom ggplot2 ggplot aes geom_segment geom_text scale_linetype_manual scale_color_manual labs theme_void theme element_text element_line coord_flip ylim
 #' @importFrom ggdendro dendro_data segment label
+#' @importFrom grDevices rgb
+#' @importFrom stats runif
 #' 
-gg_dendrograma <- function(modelo, clusters, colores) {
-  dendro <- dendro_data(modelo, type = "rectangle")
+gg_dendrograma <- function(model, k, colors = NULL) {
+  if(is.null(colors)) {
+    colors <- sapply(1:k, function(i) rgb(runif(1), runif(1), runif(1), 0.8))
+  }
+  colors <- c("gray", colors)
   
-  k        <- length(unique(clusters))
-  cluster  <- clusters[modelo$order]
+  dendro <- dendro_data(model, type = "rectangle")
+  
+  clusters <- as.factor(cutree(model, k))
+  cluster  <- clusters[model$order]
   clusters <- rep(0L, nrow(dendro$segments))
-  heights  <- sort(modelo$height, decreasing = TRUE)
+  heights  <- sort(model$height, decreasing = TRUE)
   height   <- mean(c(heights[k], heights[k - 1L]), na.rm = TRUE)
   
   for (i in 1:k) {
@@ -111,10 +118,10 @@ gg_dendrograma <- function(modelo, clusters, colores) {
     geom_text(
       data = label(dendro), aes(x = x, y = y, label = label, colour = cluster),
       vjust = 0.5, hjust = -0.1, size = 3) + 
-    scale_linetype_manual(values = c(1, 2), guide = FALSE) +
+    scale_linetype_manual(values = c(1, 2), guide = "none") +
     scale_color_manual(
       breaks = as.character(1:k), labels = paste0("Cluster ", 1:k),
-      values = colores) + 
+      values = colors) + 
     labs(color = "Clusters") +
     theme_void() + theme(
       axis.text = element_text(color = "#50505030"),
@@ -152,10 +159,9 @@ code.inercia <- function(titulos) {
   )
 }
 
-code.dendro <- function(colores) {
+code.dendro <- function(k, colores) {
   paste0(
-    "p <- gg_dendrograma(modelo.cj$modelo, modelo.cj$clusters, c('gray', '", 
-    paste(colores, collapse = "', '"), "'))\n",
+    "p <- gg_dendrograma(modelo.cj$modelo, ", k, ", c('", paste(colores, collapse = "', '"), "'))\n",
     "ggplotly(p, tooltip = c('y', 'cluster', 'clusters', 'label')) %>% \n",
     "  layout(showlegend = F, xaxis = list(showline = F), yaxis = list(showline = F)) %>%\n",
     "  style(textposition = 'right') %>% config(displaylogo = F)\n"

@@ -115,6 +115,7 @@ mod_normal_server <- function(input, output, session, updateData) {
       cod <- paste0("e_qq(datos[['", var, "']], '", colorPoint,
                     "', '", colorLine, "')")
       updateAceEditor(session, "fieldCodeQplot", value = cod)
+      
       e_qq(datos, colorPoint, colorLine)
     }, error = function(e) {
       showNotification(paste0("ERROR: ", e), duration = 10, type = "error")
@@ -163,6 +164,7 @@ mod_normal_server <- function(input, output, session, updateData) {
           )
         )
       ))
+      
       DT::datatable(
         res, selection = 'none', container = sketch, escape = F,
         options = list(dom = 'frtip', scrollY = "50vh")

@@ -201,12 +201,12 @@ mod_cj_server <- function(input, output, session, updateData) {
     if(is.null(modelo.cj())) return(NULL)
     
     tryCatch({
-      modelo   <- modelo.cj()$modelo
-      clusters <- modelo.cj()$clusters
+      modelo <- modelo.cj()$modelo
+      k      <- isolate(input$cant.cluster)
       
-      p <- gg_dendrograma(modelo, clusters, c("gray", isolate(cj_colors$colors)))
+      p <- gg_dendrograma(modelo, k, isolate(cj_colors$colors))
       
-      cod <- code.dendro(isolate(cj_colors$colors))
+      cod <- code.dendro(k, isolate(cj_colors$colors))
       updateAceEditor(session, "fieldCodeDendo", value = cod)
       
       ggplotly(p, tooltip = c("y", "cluster", "clusters", "label")) %>% 

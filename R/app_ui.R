@@ -55,8 +55,6 @@ app_ui <- function(request) {
                    icon = icon("sitemap")),
           menuItem(labelInput("kmedias"), tabName = "kmedias",
                    icon = icon("object-group")),
-          #menuItem(labelInput("reporte"), tabName = "reporte",
-          #         icon = icon("save-file", lib = "glyphicon")),
           menuItem(labelInput("acercade"), tabName = "acercaDe",
                    icon = icon("info")),
           hr(),

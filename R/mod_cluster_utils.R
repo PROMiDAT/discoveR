@@ -31,7 +31,7 @@ calc.centros <- function(data, clusters) {
   real <- lapply(levels(clusters), function(i)
     colMeans(data[clusters == i, ]))
   real <- as.data.frame(do.call('rbind', real))
-  porcentual <- apply(real, 2, function(i) scales::rescale(i, to = c(0, 100)))
+  porcentual <- apply(real, 2, function(i) (i - min(i)) / (max(i) - min(i)) * 100)
   porcentual <- as.data.frame(porcentual)
   return(list(real = real, porcentual = porcentual))
 }

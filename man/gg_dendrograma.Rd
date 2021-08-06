@@ -4,14 +4,14 @@
 \alias{gg_dendrograma}
 \title{Dendrogram plot}
 \usage{
-gg_dendrograma(modelo, clusters, colores)
+gg_dendrograma(model, k, colors = NULL)
 }
 \arguments{
-\item{modelo}{an object of class hclust.}
+\item{model}{an object of class hclust.}
 
-\item{clusters}{a vector specifying the cluster of each individual.}
+\item{k}{a vector specifying the cluster of each individual.}
 
-\item{colores}{a vector of color for each cluster.}
+\item{colors}{a vector of color for each cluster.}
 }
 \value{
 ggplot

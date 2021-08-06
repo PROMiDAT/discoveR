@@ -248,12 +248,12 @@ mod_acp_server <- function(input, output, session, updateData) {
     }
     
     cod <- paste0(
-    'datos.plot <- data.frame (x = row.names(modelo.pca$eig), y = modelo.pca$eig[, 2])\n\n',
-    'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
-    '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
-    '    "function(params) {",\n',
-    '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
-    '    "}"\n  )))\n')
+      'datos.plot <- data.frame (x = row.names(modelo.pca$eig), y = modelo.pca$eig[, 2])\n\n',
+      'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
+      '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
+      '    "function(params) {",\n',
+      '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
+      '    "}"\n  )))\n')
     updateAceEditor(session, "fieldCodeVEE", value = cod)
     
     datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
@@ -334,29 +334,12 @@ mod_acp_server <- function(input, output, session, updateData) {
     
     cod <- paste0(
       'datos.plot <- round(modelo$var$cor, 3)\n', 
-      'datos.plot %>% e_charts() %>%\n',
-      '  e_correlations(\n',
-      '    label = list(show = T),\n',
-      '    itemStyle = list(borderWidth = 2, borderColor = "#fff")\n',
-      '  ) %>% e_datazoom(show = F) %>% e_show_loading() %>% e_tooltip(\n',
-      '    formatter = htmlwidgets::JS(paste0(\n',
-      '      "function(params) {",\n',
-      '      "  return(params.value[1] + \' ~ \' + params.value[0] + \': \' + params.value[2])",\n',
-      '      "}"))\n  )\n'
+      'e_cor(datos.plot)\n'
     )
     updateAceEditor(session, "fieldCodeCVC", value = cod)
     
     datos.plot <- round(modelo$var$cor, 3)
-    datos.plot %>% e_charts() %>%
-      e_correlations(
-        label = list(show = T),
-        itemStyle = list(borderWidth = 2, borderColor = "#fff")
-      ) %>% e_datazoom(show = F) %>% e_show_loading() %>% e_tooltip(
-        formatter = htmlwidgets::JS(paste0(
-          "function(params) {\n",
-          "  return(params.value[1] + ' ~ ' + params.value[0] + ': ' + params.value[2])\n", 
-          "}"))
-      )
+    e_cor(datos.plot)
   })
   
   #' Contribución de las variables
