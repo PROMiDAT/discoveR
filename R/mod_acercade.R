@@ -33,6 +33,7 @@ mod_acercade_ui <- function(id){
 #' @noRd 
 mod_acercade_server <- function(input, output, session) {
   ns <- session$ns
+  
 }
     
 ## To be copied in the UI
