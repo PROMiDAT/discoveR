@@ -86,7 +86,7 @@ gg_dendrograma <- function(model, k, colors = NULL) {
   if(is.null(colors)) {
     colors <- sapply(1:k, function(i) rgb(runif(1), runif(1), runif(1), 0.8))
   }
-  colors <- c("gray", colors)
+  colors <- c(colors, "gray")
   
   dendro <- dendro_data(model, type = "rectangle")
   

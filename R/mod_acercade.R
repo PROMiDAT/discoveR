@@ -24,10 +24,10 @@ mod_acercade_ui <- function(id){
     ),
     
     infoBoxPROMiDAT(
-      labelInput("version"), "2.2.4", icono = icon("file-code-o"))
+      labelInput("version"), "2.2.5", icono = icon("file-code-o"))
   )
 }
-    
+
 #' acercade Server Function
 #'
 #' @noRd 
