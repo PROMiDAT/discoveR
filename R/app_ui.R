@@ -27,7 +27,8 @@ app_ui <- function(request) {
             </a>
           </span>',
           '<img src= "img/logo_small.png" height = 50%, width = "120%">'
-        ))
+        )),
+        controlbarIcon = icon("cogs")
       ),
       
       dashboardSidebar(
@@ -35,22 +36,22 @@ app_ui <- function(request) {
           id = "principal",
           tags$div(style="padding-top:10px;"),
           menuItem(labelInput("data"), tabName = "cargar",
-                   icon = icon("dashboard")),
+                   icon = icon("database")),
           menuItem(labelInput("basico"), tabName = "parte1",
                    icon = icon("th-list"),
             menuSubItem(labelInput("resumen"), "resumen",
-                        icon = icon("sort-numeric-asc")),
+                        icon = icon("sort-numeric-down")),
             menuSubItem(labelInput("normalidad"), "normalidad",
-                        icon = icon("bar-chart")),
+                        icon = icon("chart-bar")),
             menuSubItem(labelInput("dispersion"), "dispersion",
-                        icon = icon("line-chart")),
+                        icon = icon("chart-line")),
             menuSubItem(labelInput("distribucion"), "distribucion",
-                        icon = icon("area-chart")),
+                        icon = icon("chart-area")),
             menuSubItem(labelInput("correlacion"), "correlacion",
                         icon = icon("table"))
           ),
           menuItem(labelInput("acp"), tabName = "acp", 
-                   icon = icon("pie-chart")),
+                   icon = icon("chart-pie")),
           menuItem(labelInput("jerarquico"), tabName = "cj",
                    icon = icon("sitemap")),
           menuItem(labelInput("kmedias"), tabName = "kmedias",
