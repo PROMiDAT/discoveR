@@ -306,7 +306,7 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
                      labels = paste0("Var. ", titulos))
   
   leyenda <- c(paste0("Ind. ", titulos), paste0("Var. ", titulos))
-  colores <- c(colorInd, colorIndCos, colorVarCos, colorVar)
+  colores <- c(colorInd, colorIndCos, colorVar, colorVarCos)
   colores <- colores[leyenda %in% c(as.character(unique(ind$cos)), as.character(unique(var$cos)))]
   
   r <- ind %>% group_by(cos) %>% e_charts(x) %>% 
@@ -331,6 +331,10 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
     )
   }
   
+  if(length(leyenda) == 4) {
+    colores <- c(colorInd, colorIndCos, colorVarCos, colorVar)
+  }
+  
   r$x$opts$legend$data <- leyenda
   
   r %>% e_color(colores) %>% e_show_loading() %>% e_datazoom(show = F) %>%
@@ -338,7 +342,7 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
                   y = paste0("Dim.", axes[2], " (", inercias[2], ")")) %>% 
     e_tooltip(formatter = htmlwidgets::JS(
       "function(params) {
-        return('<strong>' + params.name + '</strong>: (' + 
+         return('<strong>' + params.name + '</strong>: (' + 
                params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + ')') 
       }"))
 }
