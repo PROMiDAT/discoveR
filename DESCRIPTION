@@ -1,6 +1,6 @@
 Package: discoveR
 Title: Exploratory Data Analysis System
-Version: 2.2.6
+Version: 2.2.7
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),
@@ -29,4 +29,4 @@ Imports:
 Depends: R (>= 4.0)
 Encoding: UTF-8
 URL: https://www.promidat.com
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

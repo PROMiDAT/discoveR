@@ -306,7 +306,7 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
                      labels = paste0("Var. ", titulos))
   
   leyenda <- c(paste0("Ind. ", titulos), paste0("Var. ", titulos))
-  colores <- c(colorInd, colorIndCos, colorVar, colorVarCos)
+  colores <- c(colorInd, colorIndCos, colorVarCos, colorVar)
   colores <- colores[leyenda %in% c(as.character(unique(ind$cos)), as.character(unique(var$cos)))]
   
   r <- ind %>% group_by(cos) %>% e_charts(x) %>% 

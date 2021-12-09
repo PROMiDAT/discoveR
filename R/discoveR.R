@@ -13,8 +13,8 @@
 #' \tabular{ll}{
 #' Package: \tab discoveR\cr
 #' Type: \tab Package\cr
-#' Version: \tab 2.2.6\cr
-#' Date: \tab 2021-10-08\cr
+#' Version: \tab 2.2.7\cr
+#' Date: \tab 2021-12-09\cr
 #' License: \tab GPL (>=2)\cr
 #' }
 #' @keywords package
