@@ -279,7 +279,7 @@ e_pcavar_3D <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
 #' e_pcabi(p)
 #' 
 e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue", 
-                    colorVar = "forestgreen", cos2Ind = 0,  cos2Var = 0, 
+                    colorVar = "forestgreen", cos2Ind = 0, cos2Var = 0, 
                     colorIndCos = "firebrick", colorVarCos = "darkorchid",
                     titulos = c("Bien Representados", "Mal Representados")) {
   dims <- paste0("Dim.", axes)
@@ -304,20 +304,21 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
   var$cos2 <- apply(modelo$var$cos2[, axes], 1, sum, na.rm = T)
   var$cos  <- factor(ifelse(var$cos2 >= cos2Var, 1, 0), levels = c(1, 0), 
                      labels = paste0("Var. ", titulos))
+  var$color <- ifelse(var$cos2 >= cos2Var, colorVar, colorVarCos)
   
   leyenda <- c(paste0("Ind. ", titulos), paste0("Var. ", titulos))
-  colores <- c(colorInd, colorIndCos, colorVar, colorVarCos)
-  colores <- colores[leyenda %in% c(as.character(unique(ind$cos)), as.character(unique(var$cos)))]
   
   r <- ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter(y, symbol_size = 10, bind = id)
+    e_scatter(y, symbol_size = 10, bind = id) %>% 
+    e_color(c(colorInd, colorIndCos))
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
       type = "line", name = var$cos[i], smooth = TRUE,
       data = list(list(value = c(0, 0, 0)), 
                   list(value = c(var[i, 1], var[i, 2], var[i, 3]))),
-      lineStyle = list(width = 5),
+      lineStyle = list(width = 5, color = var$color[i]),
+      itemStyle = list(normal = list(color = var$color[i])),
       label = list(show = T, position = 'top', color = "black", 
                    formatter = htmlwidgets::JS(paste0(
                      "function(data) {\n",
@@ -331,13 +332,9 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
     )
   }
   
-  if(length(leyenda) == 4) {
-    colores <- c(colorInd, colorIndCos, colorVarCos, colorVar)
-  }
-  
   r$x$opts$legend$data <- leyenda
   
-  r %>% e_color(colores) %>% e_show_loading() %>% e_datazoom(show = F) %>%
+  r %>% e_show_loading() %>% e_datazoom(show = F) %>%
     e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
                   y = paste0("Dim.", axes[2], " (", inercias[2], ")")) %>% 
     e_tooltip(formatter = htmlwidgets::JS(
