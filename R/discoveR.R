@@ -2,8 +2,12 @@
 #' @aliases discoveR
 #' @docType package
 #' @title Exploratory Data Analysis System
-#' @author Oldemar Rodriguez Rojas \cr
-#' Maintainer: Oldemar Rodriguez Rojas <oldemar.rodriguez@ucr.ac.cr>
+#' @author
+#' Maintainer: Oldemar Rodriguez Rojas <oldemar.rodriguez@ucr.ac.cr>\cr
+#' \itemize{
+#'   \item Oldemar Rodriguez Rojas <oldemar.rodriguez@ucr.ac.cr>
+#'   \item Diego Jiménez Alvarado
+#' }
 #' @description
 #' Performs an exploratory data analysis through a 'shiny' interface. 
 #' It includes basic methods such as the mean, median, mode, normality test, 
@@ -13,8 +17,8 @@
 #' \tabular{ll}{
 #' Package: \tab discoveR\cr
 #' Type: \tab Package\cr
-#' Version: \tab 2.2.7\cr
-#' Date: \tab 2021-12-09\cr
+#' Version: \tab 3.0.0\cr
+#' Date: \tab 2022-03-21\cr
 #' License: \tab GPL (>=2)\cr
 #' }
 #' @keywords package

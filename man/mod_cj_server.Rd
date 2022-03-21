@@ -4,38 +4,9 @@
 \alias{mod_cj_server}
 \title{cj Server Function}
 \usage{
-mod_cj_server(input, output, session, updateData)
+mod_cj_server(id, updateData, codedioma)
 }
 \description{
 cj Server Function
 }
-\keyword{(CJ)}
-\keyword{(Categórico)}
-\keyword{(Cluster}
-\keyword{(Horizontal)}
-\keyword{(Mapa)}
-\keyword{(Radar)}
-\keyword{(Resultados}
-\keyword{(Vertical)}
-\keyword{Agregar}
-\keyword{Clusteres}
-\keyword{Colores}
-\keyword{Generate}
-\keyword{Inertia}
-\keyword{K-medias}
-\keyword{Mostrar}
-\keyword{Plot}
-\keyword{Update}
-\keyword{a}
-\keyword{data}
-\keyword{datos}
-\keyword{de}
-\keyword{dendrogram}
-\keyword{hclust}
 \keyword{internal}
-\keyword{jerarquico)}
-\keyword{load}
-\keyword{numéricos)}
-\keyword{on}
-\keyword{plot}
-\keyword{tabla}

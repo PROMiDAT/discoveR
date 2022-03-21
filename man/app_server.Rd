@@ -13,10 +13,4 @@ DO NOT REMOVE.}
 \description{
 The application server-side
 }
-\keyword{Enable/disable}
-\keyword{Language}
-\keyword{Update}
-\keyword{data}
 \keyword{internal}
-\keyword{load}
-\keyword{on}

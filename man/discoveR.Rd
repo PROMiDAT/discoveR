@@ -14,13 +14,16 @@ Components Analysis, Hierarchical Clustering and the K-Means Method.
 \tabular{ll}{
 Package: \tab discoveR\cr
 Type: \tab Package\cr
-Version: \tab 2.2.6\cr
-Date: \tab 2021-10-08\cr
+Version: \tab 3.0.0\cr
+Date: \tab 2022-03-21\cr
 License: \tab GPL (>=2)\cr
 }
 }
 \author{
-Oldemar Rodriguez Rojas \cr
-Maintainer: Oldemar Rodriguez Rojas <oldemar.rodriguez@ucr.ac.cr>
+Maintainer: Oldemar Rodriguez Rojas <oldemar.rodriguez@ucr.ac.cr>\cr
+\itemize{
+  \item Oldemar Rodriguez Rojas <oldemar.rodriguez@ucr.ac.cr>
+  \item Diego Jiménez Alvarado
+}
 }
 \keyword{package}

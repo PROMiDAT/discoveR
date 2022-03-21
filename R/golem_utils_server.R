@@ -65,6 +65,7 @@ rvtl <- shiny::reactiveValuesToList
 ########################################################
 
 load("inst/app/lang/translation.bin")
+translation <- append(translation, readeR::translation.readeR())
 
 tr <- function(text, idioma = "es") {
   sapply(text, function(s) {

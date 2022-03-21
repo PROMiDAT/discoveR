@@ -20,8 +20,7 @@ mod_acp_ui <- function(id) {
   )
   
   opts_acp <- tabsOptions(
-    widths = c(100, 100), heights = c(60, 40),
-    tabs.content = list(
+    heights = 70, tabs.content = list(
       list(
         options.run(ns("run_pca")), tags$hr(style = "margin-top: 0px;"),
         radioSwitch(ns("switch_scale"), NULL, c("centrar", "nocentrar")),
@@ -62,20 +61,6 @@ mod_acp_ui <- function(id) {
             )
           )
         )
-      ),
-      list(
-        codigo.monokai(ns("fieldCodePCAModelo"), height = "10vh"),
-        lapply(c("Ind", "Var", "Bi"), function(i) {
-          conditionalPanel(
-              condition = paste0("input.tabPCA == 'tab", i, "'"),
-              codigo.monokai(ns(paste0("fieldCode", i)), height = "10vh")
-          )
-        }),
-        lapply(c('VEE', 'CCI', 'CCV', 'CVC', 'PC'), function(i) {
-          conditionalPanel(
-            condition = paste0("input.tabPCA == 'tab", i, "'"),
-            codigo.monokai(ns(paste0("fieldCode", i)), height = "15vh"))
-        })
       )
     )
   )
@@ -116,270 +101,284 @@ mod_acp_ui <- function(id) {
 
 #' acp Server Function
 #' @keywords internal
-mod_acp_server <- function(input, output, session, updateData) {
-  ns <- session$ns
-  
-  #' Generate PCA on load data
-  modelo.pca <- reactive({
-    input$run_pca
+mod_acp_server <- function(id, updateData, codedioma) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
     
-    datos       <- var.numericas(updateData$datos)
-    centrado    <- isolate(input$switch_scale)
-    dimensiones <- 10
-    if(ncol(datos) < 10) {
-      dimensiones <- ncol(datos)
-    }
-    
-    updateSliderInput(session, inputId = "slider_ejes", max = dimensiones)
-    
-    if(nrow(datos) == 0) {
-      return(NULL)
-    } else {
-      cod <- paste0("modelo.pca <- PCA(var.numericas(datos), scale.unit = ",
-                    centrado, ", ncp = ", dimensiones, ", graph = F)")
-      updateAceEditor(session, "fieldCodePCAModelo", value = cod)
-      return(PCA(datos, scale.unit = centrado, ncp = dimensiones, graph = F))
-    }
-  })
-  
-  #' Plot PCA (individuals)
-  output$plot_ind <- renderEcharts4r({
-    modelo <- modelo.pca()
-    
-    ejes    <- isolate(input$slider_ejes)
-    ind.cos <- isolate(input$ind_cos) * 0.01
-    ind.col <- isolate(input$col_pca_ind)
-    cos.col <- isolate(input$col_ind_cos)
-    titulos <- c(tr("bienr", updateData$idioma), tr("malr", updateData$idioma))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      if(input$plotMode) {
-        cod <- paste0("e_pcaind(modelo.pca, c(", paste(ejes, collapse = ", "), 
-                      "), '", ind.col, "', ", ind.cos, ", '", cos.col, "', c('", 
-                      titulos[1], "', '", titulos[2], "'))")
-        updateAceEditor(session, "fieldCodeInd", value = cod)
-        e_pcaind(modelo, ejes, ind.col, ind.cos, cos.col, titulos)
-      } else {
-        cod <- paste0("e_pcaind_3D(modelo, c(", paste(ejes, collapse = ", "), 
-                      "), '", ind.col, "', ", ind.cos, ", '", cos.col, 
-                      "', c('", titulos[1], "', '", titulos[2], "'))")
-        updateAceEditor(session, "fieldCodeInd", value = cod)
-        e_pcaind_3D(modelo, c(1, 2, 3), ind.col, ind.cos, cos.col, titulos)
+    # Generate PCA on load data
+    modelo.pca <- reactive({
+      input$run_pca
+      
+      datos       <- var.numericas(updateData$datos)
+      centrado    <- isolate(input$switch_scale)
+      dimensiones <- 10
+      if(ncol(datos) < 10) {
+        dimensiones <- ncol(datos)
       }
-    }
-  })
-  
-  #' Plot PCA (variables)
-  output$plot_var <- renderEcharts4r({
-    modelo <- modelo.pca()
-    
-    ejes    <- isolate(input$slider_ejes)
-    var.cos <- isolate(input$var_cos) * 0.01
-    var.col <- isolate(input$col_pca_var)
-    cos.col <- isolate(input$col_var_cos)
-    titulos <- c(tr("bienr", updateData$idioma), tr("malr", updateData$idioma))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      if(input$plotMode) {
-        cod <- paste0("e_pcavar(modelo.pca, c(", paste(ejes, collapse = ", "), 
-                      "), '", var.col, "', ", var.cos, ", '", cos.col, "', c('", 
-                      titulos[1], "', '", titulos[2], "'))")
-        updateAceEditor(session, "fieldCodeVar", value = cod)
-        e_pcavar(modelo, ejes, var.col, var.cos, cos.col, titulos)
+      
+      updateSliderInput(session, inputId = "slider_ejes", max = dimensiones)
+      
+      if(nrow(datos) == 0) {
+        return(NULL)
       } else {
-        cod <- paste0("e_pcavar_3D(modelo, c(", paste(ejes, collapse = ", "), 
-                      "), '", var.col, "', ", var.cos, ", '", cos.col, 
-                      "', c('", titulos[1], "', '", titulos[2], "'))")
-        updateAceEditor(session, "fieldCodeVar", value = cod)
-        e_pcavar_3D(modelo, c(1, 2, 3), var.col, var.cos, cos.col, titulos)
+        cod <- paste0("### docpcamodel\nmodelo.pca <- PCA(var.numericas(datos), scale.unit = ",
+                      centrado, ", ncp = ", dimensiones, ", graph = F)\n")
+        isolate(codedioma$code <- append(codedioma$code, cod))
+        
+        return(PCA(datos, scale.unit = centrado, ncp = dimensiones, graph = F))
       }
-    }
-  })
-  
-  #' Plot PCA (Biplot)
-  output$plot_bi <- renderEcharts4r({
-    modelo  <- modelo.pca()
+    })
     
-    ejes        <- isolate(input$slider_ejes)
-    ind.cos     <- isolate(input$ind_cos) * 0.01
-    ind.col     <- isolate(input$col_pca_ind)
-    ind.cos.col <- isolate(input$col_ind_cos)
-    var.cos     <- isolate(input$var_cos) * 0.01
-    var.col     <- isolate(input$col_pca_var)
-    var.cos.col <- isolate(input$col_var_cos)
-    titulos <- c(tr("bienr", updateData$idioma), tr("malr", updateData$idioma))
-    
-    if(is.null(modelo)) {
-      return(NULL)
-    } else {
-      if(input$plotMode) {
-        cod <- paste0("e_pcabi(modelo.pca, c(", paste(ejes, collapse = ", "), 
-                      "), '", ind.col, "', '", var.col, "', ", 
-                      ind.cos, ", ", var.cos, ", '", ind.cos.col, "', '", 
-                      var.cos.col, "', c('", titulos[1], "', '", titulos[2], 
-                      "'))")
-        updateAceEditor(session, "fieldCodeBi", value = cod)
-        e_pcabi(modelo, ejes, ind.col, var.col, ind.cos, var.cos, 
-                ind.cos.col, var.cos.col, titulos)
+    # Plot PCA (individuals)
+    output$plot_ind <- renderEcharts4r({
+      modelo <- modelo.pca()
+      
+      ejes    <- isolate(input$slider_ejes)
+      ind.cos <- isolate(input$ind_cos) * 0.01
+      ind.col <- isolate(input$col_pca_ind)
+      cos.col <- isolate(input$col_ind_cos)
+      titulos <- c(tr("bienr", codedioma$idioma), tr("malr", codedioma$idioma))
+      
+      if(is.null(modelo)) {
+        return(NULL)
       } else {
-        cod <- paste0("e_pcabi_3D(modelo.pca, c(", paste(ejes, collapse = ", "), 
-                      "), '", ind.col, "', '", var.col, "', ", 
-                      ind.cos, ", ", var.cos, ", '", ind.cos.col, "', '", 
-                      var.cos.col, "', c('", titulos[1], "', '", titulos[2], 
-                      "'))")
-        updateAceEditor(session, "fieldCodeBi", value = cod)
-        e_pcabi_3D(modelo, c(1, 2, 3), ind.col, var.col, ind.cos, var.cos, 
-                ind.cos.col, var.cos.col, titulos)
+        if(input$plotMode) {
+          cod <- paste0("### docpcaind2d\ne_pcaind(modelo.pca, c(", paste(ejes, collapse = ", "), 
+                        "), '", ind.col, "', ", ind.cos, ", '", cos.col, "', c('", 
+                        titulos[1], "', '", titulos[2], "'))\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_pcaind(modelo, ejes, ind.col, ind.cos, cos.col, titulos)
+        } else {
+          cod <- paste0("### docpcaind3d\ne_pcaind_3D(modelo, c(", paste(ejes, collapse = ", "), 
+                        "), '", ind.col, "', ", ind.cos, ", '", cos.col, 
+                        "', c('", titulos[1], "', '", titulos[2], "'))\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_pcaind_3D(modelo, c(1, 2, 3), ind.col, ind.cos, cos.col, titulos)
+        }
       }
-    }
+    })
+    
+    # Plot PCA (variables)
+    output$plot_var <- renderEcharts4r({
+      modelo <- modelo.pca()
+      
+      ejes    <- isolate(input$slider_ejes)
+      var.cos <- isolate(input$var_cos) * 0.01
+      var.col <- isolate(input$col_pca_var)
+      cos.col <- isolate(input$col_var_cos)
+      titulos <- c(tr("bienr", codedioma$idioma), tr("malr", codedioma$idioma))
+      
+      if(is.null(modelo)) {
+        return(NULL)
+      } else {
+        if(input$plotMode) {
+          cod <- paste0("### docpcavar2d\ne_pcavar(modelo.pca, c(", paste(ejes, collapse = ", "), 
+                        "), '", var.col, "', ", var.cos, ", '", cos.col, "', c('", 
+                        titulos[1], "', '", titulos[2], "'))\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_pcavar(modelo, ejes, var.col, var.cos, cos.col, titulos)
+        } else {
+          cod <- paste0("### docpcavar3d\ne_pcavar_3D(modelo, c(", paste(ejes, collapse = ", "), 
+                        "), '", var.col, "', ", var.cos, ", '", cos.col, 
+                        "', c('", titulos[1], "', '", titulos[2], "'))\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_pcavar_3D(modelo, c(1, 2, 3), var.col, var.cos, cos.col, titulos)
+        }
+      }
+    })
+    
+    # Plot PCA (Biplot)
+    output$plot_bi <- renderEcharts4r({
+      modelo  <- modelo.pca()
+      
+      ejes        <- isolate(input$slider_ejes)
+      ind.cos     <- isolate(input$ind_cos) * 0.01
+      ind.col     <- isolate(input$col_pca_ind)
+      ind.cos.col <- isolate(input$col_ind_cos)
+      var.cos     <- isolate(input$var_cos) * 0.01
+      var.col     <- isolate(input$col_pca_var)
+      var.cos.col <- isolate(input$col_var_cos)
+      titulos <- c(tr("bienr", codedioma$idioma), tr("malr", codedioma$idioma))
+      
+      if(is.null(modelo)) {
+        return(NULL)
+      } else {
+        if(input$plotMode) {
+          cod <- paste0("### docpcabi2d\ne_pcabi(modelo.pca, c(", paste(ejes, collapse = ", "), 
+                        "), '", ind.col, "', '", var.col, "', ", 
+                        ind.cos, ", ", var.cos, ", '", ind.cos.col, "', '", 
+                        var.cos.col, "', c('", titulos[1], "', '", titulos[2], 
+                        "'))\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_pcabi(modelo, ejes, ind.col, var.col, ind.cos, var.cos, 
+                  ind.cos.col, var.cos.col, titulos)
+        } else {
+          cod <- paste0("### docpcabi3d\ne_pcabi_3D(modelo.pca, c(", paste(ejes, collapse = ", "), 
+                        "), '", ind.col, "', '", var.col, "', ", 
+                        ind.cos, ", ", var.cos, ", '", ind.cos.col, "', '", 
+                        var.cos.col, "', c('", titulos[1], "', '", titulos[2], 
+                        "'))\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_pcabi_3D(modelo, c(1, 2, 3), ind.col, var.col, ind.cos, var.cos, 
+                     ind.cos.col, var.cos.col, titulos)
+        }
+      }
+    })
+    
+    # Varianza Explicada por cada Eje
+    output$plotVEE <- renderEcharts4r({
+      modelo <- modelo.pca()
+      
+      datos.plot <- data.frame(x = row.names(modelo$eig), y = modelo$eig[, 2])
+      if(nrow(datos.plot) > 10) {
+        datos.plot <- datos.plot[1:10, ]
+      }
+      
+      cod <- paste0(
+        '### docvee\n',
+        'datos.plot <- data.frame (x = row.names(modelo.pca$eig), y = modelo.pca$eig[, 2])\n\n',
+        'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
+        '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
+        '    "function(params) {",\n',
+        '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
+        '    "}"\n  )))\n')
+      isolate(codedioma$code <- append(codedioma$code, cod))
+      
+      datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
+        e_tooltip(formatter = htmlwidgets::JS(paste0(
+          "function(params) {\n",
+          "  return(params.value[0] + ': ' + parseFloat(params.value[1]).toFixed(3))",
+          "}"
+        )))
+    })
+    
+    # Cosenos Cuadrados de los Individuos
+    output$plotCCI <- renderEcharts4r({
+      modelo <- modelo.pca()
+      ejes <- isolate(input$slider_ejes)
+      
+      datos.plot <- data.frame (x = row.names(modelo$ind$cos2), 
+                                y = apply(modelo$ind$cos2[, ejes], 1, sum))
+      datos.plot <- datos.plot[order(datos.plot$y, decreasing = T), ]
+      if(nrow(datos.plot) > 20) {
+        datos.plot <- datos.plot[1:20, ]
+      }
+      
+      cod <- paste0(
+        '### doccci\n',
+        'datos.plot <- data.frame (x = row.names(modelo$ind$cos2),\n',
+        '                          y = apply(modelo$ind$cos2[, c(', paste(ejes, collapse = ","), ')], 1, sum))\n',
+        'if(nrow(datos.plot) > 20) {\n',
+        '  datos.plot <- datos.plot[1:20, ]\n}\n\n',
+        'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
+        '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
+        '    "function(params) {",\n',
+        '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
+        '    "}"\n  )))\n')
+      isolate(codedioma$code <- append(codedioma$code, cod))
+      
+      datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
+        e_tooltip(formatter = htmlwidgets::JS(paste0(
+          "function(params) {\n",
+          "  return(params.value[0] + ': ' + parseFloat(params.value[1]).toFixed(3))",
+          "}"
+        )))
+    })
+    
+    # Cosenos Cuadrados de las Variables
+    output$plotCCV <- renderEcharts4r({
+      modelo <- modelo.pca()
+      ejes <- isolate(input$slider_ejes)
+      
+      datos.plot <- data.frame (x = row.names(modelo$var$cos2), 
+                                y = apply(modelo$var$cos2[, ejes], 1, sum))
+      datos.plot <- datos.plot[order(datos.plot$y, decreasing = T), ]
+      if(nrow(datos.plot) > 20) {
+        datos.plot <- datos.plot[1:20, ]
+      }
+      
+      cod <- paste0(
+        '### docccv\n',
+        'datos.plot <- data.frame (x = row.names(modelo$var$cos2),\n',
+        '                          y = apply(modelo$var$cos2[, c(', paste(ejes, collapse = ","), ')], 1, sum))\n',
+        'if(nrow(datos.plot) > 20) {\n',
+        '  datos.plot <- datos.plot[1:20, ]\n}\n\n',
+        'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
+        '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
+        '    "function(params) {",\n',
+        '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
+        '    "}"\n  )))\n')
+      isolate(codedioma$code <- append(codedioma$code, cod))
+      
+      datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
+        e_tooltip(formatter = htmlwidgets::JS(paste0(
+          "function(params) {\n",
+          "  return(params.value[0] + ': ' + parseFloat(params.value[1]).toFixed(3))",
+          "}"
+        )))
+    })
+    
+    # Correlación Variables con los Componentes
+    output$plotCVC <- renderEcharts4r({
+      modelo <- modelo.pca()
+      
+      cod <- paste0(
+        '### doccvc\n',
+        'datos.plot <- round(modelo$var$cor, 3)\n', 
+        'e_cor(datos.plot)\n'
+      )
+      isolate(codedioma$code <- append(codedioma$code, cod))
+      
+      datos.plot <- round(modelo$var$cor, 3)
+      e_cor(datos.plot)
+    })
+    
+    # Contribución de las variables
+    output$plotPC <- renderEcharts4r({
+      modelo <- modelo.pca()
+      
+      ejes <- isolate(input$slider_ejes)
+      
+      datos.plot <- data.frame (
+        x = row.names(modelo$var$contrib), 
+        y = round(modelo$var$contrib[, ejes[1]], 3),
+        z = round(modelo$var$contrib[, ejes[2]], 3))
+      
+      if(nrow(datos.plot) > 20) {
+        datos.plot <- datos.plot[1:20, ]
+      }
+      
+      cod <- paste0(
+        '### docpc\n',
+        'datos <- data.frame (x = row.names(modelo.pca$var$contrib),\n', 
+        '                     y = modelo.pca$var$contrib[, ', ejes[1], '],\n',
+        '                     z = modelo.pca$var$contrib[, ', ejes[2], '])\n',
+        'if(nrow(datos.plot) > 20) {\n',
+        '  datos.plot <- datos.plot[1:20, ]\n',
+        '}\n\n',
+        'datos.plot %>% e_charts(x) %>% e_bar(y, name = "', paste0("Comp ", ejes[1]), '") %>% \n',
+        '  e_bar(z, name = "', paste0("Comp ", ejes[2]), '") %>% e_tooltip()\n'
+      )
+      isolate(codedioma$code <- append(codedioma$code, cod))
+      
+      datos.plot %>% e_charts(x) %>% e_bar(y, name = paste0("Comp ", ejes[1])) %>% 
+        e_bar(z, name = paste0("Comp ", ejes[2])) %>% e_tooltip()
+    })
+    
+    # Modelo ACP (Resultados numéricos)
+    output$txtpca <- renderPrint(print(modelo.pca()))
   })
-  
-  #' Varianza Explicada por cada Eje
-  output$plotVEE <- renderEcharts4r({
-    modelo <- modelo.pca()
-    
-    datos.plot <- data.frame(x = row.names(modelo$eig), y = modelo$eig[, 2])
-    if(nrow(datos.plot) > 10) {
-      datos.plot <- datos.plot[1:10, ]
-    }
-    
-    cod <- paste0(
-      'datos.plot <- data.frame (x = row.names(modelo.pca$eig), y = modelo.pca$eig[, 2])\n\n',
-      'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
-      '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
-      '    "function(params) {",\n',
-      '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
-      '    "}"\n  )))\n')
-    updateAceEditor(session, "fieldCodeVEE", value = cod)
-    
-    datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
-      e_tooltip(formatter = htmlwidgets::JS(paste0(
-        "function(params) {\n",
-        "  return(params.value[0] + ': ' + parseFloat(params.value[1]).toFixed(3))",
-        "}"
-      )))
-  })
-  
-  #' Cosenos Cuadrados de los Individuos
-  output$plotCCI <- renderEcharts4r({
-    modelo <- modelo.pca()
-    ejes <- isolate(input$slider_ejes)
-    
-    datos.plot <- data.frame (x = row.names(modelo$ind$cos2), 
-                              y = apply(modelo$ind$cos2[, ejes], 1, sum))
-    datos.plot <- datos.plot[order(datos.plot$y, decreasing = T), ]
-    if(nrow(datos.plot) > 20) {
-      datos.plot <- datos.plot[1:20, ]
-    }
-    
-    cod <- paste0(
-      'datos.plot <- data.frame (x = row.names(modelo$ind$cos2),\n',
-      '                          y = apply(modelo$ind$cos2[, c(', paste(ejes, collapse = ","), ')], 1, sum))\n',
-      'if(nrow(datos.plot) > 20) {\n',
-      '  datos.plot <- datos.plot[1:20, ]\n}\n\n',
-      'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
-      '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
-      '    "function(params) {",\n',
-      '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
-      '    "}"\n  )))\n')
-    updateAceEditor(session, "fieldCodeCCI", value = cod)
-    
-    datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
-      e_tooltip(formatter = htmlwidgets::JS(paste0(
-        "function(params) {\n",
-        "  return(params.value[0] + ': ' + parseFloat(params.value[1]).toFixed(3))",
-        "}"
-      )))
-  })
-  
-  #' Cosenos Cuadrados de las Variables
-  output$plotCCV <- renderEcharts4r({
-    modelo <- modelo.pca()
-    ejes <- isolate(input$slider_ejes)
-    
-    datos.plot <- data.frame (x = row.names(modelo$var$cos2), 
-                              y = apply(modelo$var$cos2[, ejes], 1, sum))
-    datos.plot <- datos.plot[order(datos.plot$y, decreasing = T), ]
-    if(nrow(datos.plot) > 20) {
-      datos.plot <- datos.plot[1:20, ]
-    }
-    
-    cod <- paste0(
-      'datos.plot <- data.frame (x = row.names(modelo$var$cos2),\n',
-      '                          y = apply(modelo$var$cos2[, c(', paste(ejes, collapse = ","), ')], 1, sum))\n',
-      'if(nrow(datos.plot) > 20) {\n',
-      '  datos.plot <- datos.plot[1:20, ]\n}\n\n',
-      'datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>%\n',
-      '  e_tooltip(formatter = htmlwidgets::JS(paste0(\n',
-      '    "function(params) {",\n',
-      '    "  return(params.value[0] + \': \' + parseFloat(params.value[1]).toFixed(3))",\n',
-      '    "}"\n  )))\n')
-    updateAceEditor(session, "fieldCodeCCV", value = cod)
-    
-    datos.plot %>% e_charts(x) %>% e_bar(y) %>% e_legend(F) %>% 
-      e_tooltip(formatter = htmlwidgets::JS(paste0(
-        "function(params) {\n",
-        "  return(params.value[0] + ': ' + parseFloat(params.value[1]).toFixed(3))",
-        "}"
-      )))
-  })
-  
-  #' Correlación Variables con los Componentes
-  output$plotCVC <- renderEcharts4r({
-    modelo <- modelo.pca()
-    
-    cod <- paste0(
-      'datos.plot <- round(modelo$var$cor, 3)\n', 
-      'e_cor(datos.plot)\n'
-    )
-    updateAceEditor(session, "fieldCodeCVC", value = cod)
-    
-    datos.plot <- round(modelo$var$cor, 3)
-    e_cor(datos.plot)
-  })
-  
-  #' Contribución de las variables
-  output$plotPC <- renderEcharts4r({
-    modelo <- modelo.pca()
-    
-    ejes <- isolate(input$slider_ejes)
-    
-    datos.plot <- data.frame (
-      x = row.names(modelo$var$contrib), 
-      y = round(modelo$var$contrib[, ejes[1]], 3),
-      z = round(modelo$var$contrib[, ejes[2]], 3))
-    
-    if(nrow(datos.plot) > 20) {
-      datos.plot <- datos.plot[1:20, ]
-    }
-    
-    cod <- paste0(
-      'datos <- data.frame (x = row.names(modelo.pca$var$contrib),\n', 
-      '                     y = modelo.pca$var$contrib[, ', ejes[1], '],\n',
-      '                     z = modelo.pca$var$contrib[, ', ejes[2], '])\n',
-      'if(nrow(datos.plot) > 20) {\n',
-      '  datos.plot <- datos.plot[1:20, ]\n',
-      '}\n\n',
-      'datos.plot %>% e_charts(x) %>% e_bar(y, name = "', paste0("Comp ", ejes[1]), '") %>% \n',
-      '  e_bar(z, name = "', paste0("Comp ", ejes[2]), '") %>% e_tooltip()\n'
-    )
-    updateAceEditor(session, "fieldCodePC", value = cod)
-    
-    datos.plot %>% e_charts(x) %>% e_bar(y, name = paste0("Comp ", ejes[1])) %>% 
-      e_bar(z, name = paste0("Comp ", ejes[2])) %>% e_tooltip()
-  })
-  
-  #' Modelo ACP (Resultados numéricos)
-  output$txtpca <- renderPrint(print(modelo.pca()))
 }
     
 ## To be copied in the UI
 # mod_acp_ui("acp_ui_1")
     
 ## To be copied in the server
-# callModule(mod_acp_server, "acp_ui_1")
+# mod_acp_server("acp_ui_1", updateData, codedioma)
  

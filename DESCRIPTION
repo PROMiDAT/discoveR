@@ -1,10 +1,10 @@
 Package: discoveR
 Title: Exploratory Data Analysis System
-Version: 2.2.7
+Version: 3.0.0
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),
-      person(given = "Diego", family = "Jiménez", role = c("ctb", "prg")))
+      person(given = "Diego", family = "Jiménez", role = c("aut")))
 Description: Performs an exploratory data analysis through a 'shiny' interface. It includes basic methods such as the mean, median, mode, normality test, among others. It also includes clustering techniques such as Principal Components Analysis, Hierarchical Clustering and the K-Means Method.
 License: GPL (>=2)
 Imports:
@@ -14,6 +14,7 @@ Imports:
     shiny (>= 1.7.1),
     config,
     plotly,
+    readeR,
     cluster,
     ggplot2,
     shinyjs,

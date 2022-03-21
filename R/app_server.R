@@ -15,7 +15,7 @@ app_server <- function( input, output, session ) {
   options(
     DT.options = list(
       aLengthMenu = c(10, 30, 50), iDisplayLength = 10,
-      scrollX = TRUE, language = list(
+      language = list(
         search = shiny::HTML('<i class="fa fa-search"></i>'),
         info = "", emptyTable = "", zeroRecords = "",
         paginate = list(
@@ -30,16 +30,48 @@ app_server <- function( input, output, session ) {
   
   ##################################  Variables  ##############################
   updateData <- rv(datos = NULL, originales = NULL, idioma = NULL)
-  
+  codedioma  <- rv(idioma = "es", code = list())
   
   ###################################  Update  ################################
-  #' Update on Language
+  # Update on Language
   observeEvent(input$idioma, {
-    updateData$idioma = input$idioma
-    updateLabelInput(session, cambiar.labels(), tr(cambiar.labels(), input$idioma))
+    codedioma$idioma = input$idioma
+    etiquetas <- c(readeR::labels_readeR(), cambiar.labels())
+    updateLabelInput(session, etiquetas, tr(etiquetas, input$idioma))
   })
   
-  #' Enable/disable on load data
+  # Update Code
+  observeEvent(c(codedioma$code, input$idioma), {
+    codigo <- codedioma$code
+    lg <- input$idioma
+    
+    keys <- c(
+      'doccarga', 'docresumen', 'dochist', 'docqq', 'docnormal', 'docdisp',
+      'docdistnum', 'docdistcat', 'doccor', 'docrename', 'doctrans',
+      'doceliminar', 'docpcamodel', 'docpcaind2d', 'docpcaind3d', 
+      'docpcavar2d', 'docpcavar3d', 'docpcabi2d', 'docpcabi3d', 'docvee',
+      'doccci', 'docccv', 'doccvc', 'docpc', 'dochclustmodel', 
+      'dochclustinercia', 'dochclustdend', 'dochclustmapa2d', 
+      'dochclustmapa3d', 'dochclusthoriz', 'dochclustvert', 'dochclustradar',
+      'dochclustcat', 'dockmodel', 'dockjambu', 'docksilh', 'dockinercia',
+      'dockdend', 'dockmapa2d', 'dockmapa3d', 'dockhoriz', 'dockvert',
+      'dockradar', 'dockcat')
+    
+    for (k in keys) {
+      codigo <- gsub(k, tr(k, idioma = lg), codigo, fixed = T)
+    }
+    
+    codigo.completo <- paste0(
+      "library(XLConnect)\n", "library(caret)\n", "library(echarts4r)\n",
+      "library(readeR)\n", "library(discoveR)\n\n"
+    )
+    for (cod in codigo) {
+      codigo.completo <- paste0(codigo.completo, "\n", cod)
+    }
+    updateAceEditor(session, "fieldCode", value = codigo.completo)
+  })
+  
+  # Enable/disable on load data
   observe({
     element <- "#sidebarItemExpanded li"
     menu.values <- c(
@@ -56,13 +88,16 @@ app_server <- function( input, output, session ) {
   })
   
   ###################################  Modules  ###############################
-  callModule(mod_carga_datos_server,    "carga_datos_ui_1",    updateData)
-  callModule(mod_r_numerico_server,     "r_numerico_ui_1",     updateData)
-  callModule(mod_normal_server,         "normal_ui_1",         updateData)
-  callModule(mod_dispersion_server,     "dispersion_ui_1",     updateData)
-  callModule(mod_distribuciones_server, "distribuciones_ui_1", updateData)
-  callModule(mod_correlacion_server,    "correlacion_ui_1",    updateData)
-  callModule(mod_acp_server,            "acp_ui_1",            updateData)
-  callModule(mod_cj_server,             "cj_ui_1",             updateData)
-  callModule(mod_kmedias_server,        "kmedias_ui_1",        updateData)
+  
+  mod_carga_datos_server("carga_datos_ui_1", updateData, NULL, codedioma, "discoveR")
+  
+  readeR::mod_r_numerico_server(        "r_numerico_ui_1", updateData, codedioma)
+  readeR::mod_normal_server(                "normal_ui_1", updateData, codedioma)
+  readeR::mod_dispersion_server(        "dispersion_ui_1", updateData, codedioma)
+  readeR::mod_distribuciones_server("distribuciones_ui_1", updateData, codedioma)
+  readeR::mod_correlacion_server(      "correlacion_ui_1", updateData, codedioma)
+  
+  mod_acp_server(        "acp_ui_1", updateData, codedioma)
+  mod_cj_server(          "cj_ui_1", updateData, codedioma)
+  mod_kmedias_server("kmedias_ui_1", updateData, codedioma)
 }

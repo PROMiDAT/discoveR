@@ -4,6 +4,7 @@
 #'     DO NOT REMOVE.
 #' @import rlang
 #' @import shiny
+#' @import readeR
 #' @import shinyAce
 #' @import shinydashboardPlus
 #' @importFrom shinydashboard dashboardBody menuItem menuSubItem sidebarMenu tabBox tabItem tabItems
@@ -37,17 +38,17 @@ app_ui <- function(request) {
           tags$div(style="padding-top:10px;"),
           menuItem(labelInput("data"), tabName = "cargar",
                    icon = icon("database")),
-          menuItem(labelInput("basico"), tabName = "parte1",
+          menuItem(labelInput("basi"), tabName = "parte1",
                    icon = icon("th-list"),
-            menuSubItem(labelInput("resumen"), "resumen",
+            menuSubItem(labelInput("resu"), "resumen",
                         icon = icon("sort-numeric-down")),
-            menuSubItem(labelInput("normalidad"), "normalidad",
+            menuSubItem(labelInput("norm"), "normalidad",
                         icon = icon("chart-bar")),
-            menuSubItem(labelInput("dispersion"), "dispersion",
+            menuSubItem(labelInput("disp"), "dispersion",
                         icon = icon("chart-line")),
-            menuSubItem(labelInput("distribucion"), "distribucion",
+            menuSubItem(labelInput("dist"), "distribucion",
                         icon = icon("chart-area")),
-            menuSubItem(labelInput("correlacion"), "correlacion",
+            menuSubItem(labelInput("corr"), "correlacion",
                         icon = icon("table"))
           ),
           menuItem(labelInput("acp"), tabName = "acp", 
@@ -56,7 +57,7 @@ app_ui <- function(request) {
                    icon = icon("sitemap")),
           menuItem(labelInput("kmedias"), tabName = "kmedias",
                    icon = icon("object-group")),
-          menuItem(labelInput("acercade"), tabName = "acercaDe",
+          menuItem(labelInput("acerca"), tabName = "acercaDe",
                    icon = icon("info")),
           hr(),
           menu.idioma(),
@@ -73,25 +74,26 @@ app_ui <- function(request) {
         tabItems(
           
           # Carga de Datos
-          tabItem(tabName = "cargar",  mod_carga_datos_ui("carga_datos_ui_1")),
+          tabItem(tabName = "cargar", mod_carga_datos_ui(
+            "carga_datos_ui_1", labelInput('data'), paquete = "discoveR")),
           
           # Resumen Numérico
-          tabItem(tabName = "resumen", mod_r_numerico_ui("r_numerico_ui_1")),
+          tabItem(tabName = "resumen", readeR::mod_r_numerico_ui("r_numerico_ui_1")),
           
           # Test de Normalidad
-          tabItem(tabName = "normalidad", mod_normal_ui("normal_ui_1")),
+          tabItem(tabName = "normalidad", readeR::mod_normal_ui("normal_ui_1")),
           
           # Dispersión
           tabItem(tabName = "dispersion",
-                  mod_dispersion_ui("dispersion_ui_1")),
+                  readeR::mod_dispersion_ui("dispersion_ui_1")),
           
           # Distribuciones
           tabItem(tabName = "distribucion", 
-                  mod_distribuciones_ui("distribuciones_ui_1")),
+                  readeR::mod_distribuciones_ui("distribuciones_ui_1")),
           
           # Correlaciones
           tabItem(tabName = "correlacion", 
-                  mod_correlacion_ui("correlacion_ui_1")),
+                  readeR::mod_correlacion_ui("correlacion_ui_1")),
           
           # ACP
           tabItem(tabName = "acp", mod_acp_ui("acp_ui_1")),
@@ -104,6 +106,16 @@ app_ui <- function(request) {
           
           # Acerca De
           tabItem(tabName = "acercaDe", mod_acercade_ui("acercade_ui_1"))
+        )
+      ),
+      
+      dashboardControlbar(
+        width = 500,
+        div(
+          style = "margin-right: 15px; margin-left: 15px;", 
+          h3(labelInput('code')), hr(), 
+          codigo.monokai("fieldCode", height = "70vh"),
+          downloadButton("btn_code", NULL, style = "width: 100%;")
         )
       )
     )

@@ -55,7 +55,7 @@
 	opacity: 1; display: inline-block;
 }
 
-/* selectInput Posicionar Horizontal */
+/* selectInput Posicionar Horizontal 
 .multiple-select-var{
   float: right;
   width: 300px;
@@ -65,7 +65,7 @@
   line-height: 0;
 }
 
-/* Color Inputs */
+/* Color Inputs 
 .select-color {
   width: 50%;
   position: relative;
@@ -75,7 +75,7 @@
   margin-bottom: -5px;
 }
 
-/* Run Button */
+/* Run Button 
 
 .run-button {
   padding-left: 10px;
@@ -88,4 +88,4 @@
 
 .run-button:active {
   transform: translateY(4px);
-}
+}*/

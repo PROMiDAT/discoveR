@@ -4,38 +4,9 @@
 \alias{mod_kmedias_server}
 \title{kmedias Server Function}
 \usage{
-mod_kmedias_server(input, output, session, updateData)
+mod_kmedias_server(id, updateData, codedioma)
 }
 \description{
 kmedias Server Function
 }
-\keyword{(Categórico)}
-\keyword{(Cluster}
-\keyword{(Horizontal)}
-\keyword{(K-medias)}
-\keyword{(Mapa)}
-\keyword{(Radar)}
-\keyword{(Resultados}
-\keyword{(Vertical)}
-\keyword{Agregar}
-\keyword{Clusteres}
-\keyword{Colores}
-\keyword{Elbow}
-\keyword{Generate}
-\keyword{Inertia}
-\keyword{Jambu}
-\keyword{K-medias}
-\keyword{Mostrar}
-\keyword{Plot}
-\keyword{Update}
-\keyword{a}
-\keyword{data}
-\keyword{datos}
-\keyword{de}
 \keyword{internal}
-\keyword{jerarquico)}
-\keyword{load}
-\keyword{numéricos)}
-\keyword{on}
-\keyword{plot}
-\keyword{tabla}

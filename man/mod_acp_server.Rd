@@ -4,39 +4,9 @@
 \alias{mod_acp_server}
 \title{acp Server Function}
 \usage{
-mod_acp_server(input, output, session, updateData)
+mod_acp_server(id, updateData, codedioma)
 }
 \description{
 acp Server Function
 }
-\keyword{(Biplot)}
-\keyword{(Resultados}
-\keyword{(individuals)}
-\keyword{(variables)}
-\keyword{ACP}
-\keyword{Componentes}
-\keyword{Contribución}
-\keyword{Correlación}
-\keyword{Cosenos}
-\keyword{Cuadrados}
-\keyword{Eje}
-\keyword{Explicada}
-\keyword{Generate}
-\keyword{Individuos}
-\keyword{Modelo}
-\keyword{PCA}
-\keyword{Plot}
-\keyword{Variables}
-\keyword{Varianza}
-\keyword{cada}
-\keyword{con}
-\keyword{data}
-\keyword{de}
 \keyword{internal}
-\keyword{las}
-\keyword{load}
-\keyword{los}
-\keyword{numéricos)}
-\keyword{on}
-\keyword{por}
-\keyword{variables}
