@@ -14,8 +14,8 @@ Components Analysis, Hierarchical Clustering and the K-Means Method.
 \tabular{ll}{
 Package: \tab discoveR\cr
 Type: \tab Package\cr
-Version: \tab 3.0.0\cr
-Date: \tab 2022-03-21\cr
+Version: \tab 3.0.1\cr
+Date: \tab 2022-09-30\cr
 License: \tab GPL (>=2)\cr
 }
 }
