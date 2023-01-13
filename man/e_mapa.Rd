@@ -22,7 +22,7 @@ echarts4r plot
 PCA plot of individuals colored by clusters
 }
 \examples{
-p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 clusters <- factor(kmeans(iris[, -5], 3)$cluster)
 e_mapa(p, clusters, c("steelblue", "pink", "forestgreen"))
 

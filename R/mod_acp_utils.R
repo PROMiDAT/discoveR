@@ -6,18 +6,20 @@
 #' @param cos2 a numeric value from 0 to 1 specifying the quality of the individuals.
 #' @param colorCos a color for individuals badly represented.
 #' @param titulos a character vector of length 2 specifying the titles to use on legend.
+#' @param etq a boolean, whether to add label to graph or not.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return echarts4r plot
 #' @export e_pcaind
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' e_pcaind(p)
 #' 
 e_pcaind <- function(modelo, axes = c(1, 2), colorInd = "steelblue", cos2 = 0, 
                      colorCos = "firebrick",
-                     titulos = c("Bien Representados", "Mal Representados")) {
+                     titulos = c("Bien Representados", "Mal Representados"),
+                     etq = F) {
   ind <- data.frame(
     x = modelo$ind$coord[, axes[1]], y = modelo$ind$coord[, axes[2]], 
     cos2 = apply(modelo$ind$cos2[, axes], 1, sum, na.rm = T))
@@ -31,17 +33,27 @@ e_pcaind <- function(modelo, axes = c(1, 2), colorInd = "steelblue", cos2 = 0,
   
   inercias <- round(modelo$eig[, 2], digits = 2)[axes]
   
-  ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter(y, label = list(show = F), symbol_size = 10, bind = id) %>%
-    e_x_axis(scale = T) %>% e_y_axis(scale = T) %>% e_datazoom(show = F) %>%
-    e_color(colores) %>% e_show_loading() %>%
+  res <- ind |> group_by(cos) |> e_charts(x) |> 
+    e_scatter(y, label = list(show = F), symbol_size = 10, bind = id) |>
+    e_x_axis(scale = T) |> e_y_axis(scale = T) |> e_datazoom(show = F) |>
+    e_color(colores) |> e_show_loading() |>
     e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
-                  y = paste0("Dim.", axes[2], " (", inercias[2], ")")) %>% 
+                  y = paste0("Dim.", axes[2], " (", inercias[2], ")")) |> 
     e_tooltip(formatter = htmlwidgets::JS(
       "function(params) {
         return('<strong>' + params.name + '</strong>: (' + 
                params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + ')') 
       }"))
+  
+  if(etq) {
+    res <- res |>
+      e_labels(formatter = htmlwidgets::JS(
+        "function(params) {
+         return(params.name)
+      }"))
+  }
+  
+  return(res)
 }
 
 #' PCA plot of individuals in 3D
@@ -52,18 +64,20 @@ e_pcaind <- function(modelo, axes = c(1, 2), colorInd = "steelblue", cos2 = 0,
 #' @param cos2 a numeric value from 0 to 1 specifying the quality of the individuals.
 #' @param colorCos a color for individuals badly represented.
 #' @param titulos a character vector of length 2 specifying the titles to use on legend.
+#' @param etq a boolean, whether to add label to graph or not.
 #' 
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return echarts4r plot
 #' @export e_pcaind_3D
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' e_pcaind_3D(p)
 #' 
 e_pcaind_3D <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue", cos2 = 0,
                         colorCos = "firebrick", 
-                        titulos = c("Bien Representados", "Mal Representados")) {
+                        titulos = c("Bien Representados", "Mal Representados"),
+                        etq = F) {
   ind <- data.frame(
     x = modelo$ind$coord[, axes[1]], y = modelo$ind$coord[, axes[2]],
     z = modelo$ind$coord[, axes[3]],
@@ -78,22 +92,32 @@ e_pcaind_3D <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue", cos2 
   if(sum(ind$cos == titulos[1]) == 0) colores <- colorCos
   if(sum(ind$cos == titulos[2]) == 0) colores <- colorInd
   
-  ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter_3d(y, z, label = list(show = F), symbol_size = 10, bind = id) %>%
-    e_color(colores) %>% e_show_loading() %>% e_theme("dark") %>%
-    e_legend(data = titulos) %>% 
+  res <- ind |> group_by(cos) |> e_charts(x) |> 
+    e_scatter_3d(y, z, label = list(show = F), symbol_size = 10, bind = id) |>
+    e_color(colores) |> e_show_loading() |> e_theme("dark") |>
+    e_legend(data = titulos) |> 
     e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>% 
+                axisLine = list(lineStyle = list(color = "white"))) |> 
     e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>%
+                axisLine = list(lineStyle = list(color = "white"))) |>
     e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>% 
+                axisLine = list(lineStyle = list(color = "white"))) |> 
     e_tooltip(formatter = htmlwidgets::JS(
       "function(params) {
          return('<strong>' + params.name + '</strong>: (' + 
                 params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + 
                 ', ' + params.value[2].toFixed(3) + ')') 
       }"))
+  
+  if(etq) {
+    res <- res |>
+      e_labels(formatter = htmlwidgets::JS(
+        "function(params) {
+         return(params.name)
+      }"))
+  }
+  
+  return(res)
 }
 
 #' PCA plot of variables
@@ -110,7 +134,7 @@ e_pcaind_3D <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue", cos2 
 #' @export e_pcavar
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' e_pcavar(p)
 #' 
 e_pcavar <- function(modelo, axes = c(1, 2), colorVar = "forestgreen", cos2 = 0, 
@@ -148,13 +172,14 @@ e_pcavar <- function(modelo, axes = c(1, 2), colorVar = "forestgreen", cos2 = 0,
   }
   
   opts <- list(
-    xAxis = list(min = -1, max = 1),
-    yAxis = list(min = -1, max = 1),
+    xAxis  = list(min = -1, max = 1),
+    yAxis  = list(min = -1, max = 1),
+    grid   = list(left = 100, right = 100, top = 100, bottom = 100),
     legend = list(data = titulos),
     series = lista
   )
   
-  e_charts() %>% e_list(opts) %>% e_datazoom(show = F) %>%
+  e_charts() |> e_list(opts) |> e_datazoom(show = F) |>
     e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
                   y = paste0("Dim.", axes[2], " (", inercias[2], ")"))
 }
@@ -173,7 +198,7 @@ e_pcavar <- function(modelo, axes = c(1, 2), colorVar = "forestgreen", cos2 = 0,
 #' @export e_pcavar_3D
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' e_pcavar_3D(p)
 #' 
 e_pcavar_3D <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
@@ -189,8 +214,8 @@ e_pcavar_3D <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
   dims <- paste0("Dim.", axes)
   inercias <- round(modelo$eig[axes, 2], digits = 2)
   
-  r <- var %>% group_by(cos) %>%
-    e_charts(x) %>% 
+  r <- var |> group_by(cos) |>
+    e_charts(x) |> 
     e_scatter_3d(y, z, bind = nombre, symbolSize = 1, label = list(
       show = T, position = 'top',
       formatter = htmlwidgets::JS(paste0(
@@ -248,13 +273,13 @@ e_pcavar_3D <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
   )
   
   r$x$opts$legend$data <- titulos
-  r %>% e_color(c(colorVar, colorCos)) %>% e_show_loading() %>% 
+  r |> e_color(c(colorVar, colorCos)) |> e_show_loading() |> 
     e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>% 
+                axisLine = list(lineStyle = list(color = "white"))) |> 
     e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>%
+                axisLine = list(lineStyle = list(color = "white"))) |>
     e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>%
+                axisLine = list(lineStyle = list(color = "white"))) |>
     e_theme("dark")
 }
 
@@ -269,19 +294,21 @@ e_pcavar_3D <- function(modelo, axes = c(1, 2, 3), colorVar = "forestgreen",
 #' @param colorIndCos a color for the individuals badly represented.
 #' @param colorVarCos a color for the variables badly represented.
 #' @param titulos a character vector of length 2 specifying the titles to use on legend.
+#' @param etq a boolean, whether to add label to graph or not.
 #' 
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return echarts4r plot
 #' @export e_pcabi
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' e_pcabi(p)
 #' 
 e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue", 
                     colorVar = "forestgreen", cos2Ind = 0, cos2Var = 0, 
                     colorIndCos = "firebrick", colorVarCos = "darkorchid",
-                    titulos = c("Bien Representados", "Mal Representados")) {
+                    titulos = c("Bien Representados", "Mal Representados"),
+                    etq = F) {
   dims <- paste0("Dim.", axes)
   inercias <- round(modelo$eig[axes, 2], digits = 2)
   
@@ -308,9 +335,17 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
   
   leyenda <- c(paste0("Ind. ", titulos), paste0("Var. ", titulos))
   
-  r <- ind %>% group_by(cos) %>% e_charts(x) %>% 
-    e_scatter(y, symbol_size = 10, bind = id) %>% 
+  r <- ind |> group_by(cos) |> e_charts(x) |> 
+    e_scatter(y, symbol_size = 10, bind = id) |> 
     e_color(c(colorInd, colorIndCos))
+  
+  if(etq) {
+    r <- r |>
+      e_labels(formatter = htmlwidgets::JS(
+        "function(params) {
+         return(params.name)
+      }"))
+  }
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -334,14 +369,16 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
   
   r$x$opts$legend$data <- leyenda
   
-  r %>% e_show_loading() %>% e_datazoom(show = F) %>%
+  res <- r |> e_show_loading() |> e_datazoom(show = F) |>
     e_axis_labels(x = paste0("Dim.", axes[1], " (", inercias[1], ")"), 
-                  y = paste0("Dim.", axes[2], " (", inercias[2], ")")) %>% 
+                  y = paste0("Dim.", axes[2], " (", inercias[2], ")")) |> 
     e_tooltip(formatter = htmlwidgets::JS(
       "function(params) {
          return('<strong>' + params.name + '</strong>: (' + 
                params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + ')') 
       }"))
+  
+  return(res)
 }
 
 #' PCA biplot in 3D
@@ -355,19 +392,21 @@ e_pcabi <- function(modelo, axes = c(1, 2), colorInd = "steelblue",
 #' @param colorIndCos a color for individuals badly represented.
 #' @param colorVarCos a color for variables badly represented.
 #' @param titulos a character vector of length 2 specifying the titles to use on legend.
+#' @param etq a boolean, whether to add label to graph or not.
 #' 
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return echarts4r plot
 #' @export e_pcabi_3D
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' e_pcabi_3D(p)
 #' 
 e_pcabi_3D <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
                        colorVar = "forestgreen", cos2Ind = 0,  cos2Var = 0,
                        colorIndCos = "firebrick", colorVarCos = "darkorchid",
-                       titulos = c("Bien Representados", "Mal Representados")) {
+                       titulos = c("Bien Representados", "Mal Representados"),
+                       etq = F) {
   dims <- paste0("Dim.", axes)
   inercias <- round(modelo$eig[axes, 2], digits = 2)
   
@@ -396,8 +435,16 @@ e_pcabi_3D <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   colores <- c(colorInd, colorIndCos, colorVar, colorVarCos)
   colores <- colores[leyenda %in% c(as.character(unique(ind$cos)), as.character(unique(var$cos)))]
   
-  r <- ind %>% group_by(cos) %>% e_charts(x) %>% 
+  r <- ind |> group_by(cos) |> e_charts(x) |> 
     e_scatter_3d(y, z, symbol_size = 10, bind = id)
+  
+  if(etq) {
+    r <- r |>
+      e_labels(formatter = htmlwidgets::JS(
+        "function(params) {
+         return(params.name)
+      }"))
+  }
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -419,18 +466,20 @@ e_pcabi_3D <- function(modelo, axes = c(1, 2, 3), colorInd = "steelblue",
   
   r$x$opts$legend$data <- leyenda
   
-  r %>% e_color(colores) %>% e_show_loading() %>%
+  res <- r |> e_color(colores) |> e_show_loading() |>
     e_x_axis_3d(name = paste0(dims[1], " (", inercias[1], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>% 
+                axisLine = list(lineStyle = list(color = "white"))) |> 
     e_y_axis_3d(name = paste0(dims[2], " (", inercias[2], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>%
+                axisLine = list(lineStyle = list(color = "white"))) |>
     e_z_axis_3d(name = paste0(dims[3], " (", inercias[3], ")"),
-                axisLine = list(lineStyle = list(color = "white"))) %>%
-    e_theme("dark") %>% 
+                axisLine = list(lineStyle = list(color = "white"))) |>
+    e_theme("dark") |> 
     e_tooltip(formatter = htmlwidgets::JS(
       "function(params) {
          return('<strong>' + params.name + '</strong>: (' + 
                 params.value[0].toFixed(3) + ', ' + params.value[1].toFixed(3) + 
                 ', ' + params.value[2].toFixed(3) + ')') 
       }"))
+  
+  return(res)
 }

@@ -1,6 +1,6 @@
 Package: discoveR
 Title: Exploratory Data Analysis System
-Version: 3.0.1
+Version: 3.1.0
 Authors@R: 
     c(person(given = "Oldemar", family = "Rodriguez", role = c("aut", "cre"),
              email = "oldemar.rodriguez@ucr.ac.cr"),
@@ -14,7 +14,7 @@ Imports:
     shiny (>= 1.7.1),
     config,
     plotly,
-    readeR,
+    loadeR,
     cluster,
     ggplot2,
     shinyjs,
@@ -22,6 +22,7 @@ Imports:
     ggdendro,
     echarts4r,
     htmltools,
+    FactoMineR,
     htmlwidgets,
     colourpicker,
     shinydashboard,
@@ -30,4 +31,4 @@ Imports:
 Depends: R (>= 4.0)
 Encoding: UTF-8
 URL: https://www.promidat.com
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

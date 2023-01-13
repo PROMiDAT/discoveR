@@ -39,8 +39,8 @@ e_jambu <- function(data, max.clusters) {
 #' @return echarts4r plot
 #' @export e_silhouette
 #' @import echarts4r
-#' @importFrom cluster silhouette
 #' @importFrom stats dist
+#' @importFrom cluster silhouette
 #' @examples
 #' e_silhouette(iris[, -5], 10)
 #' 

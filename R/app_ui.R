@@ -4,8 +4,9 @@
 #'     DO NOT REMOVE.
 #' @import rlang
 #' @import shiny
-#' @import readeR
+#' @import loadeR
 #' @import shinyAce
+#' @import FactoMineR
 #' @import shinydashboardPlus
 #' @importFrom shinydashboard dashboardBody menuItem menuSubItem sidebarMenu tabBox tabItem tabItems
 #' @importFrom shinyjs useShinyjs show hide addClass removeClass
@@ -53,6 +54,10 @@ app_ui <- function(request) {
           ),
           menuItem(labelInput("acp"), tabName = "acp", 
                    icon = icon("chart-pie")),
+          menuItem(labelInput("afc"), tabName = "afc", 
+                   icon = icon("envelope")),
+          menuItem(labelInput("afcm"), tabName = "afcm", 
+                   icon = icon("envelopes-bulk")),
           menuItem(labelInput("jerarquico"), tabName = "cj",
                    icon = icon("sitemap")),
           menuItem(labelInput("kmedias"), tabName = "kmedias",
@@ -78,25 +83,31 @@ app_ui <- function(request) {
             "carga_datos_ui_1", labelInput('data'), paquete = "discoveR")),
           
           # Resumen Numérico
-          tabItem(tabName = "resumen", readeR::mod_r_numerico_ui("r_numerico_ui_1")),
+          tabItem(tabName = "resumen", loadeR::mod_r_numerico_ui("r_numerico_ui_1")),
           
           # Test de Normalidad
-          tabItem(tabName = "normalidad", readeR::mod_normal_ui("normal_ui_1")),
+          tabItem(tabName = "normalidad", loadeR::mod_normal_ui("normal_ui_1")),
           
           # Dispersión
           tabItem(tabName = "dispersion",
-                  readeR::mod_dispersion_ui("dispersion_ui_1")),
+                  loadeR::mod_dispersion_ui("dispersion_ui_1")),
           
           # Distribuciones
           tabItem(tabName = "distribucion", 
-                  readeR::mod_distribuciones_ui("distribuciones_ui_1")),
+                  loadeR::mod_distribuciones_ui("distribuciones_ui_1")),
           
           # Correlaciones
           tabItem(tabName = "correlacion", 
-                  readeR::mod_correlacion_ui("correlacion_ui_1")),
+                  loadeR::mod_correlacion_ui("correlacion_ui_1")),
           
           # ACP
           tabItem(tabName = "acp", mod_acp_ui("acp_ui_1")),
+          
+          # AFC
+          tabItem(tabName = "afc", mod_afc_ui("afc_ui_1")),
+          
+          # AFCM
+          tabItem(tabName = "afcm", mod_afcm_ui("afcm_ui_1")),
           
           # Clusterización Jerarquica
           tabItem(tabName = "cj", mod_cj_ui("cj_ui_1")),

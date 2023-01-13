@@ -17,8 +17,8 @@
 #' \tabular{ll}{
 #' Package: \tab discoveR\cr
 #' Type: \tab Package\cr
-#' Version: \tab 3.0.1\cr
-#' Date: \tab 2022-09-30\cr
+#' Version: \tab 3.1.0\cr
+#' Date: \tab 2023-01-13\cr
 #' License: \tab GPL (>=2)\cr
 #' }
 #' @keywords package
@@ -27,5 +27,6 @@
 NULL
 utils::globalVariables(c(
   "tab.disjonctif", "cant", "x", "y", "xend", "yend", "grupo", "Dim.1", "<<-",
-  "Dim.2", "cj_colors", "cluster", "id", "k_colors", "n", "name", "value", "z"
+  "Dim.2", "cj_colors", "cluster", "id", "k_colors", "n", "name", "value", "z",
+  "colorRow", "etq"
 ))

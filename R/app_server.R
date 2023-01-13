@@ -36,7 +36,7 @@ app_server <- function( input, output, session ) {
   # Update on Language
   observeEvent(input$idioma, {
     codedioma$idioma = input$idioma
-    etiquetas <- c(readeR::labels_readeR(), cambiar.labels())
+    etiquetas <- names(translation)
     updateLabelInput(session, etiquetas, tr(etiquetas, input$idioma))
   })
   
@@ -45,25 +45,17 @@ app_server <- function( input, output, session ) {
     codigo <- codedioma$code
     lg <- input$idioma
     
-    keys <- c(
-      'doccarga', 'docresumen', 'dochist', 'docqq', 'docnormal', 'docdisp',
-      'docdistnum', 'docdistcat', 'doccor', 'docrename', 'doctrans',
-      'doceliminar', 'docpcamodel', 'docpcaind2d', 'docpcaind3d', 
-      'docpcavar2d', 'docpcavar3d', 'docpcabi2d', 'docpcabi3d', 'docvee',
-      'doccci', 'docccv', 'doccvc', 'docpc', 'dochclustmodel', 
-      'dochclustinercia', 'dochclustdend', 'dochclustmapa2d', 
-      'dochclustmapa3d', 'dochclusthoriz', 'dochclustvert', 'dochclustradar',
-      'dochclustcat', 'dockmodel', 'dockjambu', 'docksilh', 'dockinercia',
-      'dockdend', 'dockmapa2d', 'dockmapa3d', 'dockhoriz', 'dockvert',
-      'dockradar', 'dockcat')
+    keys <- names(translation)
+    keys <- keys[grepl("doc", keys, fixed = TRUE)]
     
     for (k in keys) {
-      codigo <- gsub(k, tr(k, idioma = lg), codigo, fixed = T)
+      codigo <- gsub(paste0(" ", k, "\n"),
+                     paste0(" ", tr(k, idioma = lg), "\n"), codigo, fixed = T)
     }
     
     codigo.completo <- paste0(
       "library(XLConnect)\n", "library(caret)\n", "library(echarts4r)\n",
-      "library(readeR)\n", "library(discoveR)\n\n"
+      "library(loadeR)\n", "library(discoveR)\n\n"
     )
     for (cod in codigo) {
       codigo.completo <- paste0(codigo.completo, "\n", cod)
@@ -75,8 +67,9 @@ app_server <- function( input, output, session ) {
   observe({
     element <- "#sidebarItemExpanded li"
     menu.values <- c(
-      "[class^=treeview]",  " a[data-value=acp]", " a[data-value=cj]",
-      " a[data-value=kmedias]", " a[data-value=reporte]")
+      "[class^=treeview]", " a[data-value=acp]", " a[data-value=afc]", 
+      " a[data-value=afcm]", " a[data-value=cj]", " a[data-value=kmedias]",
+      " a[data-value=reporte]")
 
     lapply(menu.values, function(i) {
       if(is.null(updateData$datos) || ncol(updateData$datos) < 1) {
@@ -91,13 +84,15 @@ app_server <- function( input, output, session ) {
   
   mod_carga_datos_server("carga_datos_ui_1", updateData, NULL, codedioma, "discoveR")
   
-  readeR::mod_r_numerico_server(        "r_numerico_ui_1", updateData, codedioma)
-  readeR::mod_normal_server(                "normal_ui_1", updateData, codedioma)
-  readeR::mod_dispersion_server(        "dispersion_ui_1", updateData, codedioma)
-  readeR::mod_distribuciones_server("distribuciones_ui_1", updateData, codedioma)
-  readeR::mod_correlacion_server(      "correlacion_ui_1", updateData, codedioma)
+  loadeR::mod_r_numerico_server(        "r_numerico_ui_1", updateData, codedioma)
+  loadeR::mod_normal_server(                "normal_ui_1", updateData, codedioma)
+  loadeR::mod_dispersion_server(        "dispersion_ui_1", updateData, codedioma)
+  loadeR::mod_distribuciones_server("distribuciones_ui_1", updateData, codedioma)
+  loadeR::mod_correlacion_server(      "correlacion_ui_1", updateData, codedioma)
   
   mod_acp_server(        "acp_ui_1", updateData, codedioma)
+  mod_afc_server(        "afc_ui_1", updateData, codedioma)
+  mod_afcm_server(       "afcm_ui_1", updateData, codedioma)
   mod_cj_server(          "cj_ui_1", updateData, codedioma)
   mod_kmedias_server("kmedias_ui_1", updateData, codedioma)
 }

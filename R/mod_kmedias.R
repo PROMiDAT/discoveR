@@ -148,7 +148,7 @@ mod_kmedias_server <- function(id, updateData, codedioma) {
           isolate(input[[paste0("kColor", i)]])))
         
         cod <- paste0("### dockmodel\n",
-                      code.k(centrar, cant.cluster, num.nstart, num.iter, sel.algoritmo))
+                      code.k(centrar, cant.cluster, num.iter, num.nstart, sel.algoritmo))
         isolate(codedioma$code <- append(codedioma$code, cod))
         return(list(modelo = modelo, clusters = clusters, centros = centros))
       }

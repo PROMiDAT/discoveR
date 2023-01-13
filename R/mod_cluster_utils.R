@@ -91,7 +91,7 @@ e_inercia <- function(data, titulos = c(
 #' @export e_mapa
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
 #' e_mapa(p, clusters, c("steelblue", "pink", "forestgreen"))
 #' 
@@ -168,7 +168,7 @@ e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2)) {
 #' @export e_mapa_3D
 #' @import echarts4r
 #' @examples
-#' p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+#' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
 #' e_mapa_3D(p, clusters, c("steelblue", "pink", "forestgreen"))
 #' 

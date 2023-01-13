@@ -1,89 +1,110 @@
-key;es;en
-acp;ACP;PCA
-inercia;Inercia;Inertia
-inerciaintra;Inercia Intra-Clase;Inertia Intra-Class
-inerciainter;Inercia Inter-Clase;Inertia Inter-Class
-selmetodo;Seleccionar Método:;Select Method:
-seltipo;Seleccionar Tipo:;Select Type:
-individuos;Individuos;Individuals
-sobreposicion;Sobreposición;Overlaying
-ayudacp;Ayuda Interpretación; Interpretation Help
-vee;Varianza Explicada por cada Eje;Variance Explained for each Axis
-cci;Cosenos Cuadrados de los Individuos;Square Cosines of Individuals
-ccv;Cosenos Cuadrados de las Variables;Square Cosines of Variables
-cvc;Correlación Variables con los Componenetes;Correlation Variables with the Componenetes
-cp;Contribución de las variables Dim;Contribution of the variables Dim
-resultados;Resultados Numéricos;Numerical Results
-centrar;Centrar y Reducir;Center and Reduce
-escalar;Escalar;Scale
-nocentrar;Sin Centrar ni Reducir;Unfocused and Unreduced
-numerodim;Número de Dimensiones;Number of Dimentions
-selejes;Seleccionar Ejes:;Select Axes:
-cosind;Coseno de los Individuos:;Cosines of Individuals:
-cosvar;Coseno de las Variables:;Cosines of Variables:
-selcolorind;Seleccionar Color (Individuos):;Select Color (Individuals):
-selcolorvar;Seleccionar Color (Variables):;Select Color (Variables):
-dendograma;Dendograma;Dendogram
-mapa;Mapa;Map
-horizontal;Horizontal;Horizontal
-vertical;Vertical;Vertical
-radar;Radar;Radar
-interpretacioncat;Interpretación Categórico;Categorical Interpretation
-colindbien;Color de individuos bien representados:;Color of well represented individuals:
-colindmal;Color de individuos mal representados:;Color of badly represented individuals:
-colvarbien;Color de variables bien representadas:;Color of well represented variables:
-colvarmal;Color de variables mal representadas:;Color of badly represented variables:
-bienr;Bien Representados;Well Represented
-malr;Mal Representados;Badly Represented
-docpcamodel;Modelo ACP;PCA Model
-2D;2D;2D
-3D;3D;3D
-docpcaind2d;Gráfico de individuos ACP (2D);Individuals plot PCA (2D)
-docpcaind3d;Gráfico de individuos ACP (3D);Individuals plot PCA (3D)
-docpcavar2d;Gráfico de variables ACP (2D);Variables plot PCA (2D)
-docpcavar3d;Gráfico de variables ACP (3D);Variables plot PCA (3D)
-docpcabi2d;Gráfico de sobreposición ACP (2D);Overlaying plot PCA (2D)
-docpcabi3d;Gráfico de sobreposición ACP (3D);Overlaying plot PCA (3D)
-docvee;Varianza Explicada por cada Eje;Variance Explained for each Axis
-doccci;Cosenos Cuadrados de los Individuos;Square Cosines of Individuals
-docccv;Cosenos Cuadrados de las Variables;Square Cosines of Variables
-doccvc;Correlación Variables con los Componenetes;Correlation Variables with the Componenetes
-docpc;Contribución de las variables Dim;Contribution of the variables Dim
-jerarquico;Cluster Jerárquico;Hierarchical Clustering
-cantcluster;Cantidad de Clústers:;Number of Clusters:
-selcolores;Seleccionar colores:;Select colors:
-metododist;Método para la Distancia:;Distance Method:
-agregarcluster;Agregar Clústers a Tabla de Datos;Add Clusters to Dataset
-ori;Originales;Original
-res;Reescalados;Rescaled
-dochclustmodel;Modelo Clusterización Jerárquica;Hierarchical Clustering Model
-dochclustinercia;Inercia Clusterización Jerárquica;Hierarchical Clustering Inertia
-dochclustdend;Dendrograma Clusterización Jerárquica;Hierarchical Clustering Dendrogram
-dochclustmapa2d;Mapa Clusterización Jerárquica (2D);Hierarchical Clustering Map (2D)
-dochclustmapa3d;Mapa Clusterización Jerárquica (3D);Hierarchical Clustering Map (3D)
-dochclusthoriz;Gráfico Horizontal Clusterización Jerárquica;Hierarchical Clustering Horizontal Plot
-dochclustvert;Gráfico Vertical Clusterización Jerárquica;Hierarchical Clustering Vertical Plot
-dochclustradar;Gráfico Radar Clusterización Jerárquica;Hierarchical Clustering Radar Plot
-dochclustcat;Gráfico Categórico Clusterización Jerárquica;Hierarchical Clustering Categorical Plot
-dockmodel;Modelo K-Medias;K-Means Model
-dockinercia;Inercia K-Medias;K-Means Inertia
-dockjambu;Codo de Jambu;Jambu Elbow
-docksilh;Silhouette;Silhouette
-dockdend;Dendrograma K-Medias;K-Means Dendrogram
-dockmapa2d;Mapa K-Medias (2D);K-Means Map (2D)
-dockmapa3d;Mapa K-Medias (3D);K-Means Map (3D)
-dockhoriz;Gráfico Horizontal K-Medias;K-Means Horizontal Plot
-dockvert;Gráfico Vertical K-Medias;K-Means Vertical Plot
-dockradar;Gráfico Radar K-Medias;K-Means Radar Plot
-dockcat;Gráfico Categórico K-Medias;K-Means Categorical Plot
-kmedias;K-Medias;K-Means
-numcluster;Número de Clusters;Number of Clusters
-metcluster;Método Número de Clusters:;Method Number of Clusters:
-jambu;Codo de Jambu;Jambu Elbow
-sil;Silhouette;Silhouette
-porc;Porcentual;Percentage
-iter;Iteraciones:;Iterations:
-kiter;Cantidad de iteraciones para K;Number of iterations to K
-nstart;Ejecuciones en Formas Fuertes:;Executions in Strong Forms:
-niter;Número de Iteraciones:;Number of Iterations:
-algoritmo;Algoritmo:;Algorithm:
+"key";"es";"en"
+"2D";"2D";"2D"
+"3D";"3D";"3D"
+"acp";"ACP";"PCA"
+"afc";"AFC";"CA"
+"afcm";"AFCM";"MCA"
+"agregarcluster";"Agregar Clústers a Tabla de Datos";"Add Clusters to Dataset"
+"algoritmo";"Algoritmo:";"Algorithm:"
+"ayudacp";"Ayuda Interpretación";"Interpretation Help"
+"bienr";"Bien Representados";"Well Represented"
+"cantcluster";"Cantidad de Clústers:";"Number of Clusters:"
+"cci";"Cosenos Cuadrados de los Individuos";"Square Cosines of Individuals"
+"ccv";"Cosenos Cuadrados de las Variables";"Square Cosines of Variables"
+"centrar";"Centrar y Reducir";"Center and Reduce"
+"colindbien";"Color de individuos bien representados:";"Color of well represented individuals:"
+"colindmal";"Color de individuos mal representados:";"Color of badly represented individuals:"
+"colvarbien";"Color de variables bien representadas:";"Color of well represented variables:"
+"colvarmal";"Color de variables mal representadas:";"Color of badly represented variables:"
+"cosind";"Coseno de los Individuos:";"Cosines of Individuals:"
+"cosvar";"Coseno de las Variables:";"Cosines of Variables:"
+"cp";"Contribución de las variables Dim";"Contribution of the variables Dim"
+"cvc";"Correlación Variables con los Componenetes";"Correlation Variables with the Componenetes"
+"dendograma";"Dendograma";"Dendogram"
+"docafcbi2d";"Gráfico de sobreposición AFC (2D)";"Overlaying plot CA (2D)"
+"docafcbi3d";"Gráfico de sobreposición AFC (3D)";"Overlaying plot CA (3D)"
+"docafcind2d";"Gráfico de individuos AFC (2D)";"Individuals plot CA (2D)"
+"docafcind3d";"Gráfico de individuos AFC (3D)";"Individuals plot CA (3D)"
+"docafcmbi2d";"Gráfico de sobreposición AFCM (2D)";"Overlaying plot MCA (2D)"
+"docafcmbi3d";"Gráfico de sobreposición AFCM (3D)";"Overlaying plot MCA (3D)"
+"docafcmind2d";"Gráfico de individuos AFCM (2D)";"Individuals plot MCA (2D)"
+"docafcmind3d";"Gráfico de individuos AFCM (3D)";"Individuals plot MCA (3D)"
+"docafcmodel";"Modelo AFC";"CA Model"
+"docafcmmodel";"Modelo AFCM";"MCA Model"
+"docafcmvar2d";"Gráfico de variables AFCM (2D)";"Variables plot MCA (2D)"
+"docafcmvar3d";"Gráfico de variables AFCM (3D)";"Variables plot MCA (3D)"
+"docafcvar2d";"Gráfico de variables AFC (2D)";"Variables plot CA (2D)"
+"docafcvar3d";"Gráfico de variables AFC (3D)";"Variables plot CA (3D)"
+"docballoon";"Tabla Cruzada";"Cross Table"
+"doccci";"Cosenos Cuadrados de los Individuos";"Square Cosines of Individuals"
+"docccv";"Cosenos Cuadrados de las Variables";"Square Cosines of Variables"
+"doccvc";"Correlación Variables con los Componenetes";"Correlation Variables with the Componenetes"
+"doccvd";"Contribución de las variables Dim";"Contribution of the variables Dim"
+"dochclustcat";"Gráfico Categórico Clusterización Jerárquica";"Hierarchical Clustering Categorical Plot"
+"dochclustdend";"Dendrograma Clusterización Jerárquica";"Hierarchical Clustering Dendrogram"
+"dochclusthoriz";"Gráfico Horizontal Clusterización Jerárquica";"Hierarchical Clustering Horizontal Plot"
+"dochclustinercia";"Inercia Clusterización Jerárquica";"Hierarchical Clustering Inertia"
+"dochclustmapa2d";"Mapa Clusterización Jerárquica (2D)";"Hierarchical Clustering Map (2D)"
+"dochclustmapa3d";"Mapa Clusterización Jerárquica (3D)";"Hierarchical Clustering Map (3D)"
+"dochclustmodel";"Modelo Clusterización Jerárquica";"Hierarchical Clustering Model"
+"dochclustradar";"Gráfico Radar Clusterización Jerárquica";"Hierarchical Clustering Radar Plot"
+"dochclustvert";"Gráfico Vertical Clusterización Jerárquica";"Hierarchical Clustering Vertical Plot"
+"dockcat";"Gráfico Categórico K-Medias";"K-Means Categorical Plot"
+"dockdend";"Dendrograma K-Medias";"K-Means Dendrogram"
+"dockhoriz";"Gráfico Horizontal K-Medias";"K-Means Horizontal Plot"
+"dockinercia";"Inercia K-Medias";"K-Means Inertia"
+"dockjambu";"Codo de Jambu";"Jambu Elbow"
+"dockmapa2d";"Mapa K-Medias (2D)";"K-Means Map (2D)"
+"dockmapa3d";"Mapa K-Medias (3D)";"K-Means Map (3D)"
+"dockmodel";"Modelo K-Medias";"K-Means Model"
+"dockradar";"Gráfico Radar K-Medias";"K-Means Radar Plot"
+"docksilh";"Silhouette";"Silhouette"
+"dockvert";"Gráfico Vertical K-Medias";"K-Means Vertical Plot"
+"docpcabi2d";"Gráfico de sobreposición ACP (2D)";"Overlaying plot PCA (2D)"
+"docpcabi3d";"Gráfico de sobreposición ACP (3D)";"Overlaying plot PCA (3D)"
+"docpcaind2d";"Gráfico de individuos ACP (2D)";"Individuals plot PCA (2D)"
+"docpcaind3d";"Gráfico de individuos ACP (3D)";"Individuals plot PCA (3D)"
+"docpcamodel";"Modelo ACP";"PCA Model"
+"docpcavar2d";"Gráfico de variables ACP (2D)";"Variables plot PCA (2D)"
+"docpcavar3d";"Gráfico de variables ACP (3D)";"Variables plot PCA (3D)"
+"docvee";"Varianza Explicada por cada Eje";"Variance Explained for each Axis"
+"escalar";"Escalar";"Scale"
+"horizontal";"Horizontal";"Horizontal"
+"individuos";"Individuos";"Individuals"
+"inercia";"Inercia";"Inertia"
+"inerciainter";"Inercia Inter-Clase";"Inertia Inter-Class"
+"inerciaintra";"Inercia Intra-Clase";"Inertia Intra-Class"
+"interpretacioncat";"Interpretación Categórico";"Categorical Interpretation"
+"iter";"Iteraciones:";"Iterations:"
+"jambu";"Codo de Jambu";"Jambu Elbow"
+"jerarquico";"Cluster Jerárquico";"Hierarchical Clustering"
+"kiter";"Cantidad de iteraciones para K";"Number of iterations to K"
+"kmedias";"K-Medias";"K-Means"
+"malr";"Mal Representados";"Badly Represented"
+"mapa";"Mapa";"Map"
+"metcluster";"Método Número de Clusters:";"Method Number of Clusters:"
+"metododist";"Método para la Distancia:";"Distance Method:"
+"niter";"Número de Iteraciones:";"Number of Iterations:"
+"nocentrar";"Sin Centrar ni Reducir";"Unfocused and Unreduced"
+"nstart";"Ejecuciones en Formas Fuertes:";"Executions in Strong Forms:"
+"numcluster";"Número de Clusters";"Number of Clusters"
+"numerodim";"Número de Dimensiones";"Number of Dimentions"
+"ori";"Originales";"Original"
+"porc";"Porcentual";"Percentage"
+"radar";"Radar";"Radar"
+"res";"Reescalados";"Rescaled"
+"resultados";"Resultados Numéricos";"Numerical Results"
+"selcolores";"Seleccionar colores:";"Select colors:"
+"selcolorind";"Seleccionar Color (Individuos):";"Select Color (Individuals):"
+"selcolorvar";"Seleccionar Color (Variables):";"Select Color (Variables):"
+"selejes";"Seleccionar Ejes:";"Select Axes:"
+"selabel";"Agregar etiquetas:";"Add tags:"
+"selabelind";"Agregar etiquetas a los individuos:";"Add tags to individuals:"
+"selmetodo";"Seleccionar Método:";"Select Method:"
+"seltipo";"Seleccionar Tipo:";"Select Type:"
+"sil";"Silhouette";"Silhouette"
+"sobreposicion";"Sobreposición";"Overlaying"
+"tcruz";"Tabla Cruzada";"Cross Table"
+"variables";"Variables";"Variables"
+"vee";"Varianza Explicada por cada Eje";"Variance Explained for each Axis"
+"vertical";"Vertical";"Vertical"

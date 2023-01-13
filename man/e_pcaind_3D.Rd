@@ -10,7 +10,8 @@ e_pcaind_3D(
   colorInd = "steelblue",
   cos2 = 0,
   colorCos = "firebrick",
-  titulos = c("Bien Representados", "Mal Representados")
+  titulos = c("Bien Representados", "Mal Representados"),
+  etq = F
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ e_pcaind_3D(
 \item{colorCos}{a color for individuals badly represented.}
 
 \item{titulos}{a character vector of length 2 specifying the titles to use on legend.}
+
+\item{etq}{a boolean, whether to add label to graph or not.}
 }
 \value{
 echarts4r plot
@@ -33,7 +36,7 @@ echarts4r plot
 PCA plot of individuals in 3D
 }
 \examples{
-p <- discoveR:::PCA(iris[, -5], graph = FALSE)
+p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 e_pcaind_3D(p)
 
 }

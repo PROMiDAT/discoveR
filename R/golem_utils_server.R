@@ -65,7 +65,7 @@ rvtl <- shiny::reactiveValuesToList
 ########################################################
 
 load("inst/app/lang/translation.bin")
-translation <- append(translation, readeR::translation.readeR())
+translation <- append(translation, loadeR::translation.loadeR())
 
 tr <- function(text, idioma = "es") {
   sapply(text, function(s) {
@@ -75,43 +75,6 @@ tr <- function(text, idioma = "es") {
     
     elem
   }, USE.NAMES = F)
-}
-
-cambiar.labels <- function() {
-  x <- c('idioma', 'selidioma', 'data', 'basico', 'acp', 'jerarquico',
-         'inercia', 'inerciaintra', 'inerciainter', 'silhouette', 'reporte',
-         'acercade', 'cargar', 'trans', 'header', 'Rownames', 'separador', 'coma',
-         'puntocoma', 'tab', 'separadordec', 'eliminana', 'eliminar', 'imputar',
-         'jambu', 'sil', 'punto', 'si', 'no', 'cargarchivo', 'subir', 'descarga',
-         'buscar', 'numerico', 'numericas', 'categorico', 'categoricas',
-         'disyuntivo', 'variables', 'tipo', 'activa', 'aplicar', 'resumen',
-         'normalidad', 'dispersion', 'distribuciones', 'distribucion', 'kmedias',
-         'correlacion', 'resumenvar', 'selvar', 'selvars', 'plotnormal',
-         'titulonormal', 'curvanormal', 'densidad', 'opciones', 'selcolor',
-         'selcolores', 'ejecutar', 'titulodistribucion', 'codigo', 'funciones',
-         'codigodistnum', 'codigodistcat', 'cantidadcasos', 'categorias',
-         'selmetodo', 'seltipo', 'individuos', 'sobreposicion', 'ayudacp', 'vee',
-         'cci', 'ccv', 'cvc', 'cp', 'resultados', 'centrar', 'escalar', 'nocentrar',
-         'numerodim', 'selejes', 'cosind', 'cosvar', 'selcolorind', 'selcolorvar',
-         'dendograma', 'mapa', 'horizontal', 'vertical', 'radar', 'alfa',
-         'interpretacioncat', 'cantcluster', 'numcluster', 'metcluster', 'sigue',
-         'indiceagrega', 'metododist', 'agregarcluster', 'todos', 'jambu', 'kiter',
-         'nstart', 'niter', 'algoritmo', 'tituloreporte', 'titulo', 'nombre',
-         'descargar', 'salida', 'copyright', 'info', 'version', 'siguiente',
-         'anterior', 'primero', 'ultimo', 'nodata', 'codedist', 'codecentros',
-         'codehoriz', 'codevert', 'coderadar', 'codejambu', 'q1', 'mediana', 'q3',
-         'minimo', 'promedio', 'maximo', 'ds', 'dimensiones', 'porcvee',
-         'calidadcos', 'contribucion', 'positivo', 'negativo', 'sinasimetria',
-         'fisher', 'asimetria', 'msjclusters', 'reptransformar', 'repeliminacion',
-         'repmodelo', 'rephc', 'repcor', 'repcaind', 'repcavar', 'repcabi',
-         'rephoriz', 'repvert', 'repradar', 'repcat', 'repinter', 'distancia',
-         'metodo', 'iter', 'coseno', 'ejes', 'repcosind', 'repcosvar', 'repdim',
-         'codreporte', 'errornum', 'errorcat', 'selcolbar', 'selcolline',
-         'selcolpoint', 'histograma', '2D', '3D', 'colindbien', 'colindmal', 
-         'colvarbien', 'colvarmal', 'longerror', 'pvalue', 'porc', 'abs', 
-         'tasim', 'ori', 'res')
-  
-  return(x)
 }
 
 # Función para generar diccionario.
