@@ -380,7 +380,10 @@ mod_acp_server <- function(id, updateData, codedioma) {
     })
     
     # Modelo ACP (Resultados numéricos)
-    output$txtpca <- renderPrint(print(modelo.pca()))
+    output$txtpca <- renderPrint({
+      modelo <- modelo.pca()
+      print(list(eig = modelo$eig, ind = modelo$ind, var = modelo$var))
+    })
   })
 }
     

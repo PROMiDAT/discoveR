@@ -65,14 +65,40 @@ app_server <- function( input, output, session ) {
   
   # Enable/disable on load data
   observe({
+    datos <- updateData$datos
+    n.neg <- sum(var.numericas(datos) < 0)
+    n.num <- ncol(var.numericas(datos))
+    n.cat <- ncol(var.categoricas(datos))
+    
     element <- "#sidebarItemExpanded li"
-    menu.values <- c(
-      "[class^=treeview]", " a[data-value=acp]", " a[data-value=afc]", 
-      " a[data-value=afcm]", " a[data-value=cj]", " a[data-value=kmedias]",
-      " a[data-value=reporte]")
+    menu.num <- c(
+      " a[data-value=acp]", " a[data-value=cj]", 
+      " a[data-value=kmedias]", " a[data-value=reporte]")
+    
+    menu.cat <- c(" a[data-value=afcm]")
+    
+    if(is.null(datos)) {
+      addClass(class = "disabled", selector = paste0(element, "[class^=treeview]"))
+    } else {
+      removeClass(class = "disabled", selector = paste0(element, "[class^=treeview]"))
+    }
+    
+    if(is.null(datos) || n.num < 2 || n.neg > 0) {
+      addClass(class = "disabled", selector = paste0(element, " a[data-value=afc]"))
+    } else {
+      removeClass(class = "disabled", selector = paste0(element, " a[data-value=afc]"))
+    }
 
-    lapply(menu.values, function(i) {
-      if(is.null(updateData$datos) || ncol(updateData$datos) < 1) {
+    lapply(menu.num, function(i) {
+      if(is.null(datos) || n.num < 2) {
+        addClass(class = "disabled", selector = paste0(element, i))
+      } else {
+        removeClass(class = "disabled", selector = paste0(element, i))
+      }
+    })
+    
+    lapply(menu.cat, function(i) {
+      if(is.null(datos) || n.cat < 2) {
         addClass(class = "disabled", selector = paste0(element, i))
       } else {
         removeClass(class = "disabled", selector = paste0(element, i))
@@ -93,6 +119,6 @@ app_server <- function( input, output, session ) {
   mod_acp_server(        "acp_ui_1", updateData, codedioma)
   mod_afc_server(        "afc_ui_1", updateData, codedioma)
   mod_afcm_server(       "afcm_ui_1", updateData, codedioma)
-  mod_cj_server(          "cj_ui_1", updateData, codedioma)
+  mod_cj_server(         "cj_ui_1", updateData, codedioma)
   mod_kmedias_server("kmedias_ui_1", updateData, codedioma)
 }

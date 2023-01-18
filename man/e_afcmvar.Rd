@@ -4,27 +4,14 @@
 \alias{e_afcmvar}
 \title{AFCM plot of variables}
 \usage{
-e_afcmvar(
-  modelo,
-  axes = c(1, 2),
-  colorVar = "forestgreen",
-  cos2 = 0,
-  colorCos = "darkorchid",
-  titulos = c("Bien Representados", "Mal Representados")
-)
+e_afcmvar(modelo, axes = c(1, 2), colorVar = "forestgreen")
 }
 \arguments{
 \item{modelo}{an object of class AFCM [FactoMineR].}
 
 \item{axes}{a numeric vector of length 2 specifying the dimensions to be plotted.}
 
-\item{colorVar}{a color for the variables well represented.}
-
-\item{cos2}{a numeric value from 0 to 1 specifying the quality of the variables.}
-
-\item{colorCos}{a color for the variables badly represented.}
-
-\item{titulos}{a character vector of length 2 specifying the titles to use on legend.}
+\item{colorVar}{a color for the variables.}
 }
 \value{
 echarts4r plot

@@ -42,13 +42,18 @@ mod_cj_ui <- function(id) {
                radioSwitch(ns("cj.scale"), NULL, c("centrar", "nocentrar")),
                sliderInput(
                  ns("cant.cluster"), labelInput("cantcluster"), 2, 10, 2),
-               selectInput(
-                 ns("sel.dist.method"),  labelInput("metododist"),
-                 c("euclidean", "maximum", "manhattan", "canberra", 
-                   "binary", "minkowski")),
-               selectInput(
-                 ns("sel.hc.method"), labelInput("selmetodo"),
-                 c("ward.D2", "single", "complete", "average"))
+               fluidRow(
+                 col_6(selectInput(
+                   ns("sel.dist.method"),  labelInput("metododist"),
+                   c("euclidean", "maximum", "manhattan", "canberra",
+                     "binary", "minkowski"))),
+                 col_6(selectInput(
+                   ns("sel.hc.method"), labelInput("selmetodo"),
+                   c("ward.D2", "single", "complete", "average")))
+               ),
+               conditionalPanel(
+                 condition = paste0("input.tabjerar == 'tabMapa'"),
+                 radioSwitch(ns("switch_label"), "selabelind", c("si", "no"), val.def = F))
              )
            ), hr(), actionButton(
              ns("CJbtn"), labelInput("agregarcluster"), width = "100%"), hr()
@@ -215,24 +220,28 @@ mod_cj_server <- function(id, updateData, codedioma) {
       modelo <- PCA(var.numericas(updateData$datos))
       if(is.null(modelo)) return(NULL)
       
+      colores  <- isolate(cj_colors$colors)
+      clusters <- modelo.cj()$clusters
+      addetq   <- isolate(input$switch_label)
+      
       if(input$plotModeCJ) {
         cod <- paste0(
           "### dochclustmapa2d\n",
           "modelo.pca <- PCA(var.numericas(datos))\n",
           "e_mapa(modelo.pca, modelo.cj$clusters, c('",
-          paste(isolate(cj_colors$colors), collapse = "', '"), "'))\n")
+          paste(colores, collapse = "', '"), "'), etq = ", addetq, ")\n")
         isolate(codedioma$code <- append(codedioma$code, cod))
         
-        e_mapa(modelo, modelo.cj()$clusters, isolate(cj_colors$colors))
+        e_mapa(modelo, clusters, colores, etq = addetq)
       } else {
         cod <- paste0(
           "### dochclustmapa3d\n",
           "modelo.pca <- PCA(var.numericas(datos))\n",
           "e_mapa_3D(modelo.pca, modelo.cj$clusters, c('",
-          paste(isolate(cj_colors$colors), collapse = "', '"), "'))\n")
+          paste(colores, collapse = "', '"), "'), etq = ", addetq, ")\n")
         isolate(codedioma$code <- append(codedioma$code, cod))
         
-        e_mapa_3D(modelo, modelo.cj()$clusters, isolate(cj_colors$colors))
+        e_mapa_3D(modelo, clusters, colores, etq = addetq)
       }
     })
     

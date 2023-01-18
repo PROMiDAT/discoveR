@@ -42,18 +42,19 @@ mod_kmedias_ui <- function(id) {
                radioSwitch(ns("k.scale"), NULL, c("centrar", "nocentrar")),
                sliderInput(
                  ns("cant.kmeans.cluster"), labelInput("cantcluster"), 2, 10, 2),
-               col_7(
-                 numericInput(ns("num.nstart"), labelInput("nstart"), 2, step = 10),
-                 numericInput(ns("num.iter"), labelInput("niter"), 100, step = 100)
+               fluidRow(
+                 col_4(numericInput(ns("num.nstart"), labelInput("nstart"), 2, step = 10)),
+                 col_4(numericInput(ns("num.iter"), labelInput("niter"), 100, step = 100)),
+                 col_4(selectInput(ns("sel.algoritmo"), labelInput("algoritmo"), 
+                                   c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen")))
                ),
-               col_5(
-                 selectInput(ns("sel.algoritmo"), labelInput("algoritmo"), 
-                             c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen")),
-                 conditionalPanel(
-                   condition = paste0("input.tabkmedias == 'tabJambu'"),
-                   radioSwitch(ns("radiojambu"), "metcluster", c("jambu", "sil"),
-                               c("wss", "silhouette")))
-               )
+               conditionalPanel(
+                 condition = paste0("input.tabkmedias == 'tabJambu'"),
+                 radioSwitch(ns("radiojambu"), "metcluster", c("jambu", "sil"),
+                             c("wss", "silhouette"))),
+               conditionalPanel(
+                 condition = paste0("input.tabkmedias == 'tabKmapa'"),
+                 radioSwitch(ns("switch_label"), "selabelind", c("si", "no"), val.def = F))
              )
            ), hr(), actionButton(
              ns("Kbtn"), labelInput("agregarcluster"), width = "100%"), hr()
@@ -220,24 +221,28 @@ mod_kmedias_server <- function(id, updateData, codedioma) {
       modelo <- PCA(var.numericas(updateData$datos))
       if(is.null(modelo)) return(NULL)
       
+      colores  <- isolate(k_colors$colors)
+      clusters <- modelo.k()$clusters
+      addetq   <- isolate(input$switch_label)
+      
       if(input$plotModeK) {
         cod <- paste0(
           "### dockmapa2d\n",
           "modelo.pca <- PCA(var.numericas(datos))\n",
           "e_mapa(modelo.pca, modelo.k$clusters, c('",
-          paste(isolate(k_colors$colors), collapse = "', '"), "'))\n")
+          paste(colores, collapse = "', '"), "'), etq = ", addetq, ")\n")
         isolate(codedioma$code <- append(codedioma$code, cod))
         
-        e_mapa(modelo, modelo.k()$clusters, isolate(k_colors$colors))
+        e_mapa(modelo, clusters, colores, etq = addetq)
       } else {
         cod <- paste0(
           "### dockmapa3d\n",
           "modelo.pca <- PCA(var.numericas(datos))\n",
           "e_mapa_3D(modelo.pca, modelo.k$clusters, c('",
-          paste(isolate(k_colors$colors), collapse = "', '"), "'))\n")
+          paste(colores, collapse = "', '"), "'), etq = ", addetq, ")\n")
         isolate(codedioma$code <- append(codedioma$code, cod))
         
-        e_mapa_3D(modelo, modelo.k()$clusters, isolate(k_colors$colors))
+        e_mapa_3D(modelo, clusters, colores, etq = addetq)
       }
     })
     

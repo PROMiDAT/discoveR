@@ -85,6 +85,7 @@ e_inercia <- function(data, titulos = c(
 #' @param clusters a vector specifying the cluster of each individual.
 #' @param colores a vector of color for each cluster.
 #' @param ejes a numeric vector of length 2 specifying the dimensions to be plotted.
+#' @param etq a boolean, whether to add label to graph or not.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return echarts4r plot
@@ -93,9 +94,9 @@ e_inercia <- function(data, titulos = c(
 #' @examples
 #' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
-#' e_mapa(p, clusters, c("steelblue", "pink", "forestgreen"))
+#' e_mapa(p, clusters, c("steelblue", "pink", "forestgreen"), etq = FALSE)
 #' 
-e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2)) {
+e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2), etq = F) {
   dims <- paste0("Dim.", ejes)
   inercias <- round(pca.model$eig[ejes, 2], digits = 2)
   
@@ -117,6 +118,14 @@ e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2)) {
   
   r <- ind %>% group_by(cluster) %>% e_charts(x) %>% 
     e_scatter(y, symbol_size = 10, bind = id)
+  
+  if(etq) {
+    r <- r |>
+      e_labels(formatter = htmlwidgets::JS(
+        "function(params) {
+         return(params.name)
+      }"))
+  }
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(
@@ -162,6 +171,7 @@ e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2)) {
 #' @param clusters a vector specifying the cluster of each individual.
 #' @param colores a vector of color for each cluster.
 #' @param ejes a numeric vector of length 3 specifying the dimensions to be plotted.
+#' @param etq a boolean, whether to add label to graph or not.
 #'
 #' @author Diego Jimenez <diego.jimenez@promidat.com>
 #' @return echarts4r plot
@@ -170,9 +180,9 @@ e_mapa <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2)) {
 #' @examples
 #' p <- FactoMineR::PCA(iris[, -5], graph = FALSE)
 #' clusters <- factor(kmeans(iris[, -5], 3)$cluster)
-#' e_mapa_3D(p, clusters, c("steelblue", "pink", "forestgreen"))
+#' e_mapa_3D(p, clusters, c("steelblue", "pink", "forestgreen"), etq = FALSE)
 #' 
-e_mapa_3D <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) {
+e_mapa_3D <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3), etq = F) {
   dims <- paste0("Dim.", ejes)
   inercias <- round(pca.model$eig[ejes, 2], digits = 2)
   
@@ -195,6 +205,14 @@ e_mapa_3D <- function(pca.model, clusters, colores = NULL, ejes = c(1, 2, 3)) {
   
   r <- ind %>% group_by(cluster) %>% e_charts(x) %>% 
     e_scatter_3d(y, z, symbol_size = 10, bind = id) %>% e_legend()
+  
+  if(etq) {
+    r <- r |>
+      e_labels(formatter = htmlwidgets::JS(
+        "function(params) {
+         return(params.name)
+      }"))
+  }
   
   for (i in 1:nrow(var)) {
     r$x$opts$series[[length(r$x$opts$series) + 1]] <- list(

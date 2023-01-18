@@ -14,7 +14,7 @@ mod_afcm_ui <- function(id){
     class = "multiple-select-var", style = "width: 150px;",
     conditionalPanel(
       condition = paste0(
-        "input.tabAFCM == 'tabInd' || ", "input.tabAFCM == 'tabVar' || ", 
+        "input.tabAFCM == 'tabInd' || ", "input.tabAFCM == 'tabCat' || ", 
         "input.tabAFCM == 'tabBi'"),
       radioSwitch(ns("plotMode"), NULL, list("2D", "3D")))
   )
@@ -48,21 +48,27 @@ mod_afcm_ui <- function(id){
         ),
         conditionalPanel(
           condition = paste0(
-            "input.tabAFCM == 'tabVar' || ", "input.tabAFCM == 'tabBi'"),
+            "input.tabAFCM == 'tabCat' || ", "input.tabAFCM == 'tabBi'"),
           fluidRow(
             style = "margin-left: 0px; margin-right: 0px",
-            col_6(sliderInput(ns("var_cos"), labelInput("cosvar"), 0, 100, 0)),
+            col_6(sliderInput(ns("cat_cos"), labelInput("cosvar"), 0, 100, 0)),
             col_3(
               colourpicker::colourInput(
-                ns("col_afcm_var"), labelInput("colvarbien"), "forestgreen", 
+                ns("col_afcm_cat"), labelInput("colcatbien"), "forestgreen", 
                 allowTransparent = T)
             ),
             col_3(
               colourpicker::colourInput(
-                ns("col_var_cos"), labelInput("colvarmal"), "darkorchid", 
+                ns("col_cat_cos"), labelInput("colcatmal"), "darkorchid", 
                 allowTransparent = T)
             )
           )
+        ),
+        conditionalPanel(
+          condition = "input.tabAFCM == 'tabVar'",
+          colourpicker::colourInput(
+            ns("col_afcm_var"), labelInput("colvarbien"), "forestgreen", 
+            allowTransparent = T)
         )
       )
     )
@@ -77,6 +83,9 @@ mod_afcm_ui <- function(id){
       tabPanel(
         title = labelInput("variables"), value = "tabVar",
         echarts4rOutput(ns('plot_var'), height = "75vh")),
+      tabPanel(
+        title = labelInput("categorias"), value = "tabCat",
+        echarts4rOutput(ns('plot_cat'), height = "75vh")),
       tabPanel(
         title = labelInput("sobreposicion"), value = "tabBi",
         echarts4rOutput(ns('plot_bi'), height = "75vh")),
@@ -122,7 +131,7 @@ mod_afcm_server <- function(id, updateData, codedioma) {
       if(nrow(datos) == 0) {
         return(NULL)
       } else {
-        cod <- paste0("### docafcmmodel\nmodelo.afcm <- CA(var.categoricas(datos), ncp = ", 
+        cod <- paste0("### docafcmmodel\nmodelo.afcm <- MCA(var.categoricas(datos), ncp = ", 
                       dimensiones, ", graph = F)\n")
         isolate(codedioma$code <- append(codedioma$code, cod))
         
@@ -161,39 +170,66 @@ mod_afcm_server <- function(id, updateData, codedioma) {
         }
       }
     })
-
-    # Plot AFC (variables)
+    
+    # Plot AFCM (variables)
     output$plot_var <- renderEcharts4r({
+      modelo <- modelo.afcm()
+      
+      ejes    <- isolate(input$slider_ejes)
+      var.col <- isolate(input$col_afcm_var)
+      titulos <- c(tr("bienr", codedioma$idioma), tr("malr", codedioma$idioma))
+      
+      if(is.null(modelo)) {
+        return(NULL)
+      } else {
+        if(input$plotMode) {
+          cod <- paste0("### docafcmvar2d\ne_afcmvar(modelo.afcm, c(", 
+                        paste(ejes, collapse = ", "), "), '", var.col, "')\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_afcmvar(modelo, ejes, var.col)
+        } else {
+          cod <- paste0("### docafcmvar3d\ne_afcmvar_3D(modelo.afcm, c(", 
+                        paste(ejes, collapse = ", "), "), '", var.col, "')\n")
+          isolate(codedioma$code <- append(codedioma$code, cod))
+          
+          e_afcmvar_3D(modelo, c(1, 2, 3), var.col)
+        }
+      }
+    })
+
+    # Plot AFCM (categories)
+    output$plot_cat <- renderEcharts4r({
       modelo <- modelo.afcm()
 
       ejes    <- isolate(input$slider_ejes)
-      var.cos <- isolate(input$var_cos) * 0.01
-      var.col <- isolate(input$col_afcm_var)
-      cos.col <- isolate(input$col_var_cos)
+      var.cos <- isolate(input$cat_cos) * 0.01
+      var.col <- isolate(input$col_afcm_cat)
+      cos.col <- isolate(input$col_cat_cos)
       titulos <- c(tr("bienr", codedioma$idioma), tr("malr", codedioma$idioma))
 
       if(is.null(modelo)) {
         return(NULL)
       } else {
         if(input$plotMode) {
-          cod <- paste0("### docafcmvar2d\ne_afcmvar(modelo.afcm, c(", paste(ejes, collapse = ", "),
+          cod <- paste0("### docafcmvar2d\ne_afcmcat(modelo.afcm, c(", paste(ejes, collapse = ", "),
                         "), '", var.col, "', ", var.cos, ", '", cos.col, "', c('",
                         titulos[1], "', '", titulos[2], "'))\n")
           isolate(codedioma$code <- append(codedioma$code, cod))
 
-          e_afcmvar(modelo, ejes, var.col, var.cos, cos.col, titulos)
+          e_afcmcat(modelo, ejes, var.col, var.cos, cos.col, titulos)
         } else {
-          cod <- paste0("### docafcmvar3d\ne_afcmvar_3D(modelo.afcm, c(", paste(ejes, collapse = ", "),
+          cod <- paste0("### docafcmvar3d\ne_afcmcat_3D(modelo.afcm, c(", paste(ejes, collapse = ", "),
                         "), '", var.col, "', ", var.cos, ", '", cos.col,
                         "', c('", titulos[1], "', '", titulos[2], "'))\n")
           isolate(codedioma$code <- append(codedioma$code, cod))
 
-          e_afcmvar_3D(modelo, c(1, 2, 3), var.col, var.cos, cos.col, titulos)
+          e_afcmcat_3D(modelo, c(1, 2, 3), var.col, var.cos, cos.col, titulos)
         }
       }
     })
 
-    # Plot PCA (Biplot)
+    # Plot AFCM (Biplot)
     output$plot_bi <- renderEcharts4r({
       modelo  <- modelo.afcm()
 
@@ -202,9 +238,9 @@ mod_afcm_server <- function(id, updateData, codedioma) {
       ind.cos     <- isolate(input$ind_cos) * 0.01
       ind.col     <- isolate(input$col_afcm_ind)
       ind.cos.col <- isolate(input$col_ind_cos)
-      var.cos     <- isolate(input$var_cos) * 0.01
-      var.col     <- isolate(input$col_afcm_var)
-      var.cos.col <- isolate(input$col_var_cos)
+      var.cos     <- isolate(input$cat_cos) * 0.01
+      var.col     <- isolate(input$col_afcm_cat)
+      var.cos.col <- isolate(input$col_cat_cos)
       titulos <- c(tr("bienr", codedioma$idioma), tr("malr", codedioma$idioma))
 
       if(is.null(modelo)) {
@@ -359,8 +395,11 @@ mod_afcm_server <- function(id, updateData, codedioma) {
         e_bar(z, name = paste0("Comp ", ejes[2])) |> e_tooltip()
     })
 
-    # Modelo AFC (Resultados numéricos)
-    output$txtafcm <- renderPrint(print(modelo.afcm()))
+    # Modelo AFCM (Resultados numéricos)
+    output$txtafcm <- renderPrint({
+      modelo <- modelo.afcm()
+      print(list(eig = modelo$eig, ind = modelo$ind, var = modelo$var))
+    })
   })
 }
     

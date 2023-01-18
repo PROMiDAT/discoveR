@@ -75,10 +75,10 @@ mod_afc_ui <- function(id){
         title = labelInput("tcruz"), value = "tabCruz",
         echarts4rOutput(ns('plot_cruz'), height = "75vh")),
       tabPanel(
-        title = labelInput("individuos"), value = "tabInd",
+        title = labelInput("prows"), value = "tabInd",
         echarts4rOutput(ns('plot_ind'), height = "75vh")),
       tabPanel(
-        title = labelInput("variables"), value = "tabVar",
+        title = labelInput("pcols"), value = "tabVar",
         echarts4rOutput(ns('plot_var'), height = "75vh")),
       tabPanel(
         title = labelInput("sobreposicion"), value = "tabBi",
@@ -377,7 +377,10 @@ mod_afc_server <- function(id, updateData, codedioma) {
     })
     
     # Modelo AFC (Resultados numéricos)
-    output$txtafc <- renderPrint(print(modelo.afc()))
+    output$txtafc <- renderPrint({
+      modelo <- modelo.afc()
+      print(list(eig = modelo$eig, col = modelo$col, row = modelo$row))
+    })
   })
 }
     
