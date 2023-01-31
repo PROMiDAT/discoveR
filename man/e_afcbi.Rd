@@ -45,8 +45,10 @@ echarts4r plot
 AFC biplot
 }
 \examples{
-p <- FactoMineR::CA(iris[, -5], graph = FALSE)
-e_afcbi(p)
+\donttest{
+  p <- FactoMineR::CA(iris[, -5], graph = FALSE)
+  e_afcbi(p)
+}
 
 }
 \author{

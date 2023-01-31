@@ -292,8 +292,10 @@ e_afccol_3D <- function(modelo, axes = c(1, 2, 3), colorCol = "forestgreen",
 #' @export e_afcbi
 #' @import echarts4r
 #' @examples
-#' p <- FactoMineR::CA(iris[, -5], graph = FALSE)
-#' e_afcbi(p)
+#' \donttest{
+#'   p <- FactoMineR::CA(iris[, -5], graph = FALSE)
+#'   e_afcbi(p)
+#' }
 #' 
 e_afcbi <- function(modelo, axes = c(1, 2), colorRow = "steelblue", 
                     colorCol = "forestgreen", cos2Row = 0, cos2Col = 0, 
@@ -382,8 +384,10 @@ e_afcbi <- function(modelo, axes = c(1, 2), colorRow = "steelblue",
 #' @export e_afcbi_3D
 #' @import echarts4r
 #' @examples
-#' p <- FactoMineR::CA(iris[, -5], graph = FALSE)
-#' e_afcbi_3D(p)
+#' \donttest{
+#'   p <- FactoMineR::CA(iris[, -5], graph = FALSE)
+#'   e_afcbi_3D(p)
+#' }
 #' 
 e_afcbi_3D <- function(modelo, axes = c(1, 2, 3), colorRow = "steelblue",
                        colorCol = "forestgreen", cos2Row = 0,  cos2Col = 0,

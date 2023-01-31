@@ -118,7 +118,7 @@ app_server <- function( input, output, session ) {
   
   mod_acp_server(        "acp_ui_1", updateData, codedioma)
   mod_afc_server(        "afc_ui_1", updateData, codedioma)
-  mod_afcm_server(       "afcm_ui_1", updateData, codedioma)
-  mod_cj_server(         "cj_ui_1", updateData, codedioma)
+  mod_afcm_server(      "afcm_ui_1", updateData, codedioma)
+  mod_cj_server(          "cj_ui_1", updateData, codedioma)
   mod_kmedias_server("kmedias_ui_1", updateData, codedioma)
 }

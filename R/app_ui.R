@@ -66,6 +66,9 @@ app_ui <- function(request) {
                    icon = icon("info")),
           hr(),
           menu.idioma(),
+          hr(),
+          img(src = "img/discoveR.png", style = 
+                "margin-left: auto;margin-right: auto;display: block;width: 80%;"),
           tags$div(style = "display:none;",
                    sliderInput(inputId = "aux", min = 2, value = 2,
                                label = "Cantidad de Clusters", max = 10),

@@ -45,8 +45,10 @@ echarts4r plot
 AFC biplot in 3D
 }
 \examples{
-p <- FactoMineR::CA(iris[, -5], graph = FALSE)
-e_afcbi_3D(p)
+\donttest{
+  p <- FactoMineR::CA(iris[, -5], graph = FALSE)
+  e_afcbi_3D(p)
+}
 
 }
 \author{
