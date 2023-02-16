@@ -1,6 +1,6 @@
 default:
   golem_name: discoveR
-  golem_version: 3.1.3
+  golem_version: 3.1.4
   app_prod: no
 production:
   app_prod: yes

@@ -338,6 +338,8 @@ mod_cj_server <- function(id, updateData, codedioma) {
       cluster.var <- as.factor(paste0(nom, clusters))
       
       updateData$datos[[paste0(nom, length(unique(clusters)))]] <- cluster.var
+      updateData$originales[[paste0(nom, length(unique(clusters)))]] <- cluster.var
+      updateData$datos.tabla[[paste0(nom, length(unique(clusters)))]] <- cluster.var
       showNotification(tr("msjclusters"), duration = 5, type = "message")
     })
   })

@@ -329,6 +329,8 @@ mod_kmedias_server <- function(id, updateData, codedioma) {
       cluster.var <- as.factor(paste0("K", clusters))
       
       updateData$datos[[nom]] <- cluster.var
+      updateData$originales[[nom]] <- cluster.var
+      updateData$datos.tabla[[nom]] <- cluster.var
       showNotification(tr("msjclusters"), duration = 5, type = "message")
     })
   })

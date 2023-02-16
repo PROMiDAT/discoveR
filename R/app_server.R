@@ -29,7 +29,8 @@ app_server <- function( input, output, session ) {
   onStop(function() stopApp())
   
   ##################################  Variables  ##############################
-  updateData <- rv(datos = NULL, originales = NULL, idioma = NULL)
+  updateData <- rv(datos = NULL, originales = NULL, 
+                   datos.tabla = NULL, idioma = NULL)
   codedioma  <- rv(idioma = "es", code = list())
   
   ###################################  Update  ################################
@@ -108,7 +109,7 @@ app_server <- function( input, output, session ) {
   
   ###################################  Modules  ###############################
   
-  mod_carga_datos_server("carga_datos_ui_1", updateData, NULL, codedioma, "discoveR")
+  loadeR::mod_carga_datos_server("carga_datos_ui_1", updateData, NULL, codedioma, "discoveR")
   
   loadeR::mod_r_numerico_server(        "r_numerico_ui_1", updateData, codedioma)
   loadeR::mod_normal_server(                "normal_ui_1", updateData, codedioma)
